@@ -12,7 +12,8 @@ The goal is to avoid losing context, changing core decisions by accident, or bui
 - Next focus: create Unity project skeleton
 - Unity project status: not created yet
 - Git status: local repository initialized; Git is available through Visual Studio bundled `git.exe`, not through PATH
-- Unity status: Unity Hub is installed at `C:\Program Files\Unity Hub\Unity Hub.exe`; Unity Editor executable was not found yet
+- Unity status: Unity Hub is installed; Unity Editor `6000.4.9f1` is installed at `C:\Program Files\Unity\Hub\Editor\6000.4.9f1\Editor\Unity.exe`
+- Unity modules detected: `windowsstandalonesupport`, `WebGLSupport`
 - Visual Studio status: Visual Studio exists on this PC
 
 ## Fixed Game Identity
@@ -388,7 +389,9 @@ Visual style:
 - Added Unity-focused `.gitignore`.
 - Initialized local Git repository.
 - Created first commit: `3f31b0a Initialize project memory and roadmap`.
-- Confirmed Unity Hub is installed, but Unity Editor is not detected yet.
+- Confirmed Unity Hub is installed.
+- Confirmed Unity Editor `6000.4.9f1` is installed.
+- Confirmed Windows Standalone support is installed.
 
 ## Current Work
 - Build project organization first.
