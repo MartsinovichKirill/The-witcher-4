@@ -61,7 +61,7 @@ Acceptance:
 - No gameplay systems are implemented yet.
 
 ### Stage 2: Main Menu And Settings Stub
-Status: next
+Status: done
 
 Tasks:
 - Build `MainMenuScene`.
@@ -81,7 +81,7 @@ Acceptance:
 - Exit button quits in build or logs in editor.
 
 ### Stage 3: Player Movement And Third-Person Camera
-Status: planned
+Status: next
 
 Tasks:
 - Add placeholder player capsule or simple model.

@@ -7,9 +7,9 @@ The goal is to avoid losing context, changing core decisions by accident, or bui
 
 ## Current Project Status
 - Current workspace: `G:\The witcher 2`
-- Current stage: Unity skeleton created
-- Current focus: prepare Stage 2 main menu and settings stub
-- Next focus: implement `MainMenuScene` menu stub
+- Current stage: Stage 2 main menu stub created
+- Current focus: prepare Stage 3 player movement and third-person camera
+- Next focus: implement placeholder player movement in `VillageScene`
 - Unity project status: created
 - Git status: local repository initialized; Git is available through Visual Studio bundled `git.exe`, not through PATH
 - Unity status: Unity Hub is installed; Unity Editor `6000.4.9f1` is installed at `C:\Program Files\Unity\Hub\Editor\6000.4.9f1\Editor\Unity.exe`
@@ -84,7 +84,7 @@ Core theme: truth can heal the world, but it can also destroy the life people bu
 ## Scenes
 | Scene | Purpose | Status |
 |---|---|---|
-| `MainMenuScene` | Main menu, settings, load game | planned |
+| `MainMenuScene` | Main menu, settings, load game | main menu stub created |
 | `VillageScene` | Vereskovy Brod hub | planned |
 | `ForestScene` | Old Forest investigation and early enemies | planned |
 | `SwampScene` | Black Swamp, Elsa, drowner nest, poison | planned |
@@ -399,10 +399,17 @@ Visual style:
 - Added both initial scenes to Unity Build Settings.
 - Added `Assets/Editor/ProjectSkeletonBuilder.cs` skeleton utility.
 - Added `Assets/Docs/STAGE_1_SKELETON.md`.
+- Added `Assets/Scripts/UI/MainMenuController.cs`.
+- Added `Assets/Editor/MainMenuSceneBuilder.cs`.
+- Built `MainMenuScene` with New Game, Continue, Settings, Exit, and settings stub UI.
+- New Game loads `VillageScene`.
+- Continue shows a no-save status message.
+- Settings panel includes volume, music, resolution placeholder, graphics placeholder, apply, and back controls.
+- Added `Assets/Docs/STAGE_2_MAIN_MENU.md`.
 
 ## Current Work
-- Stage 1 is complete.
-- Next concrete step: Stage 2, build `MainMenuScene` with a main menu and settings stub.
+- Stage 2 is complete.
+- Next concrete step: Stage 3, add placeholder player movement and third-person camera in `VillageScene`.
 
 ## Update Log Template
 Use this format after every completed part:
