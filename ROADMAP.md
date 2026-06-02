@@ -28,7 +28,7 @@ Acceptance:
 - Next work can start by reading them.
 
 ### Stage 1: Unity Project Skeleton
-Status: next
+Status: done
 
 Tasks:
 - Create Unity project in `G:\The witcher 2`.
@@ -61,7 +61,7 @@ Acceptance:
 - No gameplay systems are implemented yet.
 
 ### Stage 2: Main Menu And Settings Stub
-Status: planned
+Status: next
 
 Tasks:
 - Build `MainMenuScene`.
@@ -347,4 +347,3 @@ Release acceptance:
 - Main quest and side quests complete correctly.
 - UI, controls, saving, and endings work.
 - Ready for demonstration.
-

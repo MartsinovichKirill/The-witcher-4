@@ -7,10 +7,10 @@ The goal is to avoid losing context, changing core decisions by accident, or bui
 
 ## Current Project Status
 - Current workspace: `G:\The witcher 2`
-- Current stage: pre-Unity setup
-- Current focus: create Unity project skeleton
-- Next focus: create Unity project skeleton
-- Unity project status: not created yet
+- Current stage: Unity skeleton created
+- Current focus: prepare Stage 2 main menu and settings stub
+- Next focus: implement `MainMenuScene` menu stub
+- Unity project status: created
 - Git status: local repository initialized; Git is available through Visual Studio bundled `git.exe`, not through PATH
 - Unity status: Unity Hub is installed; Unity Editor `6000.4.9f1` is installed at `C:\Program Files\Unity\Hub\Editor\6000.4.9f1\Editor\Unity.exe`
 - Unity modules detected: `windowsstandalonesupport`, `WebGLSupport`
@@ -392,10 +392,17 @@ Visual style:
 - Confirmed Unity Hub is installed.
 - Confirmed Unity Editor `6000.4.9f1` is installed.
 - Confirmed Windows Standalone support is installed.
+- Created Unity project skeleton in `G:\The witcher 2`.
+- Created initial Unity folders under `Assets`.
+- Created `Assets/Scenes/MainMenuScene.unity`.
+- Created `Assets/Scenes/VillageScene.unity`.
+- Added both initial scenes to Unity Build Settings.
+- Added `Assets/Editor/ProjectSkeletonBuilder.cs` skeleton utility.
+- Added `Assets/Docs/STAGE_1_SKELETON.md`.
 
 ## Current Work
-- Build project organization first.
-- Next concrete step: create Unity project skeleton and folder structure.
+- Stage 1 is complete.
+- Next concrete step: Stage 2, build `MainMenuScene` with a main menu and settings stub.
 
 ## Update Log Template
 Use this format after every completed part:
