@@ -8,10 +8,10 @@ The goal is to avoid losing context, changing core decisions by accident, or bui
 ## Current Project Status
 - Current workspace: `G:\The witcher 2`
 - Current stage: pre-Unity setup
-- Current focus: initialize local Git repository and protect Unity generated files
+- Current focus: create Unity project skeleton
 - Next focus: create Unity project skeleton
 - Unity project status: not created yet
-- Git status: Git is available through Visual Studio bundled `git.exe`, not through PATH
+- Git status: local repository initialized; Git is available through Visual Studio bundled `git.exe`, not through PATH
 - Unity status: Unity Editor was not found in standard paths earlier
 - Visual Studio status: Visual Studio exists on this PC
 
@@ -386,6 +386,8 @@ Visual style:
 - Created `PROJECT_MEMORY.md`.
 - Created `ROADMAP.md`.
 - Added Unity-focused `.gitignore`.
+- Initialized local Git repository.
+- Created first commit: `3f31b0a Initialize project memory and roadmap`.
 
 ## Current Work
 - Build project organization first.
