@@ -216,15 +216,46 @@ namespace WitcherRightVersion.Editor
             CreateElderDialogue(root.transform);
             CreateMartaDialogue(root.transform);
 
+            CreateSwampTraceObjects(root.transform);
+        }
+
+        private static void CreateSwampTraceObjects(Transform parent)
+        {
             CreateInteractableTrace(
-                root.transform,
-                "SwampTrace_Prototype",
-                "Swamp tracks",
+                parent,
+                "SwampTrace_ClawMarks",
+                "Claw marks",
                 "Inspect",
                 QuestService.ActionSwampTracesFound,
-                "Fresh mud, torn reeds, and a rotten smell. The trail leads south.",
-                "These tracks may matter after Marta explains the swamp poison.",
-                new Vector3(0.8f, 0.08f, 3.2f));
+                "Deep claw cuts in the mud. Too wide for a wolf. Something dragged itself toward the reeds.",
+                "These claw marks will matter after Marta explains what to look for.",
+                new Vector3(0.8f, 0.08f, 3.2f),
+                new Vector3(0.9f, 0.04f, 0.55f),
+                new Color(0.18f, 0.12f, 0.08f, 1f));
+
+            CreateInteractableTrace(
+                parent,
+                "SwampTrace_SlimeTrail",
+                "Black slime trail",
+                "Inspect",
+                QuestService.ActionSwampTracesFound,
+                "Black slime bubbles under the grass. Marta was right: the trail is poisoned.",
+                "The slime looks wrong, but Reynard needs Marta's warning first.",
+                new Vector3(1.9f, 0.08f, 4.35f),
+                new Vector3(0.55f, 0.04f, 1.1f),
+                new Color(0.08f, 0.16f, 0.11f, 1f));
+
+            CreateInteractableTrace(
+                parent,
+                "SwampTrace_TornCloth",
+                "Torn cloth",
+                "Inspect",
+                QuestService.ActionSwampTracesFound,
+                "A strip of wet cloth hangs on the reeds. The victim was pulled toward deeper water.",
+                "This cloth is just a rag until Reynard knows the swamp signs.",
+                new Vector3(3.0f, 0.08f, 5.2f),
+                new Vector3(0.45f, 0.04f, 0.45f),
+                new Color(0.32f, 0.29f, 0.22f, 1f));
         }
 
         private static void CreateElderDialogue(Transform parent)
@@ -353,15 +384,15 @@ namespace WitcherRightVersion.Editor
                 });
         }
 
-        private static void CreateInteractableTrace(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position)
+        private static void CreateInteractableTrace(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color)
         {
             var trace = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             trace.name = objectName;
             trace.transform.SetParent(parent, true);
             trace.transform.position = position;
             trace.transform.rotation = Quaternion.identity;
-            trace.transform.localScale = new Vector3(0.75f, 0.04f, 0.75f);
-            trace.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", new Color(0.18f, 0.12f, 0.08f, 1f));
+            trace.transform.localScale = scale;
+            trace.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
 
             var interactable = trace.AddComponent<QuestProgressInteractable>();
             interactable.Configure(displayName, prompt, questAction, successMessage, blockedMessage);

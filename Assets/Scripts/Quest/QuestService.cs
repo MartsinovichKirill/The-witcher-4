@@ -5,6 +5,8 @@ namespace WitcherRightVersion.Quest
 {
     public sealed class QuestService : MonoBehaviour
     {
+        private const int RequiredSwampTraceCount = 3;
+
         public const string SwampContractQuestId = "contract_swamp_beast";
         public const string ActionStartSwampContract = "start_swamp_contract";
         public const string ActionMartaSpoken = "marta_spoken";
@@ -16,12 +18,15 @@ namespace WitcherRightVersion.Quest
 
         private QuestState swampContractState = QuestState.NotStarted;
         private SwampContractStage swampContractStage = SwampContractStage.TalkToElder;
+        private int swampTraceCount;
 
         public static QuestService Instance { get; private set; }
         public event Action QuestChanged;
 
         public QuestState SwampContractState => swampContractState;
         public SwampContractStage CurrentSwampContractStage => swampContractStage;
+        public int SwampTraceCount => swampTraceCount;
+        public int SwampTraceTarget => RequiredSwampTraceCount;
         public bool HasActiveQuest => swampContractState == QuestState.Active || swampContractState == QuestState.Completed;
 
         public string ActiveQuestTitle => HasActiveQuest ? "Contract: Beast from the Swamp" : string.Empty;
@@ -52,7 +57,7 @@ namespace WitcherRightVersion.Quest
                 case ActionMartaSpoken:
                     return AdvanceSwampContract(SwampContractStage.SpeakWithMarta, SwampContractStage.FindSwampTraces);
                 case ActionSwampTracesFound:
-                    return AdvanceSwampContract(SwampContractStage.FindSwampTraces, SwampContractStage.KillDrowner);
+                    return RecordSwampTrace();
                 case ActionFirstDrownerKilled:
                     return AdvanceSwampContract(SwampContractStage.KillDrowner, SwampContractStage.ReturnToElder);
                 case ActionReturnedToElder:
@@ -77,7 +82,34 @@ namespace WitcherRightVersion.Quest
 
             swampContractState = QuestState.Active;
             swampContractStage = SwampContractStage.SpeakWithMarta;
+            swampTraceCount = 0;
             NotifyQuestChanged("Quest started");
+            return true;
+        }
+
+        private bool RecordSwampTrace()
+        {
+            if (swampContractState != QuestState.Active)
+            {
+                Debug.Log($"Cannot record swamp trace: quest is {swampContractState}.", this);
+                return false;
+            }
+
+            if (swampContractStage != SwampContractStage.FindSwampTraces)
+            {
+                Debug.Log($"Cannot record swamp trace: current stage is {swampContractStage}.", this);
+                return false;
+            }
+
+            swampTraceCount = Mathf.Clamp(swampTraceCount + 1, 0, RequiredSwampTraceCount);
+            if (swampTraceCount >= RequiredSwampTraceCount)
+            {
+                swampContractStage = SwampContractStage.KillDrowner;
+                NotifyQuestChanged("Trace investigation complete");
+                return true;
+            }
+
+            NotifyQuestChanged("Swamp trace found");
             return true;
         }
 
@@ -121,7 +153,7 @@ namespace WitcherRightVersion.Quest
                 case SwampContractStage.SpeakWithMarta:
                     return "Speak with Marta about swamp poison.";
                 case SwampContractStage.FindSwampTraces:
-                    return "Inspect the muddy tracks south of the village.";
+                    return $"Inspect swamp traces south of the village ({swampTraceCount}/{RequiredSwampTraceCount}).";
                 case SwampContractStage.KillDrowner:
                     return "Kill the drowner near the swamp road.";
                 case SwampContractStage.ReturnToElder:
