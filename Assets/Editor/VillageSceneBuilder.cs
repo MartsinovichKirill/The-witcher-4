@@ -34,6 +34,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("DialogueCanvas");
             RemoveIfExists("QuestCanvas");
             RemoveIfExists("HealthCanvas");
+            RemoveIfExists("ControlsCanvas");
             RemoveIfExists("InventoryCanvas");
             RemoveIfExists("InteractionDemoRoot");
             RemoveIfExists("RuntimeServices");
@@ -50,6 +51,7 @@ namespace WitcherRightVersion.Editor
             CreateDialogueCanvas();
             CreateQuestCanvas();
             CreateHealthCanvas();
+            CreateControlsCanvas();
             CreateInventoryCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -689,6 +691,48 @@ namespace WitcherRightVersion.Editor
             var hud = canvasObject.AddComponent<HealthHudUI>();
             SetSerializedObjectReference(hud, "healthText", healthText);
             SetSerializedObjectReference(hud, "healthFill", fillImage);
+        }
+
+        private static void CreateControlsCanvas()
+        {
+            var canvasObject = new GameObject("ControlsCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 35;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var hintRoot = CreatePanel(
+                canvasObject.transform,
+                "ControlsHintPanel",
+                new Vector2(0f, 0f),
+                new Vector2(0f, 0f),
+                new Vector2(0f, 0f),
+                new Vector2(720f, 120f),
+                new Vector2(44f, 44f),
+                new Color(0.045f, 0.04f, 0.033f, 0.88f));
+
+            var hintText = CreateText(
+                hintRoot.transform,
+                "ControlsHintText",
+                new Vector2(0f, 0f),
+                new Vector2(1f, 1f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-44f, -30f),
+                Vector2.zero,
+                18,
+                TextAnchor.MiddleLeft,
+                new Color(0.93f, 0.9f, 0.82f, 1f));
+
+            hintText.text = "E interact | Mouse0 light | F heavy | LeftCtrl block | Space dodge | Q Aard\nI inventory | F5-F7 save | F8 autosave load | F9-F11 slot load | H help";
+
+            var hint = canvasObject.AddComponent<ControlsHintUI>();
+            SetSerializedObjectReference(hint, "hintRoot", hintRoot);
         }
 
         private static void CreateInventoryCanvas()
