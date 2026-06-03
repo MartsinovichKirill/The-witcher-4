@@ -96,6 +96,13 @@ namespace WitcherRightVersion.Editor
             var graphicsDropdown = CreateDropdown("GraphicsDropdown", settingsPanel.transform, font, new[] { "Low", "Medium", "High" });
             SetRect(graphicsDropdown.gameObject, new Vector2(0.42f, 0.31f), new Vector2(0.9f, 0.39f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
+            var languageLabel = CreateText("LanguageLabel", settingsPanel.transform, font, "Language", 18, FontStyle.Normal, Color.white);
+            SetRect(languageLabel.gameObject, new Vector2(0.08f, 0.21f), new Vector2(0.42f, 0.29f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            languageLabel.alignment = TextAnchor.MiddleLeft;
+
+            var languageDropdown = CreateDropdown("LanguageDropdown", settingsPanel.transform, font, new[] { "English", "Русский" });
+            SetRect(languageDropdown.gameObject, new Vector2(0.42f, 0.21f), new Vector2(0.9f, 0.29f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+
             var applyButton = CreateButton("ApplySettingsButton", settingsPanel.transform, font, "Apply");
             SetRect(applyButton.gameObject, new Vector2(0.08f, 0.09f), new Vector2(0.46f, 0.2f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
@@ -107,11 +114,26 @@ namespace WitcherRightVersion.Editor
 
             controller.mainPanel = mainPanel;
             controller.settingsPanel = settingsPanel;
+            controller.titleText = title;
+            controller.subtitleText = subtitle;
             controller.statusText = status;
+            controller.newGameButtonText = GetButtonLabel(newGameButton);
+            controller.continueButtonText = GetButtonLabel(continueButton);
+            controller.settingsButtonText = GetButtonLabel(settingsButton);
+            controller.exitButtonText = GetButtonLabel(exitButton);
+            controller.settingsTitleText = settingsTitle;
+            controller.volumeLabelText = volumeLabel;
+            controller.musicLabelText = musicToggle.GetComponentInChildren<Text>();
+            controller.resolutionLabelText = resolutionLabel;
+            controller.graphicsLabelText = graphicsLabel;
+            controller.languageLabelText = languageLabel;
+            controller.applyButtonText = GetButtonLabel(applyButton);
+            controller.backButtonText = GetButtonLabel(backButton);
             controller.volumeSlider = volumeSlider;
             controller.musicToggle = musicToggle;
             controller.resolutionDropdown = resolutionDropdown;
             controller.graphicsDropdown = graphicsDropdown;
+            controller.languageDropdown = languageDropdown;
 
             settingsPanel.SetActive(false);
 
@@ -182,6 +204,11 @@ namespace WitcherRightVersion.Editor
             var labelText = CreateText("Label", buttonObject.transform, font, label, 24, FontStyle.Bold, new Color(0.92f, 0.9f, 0.82f, 1f));
             Stretch(labelText.gameObject);
             return button;
+        }
+
+        private static Text GetButtonLabel(Button button)
+        {
+            return button != null ? button.GetComponentInChildren<Text>() : null;
         }
 
         private static Slider CreateSlider(string name, Transform parent)

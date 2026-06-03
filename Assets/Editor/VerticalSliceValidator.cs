@@ -79,6 +79,8 @@ namespace WitcherRightVersion.Editor
             RequireObject("SettingsButton", failures);
             RequireObject("ExitButton", failures);
             RequireObject("StatusText", failures);
+            RequireObject("LanguageLabel", failures);
+            RequireObject("LanguageDropdown", failures);
         }
 
         private static void ValidateVillageScene(List<string> failures)
@@ -284,9 +286,33 @@ namespace WitcherRightVersion.Editor
 
         private static GameObject RequireObject(string objectName, List<string> failures)
         {
-            var target = GameObject.Find(objectName);
+            var target = FindSceneObject(objectName);
             Require(target != null, failures, $"Missing GameObject: {objectName}");
             return target;
+        }
+
+        private static GameObject FindSceneObject(string objectName)
+        {
+            var activeObject = GameObject.Find(objectName);
+            if (activeObject != null)
+            {
+                return activeObject;
+            }
+
+            var allTransforms = Resources.FindObjectsOfTypeAll<Transform>();
+            for (var i = 0; i < allTransforms.Length; i++)
+            {
+                var transform = allTransforms[i];
+                if (transform != null
+                    && transform.name == objectName
+                    && transform.gameObject.scene.IsValid()
+                    && transform.gameObject.scene.isLoaded)
+                {
+                    return transform.gameObject;
+                }
+            }
+
+            return null;
         }
 
         private static void RequireObject<T>(string objectName, List<string> failures) where T : Component
