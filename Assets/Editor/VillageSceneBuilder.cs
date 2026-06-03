@@ -214,15 +214,7 @@ namespace WitcherRightVersion.Editor
             root.transform.position = Vector3.zero;
 
             CreateElderDialogue(root.transform);
-
-            CreateInteractableCapsule(
-                root.transform,
-                "MartaLozovaya_Prototype",
-                "Marta Lozovaya",
-                "Talk",
-                "Marta: Bring me herbs and I will teach you antitoxin.",
-                new Vector3(-2.4f, 1f, -1.3f),
-                new Color(0.16f, 0.24f, 0.17f, 1f));
+            CreateMartaDialogue(root.transform);
 
             CreateInteractableTrace(
                 root.transform,
@@ -233,20 +225,6 @@ namespace WitcherRightVersion.Editor
                 "Fresh mud, torn reeds, and a rotten smell. The trail leads south.",
                 "These tracks may matter after Marta explains the swamp poison.",
                 new Vector3(0.8f, 0.08f, 3.2f));
-        }
-
-        private static void CreateInteractableCapsule(Transform parent, string objectName, string displayName, string prompt, string message, Vector3 position, Color color)
-        {
-            var npc = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            npc.name = objectName;
-            npc.transform.SetParent(parent, true);
-            npc.transform.position = position;
-            npc.transform.rotation = Quaternion.identity;
-            npc.transform.localScale = new Vector3(0.75f, 1f, 0.75f);
-            npc.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
-
-            var interactable = npc.AddComponent<SimpleInteractable>();
-            interactable.Configure(displayName, prompt, message);
         }
 
         private static void CreateElderDialogue(Transform parent)
@@ -302,6 +280,75 @@ namespace WitcherRightVersion.Editor
                         new[]
                         {
                             new DialogueChoice("I will find your beast.", "", "", true)
+                        })
+                });
+        }
+
+        private static void CreateMartaDialogue(Transform parent)
+        {
+            var marta = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            marta.name = "MartaLozovaya_Prototype";
+            marta.transform.SetParent(parent, true);
+            marta.transform.position = new Vector3(-2.4f, 1f, -1.3f);
+            marta.transform.rotation = Quaternion.identity;
+            marta.transform.localScale = new Vector3(0.75f, 1f, 0.75f);
+            marta.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/MartaLozovaya_Prototype.mat", new Color(0.16f, 0.24f, 0.17f, 1f));
+
+            var dialogue = marta.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Marta Lozovaya",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Marta Lozovaya",
+                        "You walk like someone hired by Voytsekh. If he sent you south, do not trust dry boots and clean stories.",
+                        new[]
+                        {
+                            new DialogueChoice("I took the swamp contract. What do you know?", "swamp_poison", "", false, QuestService.ActionMartaSpoken),
+                            new DialogueChoice("Why does the village fear the swamp?", "curse"),
+                            new DialogueChoice("I need herbs and remedies.", "antitoxin"),
+                            new DialogueChoice("Later.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "swamp_poison",
+                        "Marta Lozovaya",
+                        "The mud itself bites now. Look for black slime on the road, torn reeds, and tracks that sink too deep. If you smell rot before you see water, draw silver.",
+                        new[]
+                        {
+                            new DialogueChoice("Then I start with the tracks.", "", "", true),
+                            new DialogueChoice("Tell me about antidotes.", "antitoxin"),
+                            new DialogueChoice("Why is this happening?", "curse")
+                        }),
+                    new DialogueNode(
+                        "curse",
+                        "Marta Lozovaya",
+                        "A normal swamp kills slowly. This one remembers. People call Elsa a witch because it is easier than asking what the village buried.",
+                        new[]
+                        {
+                            new DialogueChoice("That sounds bigger than a monster.", "warning"),
+                            new DialogueChoice("Back to the contract.", "swamp_poison", "", false, QuestService.ActionMartaSpoken),
+                            new DialogueChoice("Enough for now.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "warning",
+                        "Marta Lozovaya",
+                        "It is. But first survive the thing in the reeds. Truth is useless if you drown before reaching it.",
+                        new[]
+                        {
+                            new DialogueChoice("Show me how to stay alive.", "antitoxin"),
+                            new DialogueChoice("I will inspect the tracks.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "antitoxin",
+                        "Marta Lozovaya",
+                        "Boil bogweed with a little monster slime and keep it bitter. Proper antitoxin comes later, once you bring proof from the swamp.",
+                        new[]
+                        {
+                            new DialogueChoice("I will remember that.", "", "", true),
+                            new DialogueChoice("Tell me about the tracks.", "swamp_poison", "", false, QuestService.ActionMartaSpoken)
                         })
                 });
         }
