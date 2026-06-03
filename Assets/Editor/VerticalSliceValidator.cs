@@ -20,6 +20,7 @@ namespace WitcherRightVersion.Editor
     {
         private const string MainMenuScenePath = "Assets/Scenes/MainMenuScene.unity";
         private const string VillageScenePath = "Assets/Scenes/VillageScene.unity";
+        private const string ForestScenePath = "Assets/Scenes/ForestScene.unity";
 
         [MenuItem("Tools/Witcher Right Version/Validate Vertical Slice")]
         public static void Validate()
@@ -29,6 +30,7 @@ namespace WitcherRightVersion.Editor
             ValidateBuildSettings(failures);
             ValidateMainMenuScene(failures);
             ValidateVillageScene(failures);
+            ValidateForestScene(failures);
             ValidateQuestFlowSimulation(failures);
 
             if (failures.Count > 0)
@@ -45,6 +47,7 @@ namespace WitcherRightVersion.Editor
         {
             var hasMainMenu = false;
             var hasVillage = false;
+            var hasForest = false;
 
             for (var i = 0; i < EditorBuildSettings.scenes.Length; i++)
             {
@@ -56,10 +59,12 @@ namespace WitcherRightVersion.Editor
 
                 hasMainMenu |= scene.path == MainMenuScenePath;
                 hasVillage |= scene.path == VillageScenePath;
+                hasForest |= scene.path == ForestScenePath;
             }
 
             Require(hasMainMenu, failures, "Build Settings must include enabled MainMenuScene.");
             Require(hasVillage, failures, "Build Settings must include enabled VillageScene.");
+            Require(hasForest, failures, "Build Settings must include enabled ForestScene.");
         }
 
         private static void ValidateMainMenuScene(List<string> failures)
@@ -103,6 +108,7 @@ namespace WitcherRightVersion.Editor
 
             RequireObject<DialogueInteractable>("ElderVoytsekh_Prototype", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_Prototype", failures);
+            RequireObject<SceneTransitionInteractable>("ForestPathTransition", failures);
 
             RequireObject("SwampMoodRoot", failures);
             RequireObject("SwampBogGround", failures);
@@ -128,6 +134,40 @@ namespace WitcherRightVersion.Editor
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
             RequireObject("ThirdPersonCamera", failures);
             RequireObject("VillageBlockoutGround", failures);
+        }
+
+        private static void ValidateForestScene(List<string> failures)
+        {
+            EditorSceneManager.OpenScene(ForestScenePath, OpenSceneMode.Single);
+
+            var player = RequireObject("Reynard_Player", failures);
+            if (player != null)
+            {
+                RequireComponent<CharacterController>(player, failures, "Forest Reynard_Player");
+                RequireComponent<PlayerController>(player, failures, "Forest Reynard_Player");
+                RequireComponent<InteractionController>(player, failures, "Forest Reynard_Player");
+                RequireComponent<Health>(player, failures, "Forest Reynard_Player");
+                RequireComponent<CombatController>(player, failures, "Forest Reynard_Player");
+            }
+
+            var services = RequireObject("RuntimeServices", failures);
+            if (services != null)
+            {
+                RequireComponent<AudioFeedbackService>(services, failures, "Forest RuntimeServices");
+                RequireComponent<DecisionFlagService>(services, failures, "Forest RuntimeServices");
+                RequireComponent<PlayerRewardService>(services, failures, "Forest RuntimeServices");
+                RequireComponent<InventoryService>(services, failures, "Forest RuntimeServices");
+                RequireComponent<QuestService>(services, failures, "Forest RuntimeServices");
+                RequireComponent<SaveService>(services, failures, "Forest RuntimeServices");
+            }
+
+            RequireObject("ForestBlockoutGround", failures);
+            RequireObject("ForestMoodRoot", failures);
+            RequireObject("ForestTree_01", failures);
+            RequireObject("ForestRock_01", failures);
+            RequireObject<SceneTransitionInteractable>("VillagePathTransition", failures);
+            RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
+            RequireObject("ThirdPersonCamera", failures);
         }
 
         private static void ValidateTrace(string objectName, List<string> failures)

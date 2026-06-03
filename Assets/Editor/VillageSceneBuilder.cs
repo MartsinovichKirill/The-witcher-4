@@ -321,6 +321,21 @@ namespace WitcherRightVersion.Editor
 
             CreateSwampTraceObjects(root.transform);
             CreateFirstDrowner(root.transform);
+            CreateForestTransition(root.transform);
+        }
+
+        private static void CreateForestTransition(Transform parent)
+        {
+            var transition = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            transition.name = "ForestPathTransition";
+            transition.transform.SetParent(parent, true);
+            transition.transform.position = new Vector3(-5.6f, 0.55f, 2.8f);
+            transition.transform.rotation = Quaternion.Euler(0f, -18f, 0f);
+            transition.transform.localScale = new Vector3(0.55f, 1.1f, 2.2f);
+            transition.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/ForestPathTransition.mat", new Color(0.19f, 0.27f, 0.12f, 1f));
+
+            var interactable = transition.AddComponent<SceneTransitionInteractable>();
+            interactable.Configure("Path to Old Forest", "Travel", "ForestScene");
         }
 
         private static void CreateSwampTraceObjects(Transform parent)
