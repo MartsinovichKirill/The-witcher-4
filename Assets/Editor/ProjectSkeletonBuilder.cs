@@ -29,6 +29,7 @@ namespace WitcherRightVersion.Editor
             "Assets/Docs"
         };
 
+        [MenuItem("Tools/Witcher Right Version/Build Project Skeleton")]
         public static void Create()
         {
             foreach (var folder in RequiredFolders)
@@ -79,4 +80,3 @@ namespace WitcherRightVersion.Editor
         }
     }
 }
-

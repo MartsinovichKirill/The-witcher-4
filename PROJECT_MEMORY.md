@@ -7,9 +7,9 @@ The goal is to avoid losing context, changing core decisions by accident, or bui
 
 ## Current Project Status
 - Current workspace: `G:\The witcher 2`
-- Current stage: Stage 2 main menu stub created
-- Current focus: prepare Stage 3 player movement and third-person camera
-- Next focus: implement placeholder player movement in `VillageScene`
+- Current stage: Stage 3 player movement and camera created
+- Current focus: prepare Stage 4 interaction system
+- Next focus: implement reusable interaction prompt and interactable interface
 - Unity project status: created
 - Git status: local repository initialized; Git is available through Visual Studio bundled `git.exe`, not through PATH
 - Unity status: Unity Hub is installed; Unity Editor `6000.4.9f1` is installed at `C:\Program Files\Unity\Hub\Editor\6000.4.9f1\Editor\Unity.exe`
@@ -85,7 +85,7 @@ Core theme: truth can heal the world, but it can also destroy the life people bu
 | Scene | Purpose | Status |
 |---|---|---|
 | `MainMenuScene` | Main menu, settings, load game | main menu stub created |
-| `VillageScene` | Vereskovy Brod hub | planned |
+| `VillageScene` | Vereskovy Brod hub | player movement blockout created |
 | `ForestScene` | Old Forest investigation and early enemies | planned |
 | `SwampScene` | Black Swamp, Elsa, drowner nest, poison | planned |
 | `TowerRuinsScene` | Truth reveal, Orten, mirror hall | planned |
@@ -166,7 +166,7 @@ Vertical slice content:
 ## NPC Database
 | NPC | Location | Role | Functions | Status |
 |---|---|---|---|---|
-| Reynard | player | main hero | movement, combat, signs, inventory, quests, choices, save/load | planned |
+| Reynard | player | main hero | movement, combat, signs, inventory, quests, choices, save/load | placeholder movement created |
 | Elder Voytsekh | village | quest giver and hidden culprit | gives main contract, pushes blame onto Elsa, supports Lie ending | planned |
 | Marta Lozovaya | village | healer and alchemy mentor | heals, sells herbs, opens alchemy, explains curse | planned |
 | Elsa Chernotravka | swamp | exile and truth holder | gives rare recipes, helps open tower, affects finale | planned |
@@ -406,10 +406,17 @@ Visual style:
 - Continue shows a no-save status message.
 - Settings panel includes volume, music, resolution placeholder, graphics placeholder, apply, and back controls.
 - Added `Assets/Docs/STAGE_2_MAIN_MENU.md`.
+- Added `Assets/Scripts/Player/PlayerController.cs`.
+- Added `Assets/Scripts/Player/ThirdPersonCamera.cs`.
+- Added `Assets/Editor/VillageSceneBuilder.cs`.
+- Built `VillageScene` with `Reynard_Player`, `ThirdPersonCamera`, `VillageBlockoutGround`, and movement test markers.
+- Controls for Stage 3: WASD/arrows move, Left Shift runs, hold right mouse to orbit camera.
+- Added placeholder materials for the player, ground, and directional markers.
+- Added `Assets/Docs/STAGE_3_PLAYER_CAMERA.md`.
 
 ## Current Work
-- Stage 2 is complete.
-- Next concrete step: Stage 3, add placeholder player movement and third-person camera in `VillageScene`.
+- Stage 3 is complete.
+- Next concrete step: Stage 4, add the reusable interaction system.
 
 ## Update Log Template
 Use this format after every completed part:

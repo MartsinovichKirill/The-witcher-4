@@ -14,6 +14,7 @@ namespace WitcherRightVersion.Editor
     {
         private const string ScenePath = "Assets/Scenes/MainMenuScene.unity";
 
+        [MenuItem("Tools/Witcher Right Version/Build Main Menu Scene")]
         public static void Create()
         {
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
@@ -319,4 +320,3 @@ namespace WitcherRightVersion.Editor
         }
     }
 }
-

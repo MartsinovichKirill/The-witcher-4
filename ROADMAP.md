@@ -81,7 +81,7 @@ Acceptance:
 - Exit button quits in build or logs in editor.
 
 ### Stage 3: Player Movement And Third-Person Camera
-Status: next
+Status: done
 
 Tasks:
 - Add placeholder player capsule or simple model.
@@ -97,7 +97,7 @@ Acceptance:
 - No combat, quests, or inventory in this stage.
 
 ### Stage 4: Interaction System
-Status: planned
+Status: next
 
 Tasks:
 - Implement `InteractionController`.
