@@ -46,6 +46,8 @@ desktop.ini
 Saves/
 *.tmp
 *.bak
+PROJECT_MEMORY.md
+ROADMAP.md
 Assets/Art/External/_Downloads/
 
 # Imported source packs can contain duplicate model formats.
