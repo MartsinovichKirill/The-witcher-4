@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using WitcherRightVersion.Combat;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Crafting;
 using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Inventory;
@@ -323,6 +324,88 @@ namespace WitcherRightVersion.Editor
             CreateFirstDrowner(root.transform);
             CreateForestTransition(root.transform);
             CreateSmithDebtObjects(root.transform);
+            CreateCraftingObjects(root.transform);
+        }
+
+        private static void CreateCraftingObjects(Transform parent)
+        {
+            CreateSupplyCrate(
+                parent,
+                "MartaHerbBasket",
+                "Marta's herb basket",
+                "Take herbs",
+                new[] { "Swallow Grass", "Field Ration", "Bogweed" },
+                "Resources gained: Swallow Grass, Field Ration, Bogweed.",
+                new Vector3(-2.95f, 0.18f, -0.72f),
+                new Vector3(0.42f, 0.22f, 0.42f),
+                new Color(0.13f, 0.28f, 0.12f, 1f));
+
+            CreateSupplyCrate(
+                parent,
+                "VillageForgeSupplies",
+                "Forge supplies",
+                "Take supplies",
+                new[] { "Iron Ore", "Wolf Pelt", "Drowner Slime" },
+                "Resources gained: Iron Ore, Wolf Pelt, Drowner Slime.",
+                new Vector3(-4.95f, 0.2f, -2.85f),
+                new Vector3(0.55f, 0.28f, 0.42f),
+                new Color(0.25f, 0.19f, 0.12f, 1f));
+
+            CreateCraftingStation(
+                parent,
+                "AlchemyTable_Swallow",
+                "Alchemy table: Swallow",
+                "Craft",
+                "swallow",
+                new Vector3(-2.95f, 0.35f, -1.9f),
+                new Vector3(0.95f, 0.2f, 0.58f),
+                new Color(0.11f, 0.24f, 0.16f, 1f));
+
+            CreateCraftingStation(
+                parent,
+                "AlchemyTable_Antitoxin",
+                "Alchemy table: Antitoxin",
+                "Craft",
+                "antitoxin",
+                new Vector3(-2.95f, 0.62f, -1.9f),
+                new Vector3(0.7f, 0.08f, 0.42f),
+                new Color(0.08f, 0.36f, 0.26f, 1f));
+
+            CreateCraftingStation(
+                parent,
+                "Forge_ReinforcedArmor",
+                "Boris's forge: Reinforced Armor",
+                "Craft",
+                "reinforced_armor",
+                new Vector3(-4.6f, 0.55f, -3.05f),
+                new Vector3(0.85f, 0.32f, 0.58f),
+                new Color(0.26f, 0.16f, 0.1f, 1f));
+        }
+
+        private static void CreateSupplyCrate(Transform parent, string objectName, string displayName, string prompt, string[] itemsToGrant, string message, Vector3 position, Vector3 scale, Color color)
+        {
+            var crate = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            crate.name = objectName;
+            crate.transform.SetParent(parent, true);
+            crate.transform.position = position;
+            crate.transform.localScale = scale;
+            crate.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            var grant = crate.AddComponent<InventoryGrantInteractable>();
+            grant.Configure(displayName, prompt, itemsToGrant, message);
+        }
+
+        private static void CreateCraftingStation(Transform parent, string objectName, string displayName, string prompt, string recipeId, Vector3 position, Vector3 scale, Color color)
+        {
+            var station = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            station.name = objectName;
+            station.transform.SetParent(parent, true);
+            station.transform.position = position;
+            station.transform.localScale = scale;
+            station.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            var crafting = station.AddComponent<CraftingInteractable>();
+            crafting.Configure(displayName, prompt, recipeId);
         }
 
         private static void CreateSmithDebtObjects(Transform parent)
@@ -930,6 +1013,7 @@ namespace WitcherRightVersion.Editor
             services.AddComponent<DecisionFlagService>();
             services.AddComponent<PlayerRewardService>();
             services.AddComponent<InventoryService>();
+            services.AddComponent<CraftingService>();
             services.AddComponent<QuestService>();
             services.AddComponent<SaveService>();
         }

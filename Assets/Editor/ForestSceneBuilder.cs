@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using WitcherRightVersion.Combat;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Crafting;
 using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Inventory;
 using WitcherRightVersion.Player;
@@ -54,6 +55,7 @@ namespace WitcherRightVersion.Editor
             services.AddComponent<DecisionFlagService>();
             services.AddComponent<PlayerRewardService>();
             services.AddComponent<InventoryService>();
+            services.AddComponent<CraftingService>();
             services.AddComponent<QuestService>();
             services.AddComponent<SaveService>();
         }

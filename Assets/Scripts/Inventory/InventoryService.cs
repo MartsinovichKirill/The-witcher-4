@@ -70,6 +70,22 @@ namespace WitcherRightVersion.Inventory
             Debug.Log($"Item added: {itemName}", this);
         }
 
+        public bool RemoveItem(string itemName)
+        {
+            if (string.IsNullOrWhiteSpace(itemName))
+            {
+                return false;
+            }
+
+            var removed = items.Remove(itemName);
+            if (removed)
+            {
+                Debug.Log($"Item removed: {itemName}", this);
+            }
+
+            return removed;
+        }
+
         public void EquipWeapon(string weaponName)
         {
             if (!HasWeapon(weaponName))

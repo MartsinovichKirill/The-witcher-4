@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using WitcherRightVersion.Combat;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Crafting;
 using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Inventory;
@@ -104,6 +105,7 @@ namespace WitcherRightVersion.Editor
                 RequireComponent<DecisionFlagService>(services, failures, "RuntimeServices");
                 RequireComponent<PlayerRewardService>(services, failures, "RuntimeServices");
                 RequireComponent<InventoryService>(services, failures, "RuntimeServices");
+                RequireComponent<CraftingService>(services, failures, "RuntimeServices");
                 RequireComponent<QuestService>(services, failures, "RuntimeServices");
                 RequireComponent<SaveService>(services, failures, "RuntimeServices");
             }
@@ -113,6 +115,11 @@ namespace WitcherRightVersion.Editor
             RequireObject<SceneTransitionInteractable>("ForestPathTransition", failures);
             ValidateForestQuestObject("BorisSmithQuest_Start", failures);
             ValidateForestQuestObject("BorisSmithQuest_Return", failures);
+            ValidateInventoryGrantObject("MartaHerbBasket", failures);
+            ValidateInventoryGrantObject("VillageForgeSupplies", failures);
+            ValidateCraftingObject("AlchemyTable_Swallow", failures);
+            ValidateCraftingObject("AlchemyTable_Antitoxin", failures);
+            ValidateCraftingObject("Forge_ReinforcedArmor", failures);
 
             RequireObject("SwampMoodRoot", failures);
             RequireObject("SwampBogGround", failures);
@@ -161,6 +168,7 @@ namespace WitcherRightVersion.Editor
                 RequireComponent<DecisionFlagService>(services, failures, "Forest RuntimeServices");
                 RequireComponent<PlayerRewardService>(services, failures, "Forest RuntimeServices");
                 RequireComponent<InventoryService>(services, failures, "Forest RuntimeServices");
+                RequireComponent<CraftingService>(services, failures, "Forest RuntimeServices");
                 RequireComponent<QuestService>(services, failures, "Forest RuntimeServices");
                 RequireComponent<SaveService>(services, failures, "Forest RuntimeServices");
             }
@@ -209,11 +217,30 @@ namespace WitcherRightVersion.Editor
             }
         }
 
+        private static void ValidateCraftingObject(string objectName, List<string> failures)
+        {
+            var target = RequireObject(objectName, failures);
+            if (target != null)
+            {
+                RequireComponent<CraftingInteractable>(target, failures, objectName);
+            }
+        }
+
+        private static void ValidateInventoryGrantObject(string objectName, List<string> failures)
+        {
+            var target = RequireObject(objectName, failures);
+            if (target != null)
+            {
+                RequireComponent<InventoryGrantInteractable>(target, failures, objectName);
+            }
+        }
+
         private static void ValidateQuestFlowSimulation(List<string> failures)
         {
             ResetSingleton<DecisionFlagService>();
             ResetSingleton<PlayerRewardService>();
             ResetSingleton<InventoryService>();
+            ResetSingleton<CraftingService>();
             ResetSingleton<QuestService>();
 
             var root = new GameObject("VerticalSliceQuestFlowSimulation");
@@ -222,11 +249,13 @@ namespace WitcherRightVersion.Editor
                 var flags = root.AddComponent<DecisionFlagService>();
                 var rewards = root.AddComponent<PlayerRewardService>();
                 var inventory = root.AddComponent<InventoryService>();
+                var crafting = root.AddComponent<CraftingService>();
                 var quest = root.AddComponent<QuestService>();
 
                 InvokeAwake(flags);
                 InvokeAwake(rewards);
                 InvokeAwake(inventory);
+                InvokeAwake(crafting);
                 InvokeAwake(quest);
 
                 flags.SetFlag("acceptedSwampContract");
@@ -263,6 +292,27 @@ namespace WitcherRightVersion.Editor
                 Require(flags.HasFlag("questionedElderVersion"), failures, "Quest flow must keep questionedElderVersion flag.");
                 Require(flags.HasFlag("killedFirstDrowner"), failures, "Quest flow must keep killedFirstDrowner flag.");
                 Require(flags.HasFlag("receivedAntitoxinRecipe"), failures, "Quest flow must set receivedAntitoxinRecipe flag.");
+
+                inventory.AddItem("Swallow Grass");
+                inventory.AddItem("Field Ration");
+                Require(crafting.Craft("swallow"), failures, "Crafting must create Swallow from grass and ration.");
+                Require(inventory.HasItem("Swallow"), failures, "Crafting must add Swallow to inventory.");
+                Require(!inventory.HasItem("Swallow Grass"), failures, "Crafting must consume Swallow Grass.");
+                Require(flags.HasFlag("crafted_swallow"), failures, "Crafting must set crafted_swallow flag.");
+
+                inventory.AddItem("Bogweed");
+                inventory.AddItem("Drowner Slime");
+                Require(crafting.Craft("antitoxin"), failures, "Crafting must create Antitoxin after recipe unlock.");
+                Require(inventory.HasItem("Antitoxin"), failures, "Crafting must add Antitoxin to inventory.");
+                Require(!inventory.HasItem("Bogweed"), failures, "Crafting must consume Bogweed.");
+                Require(flags.HasFlag("crafted_antitoxin"), failures, "Crafting must set crafted_antitoxin flag.");
+
+                inventory.AddItem("Wolf Pelt");
+                inventory.AddItem("Iron Ore");
+                Require(crafting.Craft("reinforced_armor"), failures, "Forge crafting must create Reinforced Armor.");
+                Require(inventory.HasItem("Reinforced Armor"), failures, "Forge crafting must add Reinforced Armor.");
+                Require(!inventory.HasItem("Leather Witcher Armor"), failures, "Forge crafting must consume Leather Witcher Armor.");
+                Require(flags.HasFlag("crafted_reinforced_armor"), failures, "Forge crafting must set crafted_reinforced_armor flag.");
 
                 var xpAfterSwamp = rewards.Experience;
                 var coinsAfterSwamp = rewards.Coins;
@@ -304,6 +354,7 @@ namespace WitcherRightVersion.Editor
                 ResetSingleton<DecisionFlagService>();
                 ResetSingleton<PlayerRewardService>();
                 ResetSingleton<InventoryService>();
+                ResetSingleton<CraftingService>();
                 ResetSingleton<QuestService>();
             }
         }
