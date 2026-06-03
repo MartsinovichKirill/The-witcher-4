@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -28,6 +29,7 @@ namespace WitcherRightVersion.Editor
             ValidateBuildSettings(failures);
             ValidateMainMenuScene(failures);
             ValidateVillageScene(failures);
+            ValidateQuestFlowSimulation(failures);
 
             if (failures.Count > 0)
             {
@@ -138,6 +140,67 @@ namespace WitcherRightVersion.Editor
             }
         }
 
+        private static void ValidateQuestFlowSimulation(List<string> failures)
+        {
+            ResetSingleton<DecisionFlagService>();
+            ResetSingleton<PlayerRewardService>();
+            ResetSingleton<QuestService>();
+
+            var root = new GameObject("VerticalSliceQuestFlowSimulation");
+            try
+            {
+                var flags = root.AddComponent<DecisionFlagService>();
+                var rewards = root.AddComponent<PlayerRewardService>();
+                var quest = root.AddComponent<QuestService>();
+
+                InvokeAwake(flags);
+                InvokeAwake(rewards);
+                InvokeAwake(quest);
+
+                flags.SetFlag("acceptedSwampContract");
+                Require(quest.RunAction(QuestService.ActionStartSwampContract), failures, "Quest flow must start swamp contract.");
+                Require(quest.SwampContractState == QuestState.Active, failures, "Quest flow must become active after contract accept.");
+                Require(quest.CurrentSwampContractStage == SwampContractStage.SpeakWithMarta, failures, "Quest flow must move to Marta after contract accept.");
+
+                Require(quest.RunAction(QuestService.ActionMartaSpoken), failures, "Quest flow must accept Marta conversation.");
+                Require(quest.CurrentSwampContractStage == SwampContractStage.FindSwampTraces, failures, "Quest flow must move to trace investigation after Marta.");
+
+                Require(quest.RunAction(QuestService.ActionSwampTracesFound), failures, "Quest flow must accept first trace.");
+                Require(quest.RunAction(QuestService.ActionSwampTracesFound), failures, "Quest flow must accept second trace.");
+                Require(quest.RunAction(QuestService.ActionSwampTracesFound), failures, "Quest flow must accept third trace.");
+                Require(quest.CurrentSwampContractStage == SwampContractStage.KillDrowner, failures, "Quest flow must unlock drowner after three traces.");
+
+                flags.SetFlag("killedFirstDrowner");
+                Require(quest.RunAction(QuestService.ActionFirstDrownerKilled), failures, "Quest flow must accept first drowner kill.");
+                Require(quest.CurrentSwampContractStage == SwampContractStage.ReturnToElder, failures, "Quest flow must return to elder after drowner kill.");
+
+                Require(quest.RunAction(QuestService.ActionReturnedToElder), failures, "Quest flow must accept elder return.");
+                Require(quest.CurrentSwampContractStage == SwampContractStage.ChooseResponse, failures, "Quest flow must reach response choice.");
+
+                flags.SetFlag("questionedElderVersion");
+                Require(quest.RunAction(QuestService.ActionQuestionedElderVersion), failures, "Quest flow must accept questioned elder version choice.");
+                Require(quest.CurrentSwampContractStage == SwampContractStage.ReceiveReward, failures, "Quest flow must reach reward stage after choice.");
+
+                Require(quest.RunAction(QuestService.ActionRewardReceived), failures, "Quest flow must accept reward.");
+                Require(quest.SwampContractState == QuestState.Completed, failures, "Quest flow must complete swamp contract after reward.");
+                Require(quest.CurrentSwampContractStage == SwampContractStage.Completed, failures, "Quest flow stage must be completed after reward.");
+                Require(rewards.Experience == 50, failures, "Quest reward must grant exactly 50 XP.");
+                Require(rewards.Coins == 20, failures, "Quest reward must grant exactly 20 coins.");
+                Require(rewards.HasRecipe("antitoxin"), failures, "Quest reward must unlock Antitoxin recipe.");
+                Require(flags.HasFlag("acceptedSwampContract"), failures, "Quest flow must keep acceptedSwampContract flag.");
+                Require(flags.HasFlag("questionedElderVersion"), failures, "Quest flow must keep questionedElderVersion flag.");
+                Require(flags.HasFlag("killedFirstDrowner"), failures, "Quest flow must keep killedFirstDrowner flag.");
+                Require(flags.HasFlag("receivedAntitoxinRecipe"), failures, "Quest flow must set receivedAntitoxinRecipe flag.");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+                ResetSingleton<DecisionFlagService>();
+                ResetSingleton<PlayerRewardService>();
+                ResetSingleton<QuestService>();
+            }
+        }
+
         private static GameObject RequireObject(string objectName, List<string> failures)
         {
             var target = GameObject.Find(objectName);
@@ -167,6 +230,18 @@ namespace WitcherRightVersion.Editor
             {
                 failures.Add(message);
             }
+        }
+
+        private static void InvokeAwake(MonoBehaviour component)
+        {
+            var method = component.GetType().GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
+            method?.Invoke(component, null);
+        }
+
+        private static void ResetSingleton<T>() where T : Component
+        {
+            var backingField = typeof(T).GetField("<Instance>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic);
+            backingField?.SetValue(null, null);
         }
     }
 }
