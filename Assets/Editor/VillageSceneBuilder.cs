@@ -779,6 +779,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateRuntimeServices()
         {
             var services = new GameObject("RuntimeServices");
+            services.AddComponent<AudioFeedbackService>();
             services.AddComponent<DecisionFlagService>();
             services.AddComponent<PlayerRewardService>();
             services.AddComponent<InventoryService>();

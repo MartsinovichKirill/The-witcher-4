@@ -177,6 +177,7 @@ namespace WitcherRightVersion.Quest
         private void NotifyQuestChanged(string reason)
         {
             Debug.Log($"{reason}: {SwampContractQuestId} -> {swampContractStage}", this);
+            AudioFeedbackService.Instance?.PlayQuest();
             QuestChanged?.Invoke();
         }
 

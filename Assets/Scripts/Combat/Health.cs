@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using WitcherRightVersion.Core;
 
 namespace WitcherRightVersion.Combat
 {
@@ -40,6 +41,7 @@ namespace WitcherRightVersion.Combat
 
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             Debug.Log($"{displayName} took {amount:0} damage. HP: {currentHealth:0}/{maxHealth:0}", this);
+            AudioFeedbackService.Instance?.PlayHit();
 
             if (currentHealth <= 0f)
             {
@@ -73,6 +75,7 @@ namespace WitcherRightVersion.Combat
 
             isDead = true;
             Debug.Log($"{displayName} died.", this);
+            AudioFeedbackService.Instance?.PlayDeath();
             Died?.Invoke(this, source);
         }
     }

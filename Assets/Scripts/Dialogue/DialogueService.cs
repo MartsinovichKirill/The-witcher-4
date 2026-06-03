@@ -164,6 +164,7 @@ namespace WitcherRightVersion.Dialogue
             }
 
             var choice = choices[index];
+            AudioFeedbackService.Instance?.PlayUi();
             if (!string.IsNullOrWhiteSpace(choice.FlagToSet))
             {
                 DecisionFlagService.Instance?.SetFlag(choice.FlagToSet);
