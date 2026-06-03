@@ -31,6 +31,7 @@ namespace WitcherRightVersion.Combat
         private Collider[] colliders;
         private bool lastCombatActiveState = true;
         private float nextAttackTime;
+        private float stunEndTime;
 
         private void Awake()
         {
@@ -78,6 +79,11 @@ namespace WitcherRightVersion.Combat
                 return;
             }
 
+            if (Time.time < stunEndTime)
+            {
+                return;
+            }
+
             var offset = target.position - transform.position;
             offset.y = 0f;
             var distance = offset.magnitude;
@@ -102,9 +108,35 @@ namespace WitcherRightVersion.Combat
             if (Time.time >= nextAttackTime)
             {
                 nextAttackTime = Time.time + attackCooldown;
-                targetHealth.TakeDamage(damage, gameObject);
-                InteractionPromptUI.Instance?.ShowMessage($"{enemyName} hits Reynard: {damage:0} damage.");
+                var targetCombat = target.GetComponent<CombatController>();
+                if (targetCombat != null)
+                {
+                    targetCombat.ReceiveEnemyAttack(damage, gameObject);
+                }
+                else
+                {
+                    targetHealth.TakeDamage(damage, gameObject);
+                    InteractionPromptUI.Instance?.ShowMessage($"{enemyName} hits target: {damage:0} damage.");
+                }
             }
+        }
+
+        public void ApplyAard(Vector3 direction, float knockbackDistance, float stunDuration)
+        {
+            if (health.IsDead)
+            {
+                return;
+            }
+
+            var flatDirection = direction;
+            flatDirection.y = 0f;
+            if (flatDirection.sqrMagnitude <= 0.01f)
+            {
+                flatDirection = -transform.forward;
+            }
+
+            transform.position += flatDirection.normalized * Mathf.Max(0f, knockbackDistance);
+            stunEndTime = Mathf.Max(stunEndTime, Time.time + Mathf.Max(0f, stunDuration));
         }
 
         private void OnDestroy()

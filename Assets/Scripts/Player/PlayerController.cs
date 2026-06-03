@@ -18,6 +18,7 @@ namespace WitcherRightVersion.Player
 
         private CharacterController characterController;
         private Health health;
+        private CombatController combat;
         private float verticalVelocity;
 
         public bool IsMoving { get; private set; }
@@ -27,6 +28,7 @@ namespace WitcherRightVersion.Player
         {
             characterController = GetComponent<CharacterController>();
             health = GetComponent<Health>();
+            combat = GetComponent<CombatController>();
 
             if (cameraTransform == null && Camera.main != null)
             {
@@ -44,6 +46,13 @@ namespace WitcherRightVersion.Player
             }
 
             if (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen)
+            {
+                IsMoving = false;
+                IsRunning = false;
+                return;
+            }
+
+            if (combat != null && combat.IsDodging)
             {
                 IsMoving = false;
                 IsRunning = false;
