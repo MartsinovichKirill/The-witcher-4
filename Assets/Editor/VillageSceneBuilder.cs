@@ -33,6 +33,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("InteractionCanvas");
             RemoveIfExists("DialogueCanvas");
             RemoveIfExists("QuestCanvas");
+            RemoveIfExists("HealthCanvas");
             RemoveIfExists("InventoryCanvas");
             RemoveIfExists("InteractionDemoRoot");
             RemoveIfExists("RuntimeServices");
@@ -48,6 +49,7 @@ namespace WitcherRightVersion.Editor
             CreateInteractionCanvas();
             CreateDialogueCanvas();
             CreateQuestCanvas();
+            CreateHealthCanvas();
             CreateInventoryCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -620,6 +622,73 @@ namespace WitcherRightVersion.Editor
             SetSerializedObjectReference(hud, "hudRoot", hudRoot);
             SetSerializedObjectReference(hud, "titleText", title);
             SetSerializedObjectReference(hud, "objectiveText", objective);
+        }
+
+        private static void CreateHealthCanvas()
+        {
+            var canvasObject = new GameObject("HealthCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 45;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var hudRoot = CreatePanel(
+                canvasObject.transform,
+                "HealthHudPanel",
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f),
+                new Vector2(420f, 92f),
+                new Vector2(44f, -44f),
+                new Color(0.045f, 0.04f, 0.032f, 0.88f));
+
+            var barBack = CreatePanel(
+                hudRoot.transform,
+                "HealthBarBack",
+                new Vector2(0f, 0f),
+                new Vector2(1f, 0f),
+                new Vector2(0.5f, 0f),
+                new Vector2(-44f, 22f),
+                new Vector2(0f, 20f),
+                new Color(0.14f, 0.05f, 0.04f, 1f));
+
+            var barFillObject = CreatePanel(
+                barBack.transform,
+                "HealthBarFill",
+                new Vector2(0f, 0f),
+                new Vector2(1f, 1f),
+                new Vector2(0f, 0.5f),
+                Vector2.zero,
+                Vector2.zero,
+                new Color(0.68f, 0.11f, 0.08f, 1f));
+
+            var fillImage = barFillObject.GetComponent<Image>();
+            fillImage.type = Image.Type.Filled;
+            fillImage.fillMethod = Image.FillMethod.Horizontal;
+            fillImage.fillOrigin = 0;
+            fillImage.fillAmount = 1f;
+
+            var healthText = CreateText(
+                hudRoot.transform,
+                "HealthHudText",
+                new Vector2(0f, 0.48f),
+                new Vector2(1f, 1f),
+                new Vector2(0.5f, 1f),
+                new Vector2(-44f, -14f),
+                new Vector2(0f, -10f),
+                21,
+                TextAnchor.MiddleLeft,
+                new Color(0.96f, 0.88f, 0.77f, 1f));
+
+            var hud = canvasObject.AddComponent<HealthHudUI>();
+            SetSerializedObjectReference(hud, "healthText", healthText);
+            SetSerializedObjectReference(hud, "healthFill", fillImage);
         }
 
         private static void CreateInventoryCanvas()
