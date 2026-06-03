@@ -3,6 +3,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using WitcherRightVersion.Combat;
 using WitcherRightVersion.Core;
 using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.Interaction;
@@ -80,6 +81,9 @@ namespace WitcherRightVersion.Editor
 
             player.AddComponent<PlayerController>();
             player.AddComponent<InteractionController>();
+            var health = player.AddComponent<Health>();
+            health.Configure("Reynard", 120f);
+            player.AddComponent<CombatController>();
             CreatePlayerVisual(player.transform);
             return player;
         }
@@ -217,6 +221,7 @@ namespace WitcherRightVersion.Editor
             CreateMartaDialogue(root.transform);
 
             CreateSwampTraceObjects(root.transform);
+            CreateFirstDrowner(root.transform);
         }
 
         private static void CreateSwampTraceObjects(Transform parent)
@@ -396,6 +401,23 @@ namespace WitcherRightVersion.Editor
 
             var interactable = trace.AddComponent<QuestProgressInteractable>();
             interactable.Configure(displayName, prompt, questAction, successMessage, blockedMessage);
+        }
+
+        private static void CreateFirstDrowner(Transform parent)
+        {
+            var drowner = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            drowner.name = "FirstDrowner_Prototype";
+            drowner.transform.SetParent(parent, true);
+            drowner.transform.position = new Vector3(5.2f, 1f, 6.1f);
+            drowner.transform.rotation = Quaternion.Euler(0f, -130f, 0f);
+            drowner.transform.localScale = new Vector3(0.9f, 0.85f, 0.9f);
+            drowner.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/FirstDrowner_Prototype.mat", new Color(0.08f, 0.18f, 0.14f, 1f));
+
+            var health = drowner.AddComponent<Health>();
+            health.Configure("First drowner", 72f);
+
+            var ai = drowner.AddComponent<EnemyAI>();
+            ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
         }
 
         private static void CreateInteractionCanvas()

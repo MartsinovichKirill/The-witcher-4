@@ -1,4 +1,5 @@
 using UnityEngine;
+using WitcherRightVersion.Combat;
 using WitcherRightVersion.Dialogue;
 
 namespace WitcherRightVersion.Player
@@ -16,6 +17,7 @@ namespace WitcherRightVersion.Player
         [SerializeField] private Transform cameraTransform;
 
         private CharacterController characterController;
+        private Health health;
         private float verticalVelocity;
 
         public bool IsMoving { get; private set; }
@@ -24,6 +26,7 @@ namespace WitcherRightVersion.Player
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
+            health = GetComponent<Health>();
 
             if (cameraTransform == null && Camera.main != null)
             {
@@ -33,6 +36,13 @@ namespace WitcherRightVersion.Player
 
         private void Update()
         {
+            if (health != null && health.IsDead)
+            {
+                IsMoving = false;
+                IsRunning = false;
+                return;
+            }
+
             if (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen)
             {
                 IsMoving = false;
