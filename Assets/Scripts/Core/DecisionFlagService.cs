@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace WitcherRightVersion.Core
@@ -34,6 +35,31 @@ namespace WitcherRightVersion.Core
         public bool HasFlag(string flag)
         {
             return !string.IsNullOrWhiteSpace(flag) && flags.Contains(flag);
+        }
+
+        public string[] CaptureFlags()
+        {
+            return flags.OrderBy(flag => flag).ToArray();
+        }
+
+        public void RestoreFlags(IEnumerable<string> savedFlags)
+        {
+            flags.Clear();
+
+            if (savedFlags == null)
+            {
+                return;
+            }
+
+            foreach (var flag in savedFlags)
+            {
+                if (!string.IsNullOrWhiteSpace(flag))
+                {
+                    flags.Add(flag);
+                }
+            }
+
+            Debug.Log($"Decision flags restored: {flags.Count}", this);
         }
     }
 }

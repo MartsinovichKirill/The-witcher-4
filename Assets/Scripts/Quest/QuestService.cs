@@ -179,5 +179,48 @@ namespace WitcherRightVersion.Quest
             Debug.Log($"{reason}: {SwampContractQuestId} -> {swampContractStage}", this);
             QuestChanged?.Invoke();
         }
+
+        public QuestSnapshot CaptureSnapshot()
+        {
+            return new QuestSnapshot
+            {
+                swampContractState = swampContractState.ToString(),
+                swampContractStage = swampContractStage.ToString(),
+                swampTraceCount = swampTraceCount
+            };
+        }
+
+        public void RestoreSnapshot(QuestSnapshot snapshot)
+        {
+            if (snapshot == null)
+            {
+                swampContractState = QuestState.NotStarted;
+                swampContractStage = SwampContractStage.TalkToElder;
+                swampTraceCount = 0;
+                NotifyQuestChanged("Quest restored");
+                return;
+            }
+
+            if (!Enum.TryParse(snapshot.swampContractState, out swampContractState))
+            {
+                swampContractState = QuestState.NotStarted;
+            }
+
+            if (!Enum.TryParse(snapshot.swampContractStage, out swampContractStage))
+            {
+                swampContractStage = SwampContractStage.TalkToElder;
+            }
+
+            swampTraceCount = Mathf.Clamp(snapshot.swampTraceCount, 0, RequiredSwampTraceCount);
+            NotifyQuestChanged("Quest restored");
+        }
+    }
+
+    [Serializable]
+    public sealed class QuestSnapshot
+    {
+        public string swampContractState;
+        public string swampContractStage;
+        public int swampTraceCount;
     }
 }

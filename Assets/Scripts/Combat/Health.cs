@@ -57,6 +57,13 @@ namespace WitcherRightVersion.Combat
             currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
         }
 
+        public void RestoreCurrentHealth(float savedHealth)
+        {
+            currentHealth = Mathf.Clamp(savedHealth, 0f, maxHealth);
+            isDead = currentHealth <= 0f;
+            Debug.Log($"{displayName} health restored: {currentHealth:0}/{maxHealth:0}", this);
+        }
+
         private void Die(GameObject source)
         {
             if (isDead)

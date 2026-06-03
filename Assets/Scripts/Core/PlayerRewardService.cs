@@ -72,5 +72,43 @@ namespace WitcherRightVersion.Core
             DecisionFlagService.Instance?.SetFlag("receivedAntitoxinRecipe");
             InteractionPromptUI.Instance?.ShowMessage("Reward: 50 XP, 20 coins, Antitoxin recipe.");
         }
+
+        public PlayerRewardSnapshot CaptureSnapshot()
+        {
+            return new PlayerRewardSnapshot
+            {
+                experience = Experience,
+                coins = Coins,
+                unlockedRecipes = new List<string>(unlockedRecipes).ToArray()
+            };
+        }
+
+        public void RestoreSnapshot(PlayerRewardSnapshot snapshot)
+        {
+            Experience = snapshot != null ? Mathf.Max(0, snapshot.experience) : 0;
+            Coins = snapshot != null ? Mathf.Max(0, snapshot.coins) : 0;
+
+            unlockedRecipes.Clear();
+            if (snapshot?.unlockedRecipes != null)
+            {
+                for (var i = 0; i < snapshot.unlockedRecipes.Length; i++)
+                {
+                    if (!string.IsNullOrWhiteSpace(snapshot.unlockedRecipes[i]))
+                    {
+                        unlockedRecipes.Add(snapshot.unlockedRecipes[i]);
+                    }
+                }
+            }
+
+            Debug.Log($"Rewards restored. XP: {Experience}, Coins: {Coins}", this);
+        }
+    }
+
+    [System.Serializable]
+    public sealed class PlayerRewardSnapshot
+    {
+        public int experience;
+        public int coins;
+        public string[] unlockedRecipes;
     }
 }

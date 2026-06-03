@@ -10,6 +10,7 @@ using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Inventory;
 using WitcherRightVersion.Player;
 using WitcherRightVersion.Quest;
+using WitcherRightVersion.Save;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Editor
@@ -669,6 +670,7 @@ namespace WitcherRightVersion.Editor
             services.AddComponent<PlayerRewardService>();
             services.AddComponent<InventoryService>();
             services.AddComponent<QuestService>();
+            services.AddComponent<SaveService>();
         }
 
         private static void PlaceProp(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)

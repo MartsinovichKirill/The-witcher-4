@@ -1,0 +1,271 @@
+using System;
+using System.IO;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using WitcherRightVersion.Combat;
+using WitcherRightVersion.Core;
+using WitcherRightVersion.Inventory;
+using WitcherRightVersion.Quest;
+using WitcherRightVersion.UI;
+
+namespace WitcherRightVersion.Save
+{
+    public sealed class SaveService : MonoBehaviour
+    {
+        private const string AutosaveFileName = "autosave.json";
+        private const string ManualSlotPrefix = "manual_slot_";
+        private const string ManualSlotExtension = ".json";
+        private const int ManualSlotCount = 3;
+
+        public static SaveService Instance { get; private set; }
+
+        public string SaveDirectory => Path.Combine(Application.persistentDataPath, "WitcherRightVersion");
+
+        private bool isRestoring;
+        private bool questEventsAttached;
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+        }
+
+        private void OnEnable()
+        {
+            AttachQuestEvents();
+        }
+
+        private void Start()
+        {
+            AttachQuestEvents();
+        }
+
+        private void OnDisable()
+        {
+            if (QuestService.Instance != null && questEventsAttached)
+            {
+                QuestService.Instance.QuestChanged -= HandleQuestChanged;
+                questEventsAttached = false;
+            }
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                SaveManualSlot(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.F6))
+            {
+                SaveManualSlot(2);
+            }
+            else if (Input.GetKeyDown(KeyCode.F7))
+            {
+                SaveManualSlot(3);
+            }
+            else if (Input.GetKeyDown(KeyCode.F8))
+            {
+                LoadAutosave();
+            }
+            else if (Input.GetKeyDown(KeyCode.F9))
+            {
+                LoadManualSlot(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.F10))
+            {
+                LoadManualSlot(2);
+            }
+            else if (Input.GetKeyDown(KeyCode.F11))
+            {
+                LoadManualSlot(3);
+            }
+        }
+
+        public bool SaveAutosave()
+        {
+            if (isRestoring)
+            {
+                return false;
+            }
+
+            return SaveToPath(GetAutosavePath(), "Autosave");
+        }
+
+        public bool LoadAutosave()
+        {
+            return LoadFromPath(GetAutosavePath(), "Autosave");
+        }
+
+        public bool SaveManualSlot(int slotNumber)
+        {
+            if (!IsValidManualSlot(slotNumber))
+            {
+                Debug.LogWarning($"Invalid manual save slot: {slotNumber}", this);
+                return false;
+            }
+
+            return SaveToPath(GetManualSlotPath(slotNumber), $"Manual slot {slotNumber}");
+        }
+
+        public bool LoadManualSlot(int slotNumber)
+        {
+            if (!IsValidManualSlot(slotNumber))
+            {
+                Debug.LogWarning($"Invalid manual load slot: {slotNumber}", this);
+                return false;
+            }
+
+            return LoadFromPath(GetManualSlotPath(slotNumber), $"Manual slot {slotNumber}");
+        }
+
+        private bool SaveToPath(string path, string label)
+        {
+            var data = CaptureSaveData();
+            if (data == null)
+            {
+                InteractionPromptUI.Instance?.ShowMessage($"{label} failed: no player.");
+                return false;
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllText(path, JsonUtility.ToJson(data, true));
+            Debug.Log($"{label} written to {path}", this);
+            InteractionPromptUI.Instance?.ShowMessage($"{label} saved.");
+            return true;
+        }
+
+        private bool LoadFromPath(string path, string label)
+        {
+            if (!File.Exists(path))
+            {
+                Debug.LogWarning($"{label} not found: {path}", this);
+                InteractionPromptUI.Instance?.ShowMessage($"{label} not found.");
+                return false;
+            }
+
+            try
+            {
+                var json = File.ReadAllText(path);
+                var data = JsonUtility.FromJson<SaveData>(json);
+                if (data == null)
+                {
+                    InteractionPromptUI.Instance?.ShowMessage($"{label} failed: broken save.");
+                    return false;
+                }
+
+                var currentScene = SceneManager.GetActiveScene().name;
+                if (!string.Equals(data.sceneName, currentScene, StringComparison.Ordinal))
+                {
+                    Debug.LogWarning($"Save scene mismatch. Saved: {data.sceneName}, current: {currentScene}. Cross-scene restore is deferred.", this);
+                    InteractionPromptUI.Instance?.ShowMessage($"{label} needs scene {data.sceneName}.");
+                    return false;
+                }
+
+                RestoreSaveData(data);
+                Debug.Log($"{label} loaded from {path}", this);
+                InteractionPromptUI.Instance?.ShowMessage($"{label} loaded.");
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"{label} load failed: {exception}", this);
+                InteractionPromptUI.Instance?.ShowMessage($"{label} failed.");
+                return false;
+            }
+        }
+
+        private SaveData CaptureSaveData()
+        {
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null)
+            {
+                return null;
+            }
+
+            var health = player.GetComponent<Health>();
+
+            return new SaveData
+            {
+                sceneName = SceneManager.GetActiveScene().name,
+                playerPosition = new SerializableVector3(player.transform.position),
+                playerHealth = health != null ? health.CurrentHealth : 0f,
+                quest = QuestService.Instance != null ? QuestService.Instance.CaptureSnapshot() : null,
+                decisionFlags = DecisionFlagService.Instance != null ? DecisionFlagService.Instance.CaptureFlags() : Array.Empty<string>(),
+                rewards = PlayerRewardService.Instance != null ? PlayerRewardService.Instance.CaptureSnapshot() : null,
+                inventory = InventoryService.Instance != null ? InventoryService.Instance.CaptureSnapshot() : null
+            };
+        }
+
+        private void RestoreSaveData(SaveData data)
+        {
+            isRestoring = true;
+            try
+            {
+                DecisionFlagService.Instance?.RestoreFlags(data.decisionFlags);
+                PlayerRewardService.Instance?.RestoreSnapshot(data.rewards);
+                InventoryService.Instance?.RestoreSnapshot(data.inventory);
+                QuestService.Instance?.RestoreSnapshot(data.quest);
+
+                var player = GameObject.FindGameObjectWithTag("Player");
+                if (player != null)
+                {
+                    var controller = player.GetComponent<CharacterController>();
+                    if (controller != null)
+                    {
+                        controller.enabled = false;
+                    }
+
+                    player.transform.position = data.playerPosition.ToVector3();
+
+                    if (controller != null)
+                    {
+                        controller.enabled = true;
+                    }
+
+                    var health = player.GetComponent<Health>();
+                    health?.RestoreCurrentHealth(data.playerHealth);
+                }
+            }
+            finally
+            {
+                isRestoring = false;
+            }
+        }
+
+        private void AttachQuestEvents()
+        {
+            if (questEventsAttached || QuestService.Instance == null)
+            {
+                return;
+            }
+
+            QuestService.Instance.QuestChanged += HandleQuestChanged;
+            questEventsAttached = true;
+        }
+
+        private void HandleQuestChanged()
+        {
+            SaveAutosave();
+        }
+
+        private string GetAutosavePath()
+        {
+            return Path.Combine(SaveDirectory, AutosaveFileName);
+        }
+
+        private string GetManualSlotPath(int slotNumber)
+        {
+            return Path.Combine(SaveDirectory, ManualSlotPrefix + slotNumber + ManualSlotExtension);
+        }
+
+        private static bool IsValidManualSlot(int slotNumber)
+        {
+            return slotNumber >= 1 && slotNumber <= ManualSlotCount;
+        }
+    }
+}

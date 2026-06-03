@@ -53,5 +53,56 @@ namespace WitcherRightVersion.Inventory
             EquippedWeapon = weaponName;
             Debug.Log($"Equipped weapon: {EquippedWeapon}", this);
         }
+
+        public InventorySnapshot CaptureSnapshot()
+        {
+            return new InventorySnapshot
+            {
+                weapons = weapons.ToArray(),
+                items = items.ToArray(),
+                equippedWeapon = EquippedWeapon
+            };
+        }
+
+        public void RestoreSnapshot(InventorySnapshot snapshot)
+        {
+            weapons.Clear();
+            items.Clear();
+
+            if (snapshot?.weapons != null)
+            {
+                weapons.AddRange(snapshot.weapons);
+            }
+
+            if (snapshot?.items != null)
+            {
+                items.AddRange(snapshot.items);
+            }
+
+            if (weapons.Count == 0)
+            {
+                weapons.Add("Old Steel Sword");
+                weapons.Add("Witcher Silver Sword");
+            }
+
+            if (items.Count == 0)
+            {
+                items.Add("Leather Witcher Armor");
+            }
+
+            EquippedWeapon = !string.IsNullOrWhiteSpace(snapshot?.equippedWeapon) && weapons.Contains(snapshot.equippedWeapon)
+                ? snapshot.equippedWeapon
+                : weapons[0];
+
+            Debug.Log($"Inventory restored. Equipped: {EquippedWeapon}", this);
+        }
+    }
+
+    [System.Serializable]
+    public sealed class InventorySnapshot
+    {
+        public string[] weapons;
+        public string[] items;
+        public string equippedWeapon;
     }
 }
