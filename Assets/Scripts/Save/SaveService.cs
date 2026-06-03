@@ -215,6 +215,7 @@ namespace WitcherRightVersion.Save
                 playerPosition = new SerializableVector3(player.transform.position),
                 playerHealth = health != null ? health.CurrentHealth : 0f,
                 quest = QuestService.Instance != null ? QuestService.Instance.CaptureSnapshot() : null,
+                completedQuestInteractables = CaptureCompletedQuestInteractables(),
                 decisionFlags = DecisionFlagService.Instance != null ? DecisionFlagService.Instance.CaptureFlags() : Array.Empty<string>(),
                 rewards = PlayerRewardService.Instance != null ? PlayerRewardService.Instance.CaptureSnapshot() : null,
                 inventory = InventoryService.Instance != null ? InventoryService.Instance.CaptureSnapshot() : null
@@ -229,6 +230,7 @@ namespace WitcherRightVersion.Save
                 DecisionFlagService.Instance?.RestoreFlags(data.decisionFlags);
                 PlayerRewardService.Instance?.RestoreSnapshot(data.rewards);
                 InventoryService.Instance?.RestoreSnapshot(data.inventory);
+                RestoreCompletedQuestInteractables(data.completedQuestInteractables);
                 QuestService.Instance?.RestoreSnapshot(data.quest);
 
                 var player = GameObject.FindGameObjectWithTag("Player");
@@ -271,6 +273,38 @@ namespace WitcherRightVersion.Save
         private void HandleQuestChanged()
         {
             SaveAutosave();
+        }
+
+        private static string[] CaptureCompletedQuestInteractables()
+        {
+            var interactables = FindObjectsByType<QuestProgressInteractable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var completedIds = new System.Collections.Generic.List<string>();
+
+            for (var i = 0; i < interactables.Length; i++)
+            {
+                var interactable = interactables[i];
+                if (interactable != null && interactable.IsCompleted && !string.IsNullOrWhiteSpace(interactable.PersistentId))
+                {
+                    completedIds.Add(interactable.PersistentId);
+                }
+            }
+
+            return completedIds.ToArray();
+        }
+
+        private static void RestoreCompletedQuestInteractables(string[] completedIds)
+        {
+            var completedSet = new System.Collections.Generic.HashSet<string>(completedIds ?? Array.Empty<string>());
+            var interactables = FindObjectsByType<QuestProgressInteractable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            for (var i = 0; i < interactables.Length; i++)
+            {
+                var interactable = interactables[i];
+                if (interactable != null && !string.IsNullOrWhiteSpace(interactable.PersistentId))
+                {
+                    interactable.RestoreCompletedState(completedSet.Contains(interactable.PersistentId));
+                }
+            }
         }
 
         private string GetAutosavePath()

@@ -12,12 +12,15 @@ namespace WitcherRightVersion.Quest
         [SerializeField] private string successMessage = "Quest updated.";
         [SerializeField] private string blockedMessage = "Nothing useful yet.";
         [SerializeField] private bool canRepeat;
+        [SerializeField] private string persistentId;
 
         private bool completed;
 
         public string DisplayName => displayName;
         public string InteractionPrompt => interactionPrompt;
         public bool CanInteract => canRepeat || !completed;
+        public string PersistentId => persistentId;
+        public bool IsCompleted => completed;
 
         public void Configure(string newDisplayName, string newPrompt, string newQuestAction, string newSuccessMessage, string newBlockedMessage, bool newCanRepeat = false)
         {
@@ -27,6 +30,7 @@ namespace WitcherRightVersion.Quest
             successMessage = newSuccessMessage;
             blockedMessage = newBlockedMessage;
             canRepeat = newCanRepeat;
+            persistentId = gameObject.name;
         }
 
         public void Interact(InteractionController interactor)
@@ -43,6 +47,16 @@ namespace WitcherRightVersion.Quest
             }
 
             InteractionPromptUI.Instance?.ShowMessage(advanced ? successMessage : blockedMessage);
+        }
+
+        public void RestoreCompletedState(bool isCompleted)
+        {
+            if (canRepeat)
+            {
+                return;
+            }
+
+            completed = isCompleted;
         }
     }
 }

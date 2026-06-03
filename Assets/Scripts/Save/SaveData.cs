@@ -14,6 +14,7 @@ namespace WitcherRightVersion.Save
         public SerializableVector3 playerPosition;
         public float playerHealth;
         public QuestSnapshot quest;
+        public string[] completedQuestInteractables;
         public string[] decisionFlags;
         public PlayerRewardSnapshot rewards;
         public InventorySnapshot inventory;
