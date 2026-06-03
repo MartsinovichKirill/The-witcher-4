@@ -1,4 +1,5 @@
 using UnityEngine;
+using WitcherRightVersion.Dialogue;
 
 namespace WitcherRightVersion.Player
 {
@@ -32,6 +33,13 @@ namespace WitcherRightVersion.Player
 
         private void Update()
         {
+            if (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen)
+            {
+                IsMoving = false;
+                IsRunning = false;
+                return;
+            }
+
             Move();
         }
 
@@ -90,4 +98,3 @@ namespace WitcherRightVersion.Player
         }
     }
 }
-

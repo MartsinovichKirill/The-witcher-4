@@ -1,4 +1,5 @@
 using UnityEngine;
+using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Interaction
@@ -19,6 +20,13 @@ namespace WitcherRightVersion.Interaction
 
         private void Update()
         {
+            if (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen)
+            {
+                currentInteractable = null;
+                InteractionPromptUI.Instance?.HidePrompt();
+                return;
+            }
+
             currentInteractable = FindBestInteractable();
             UpdatePrompt();
 

@@ -3,6 +3,8 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using WitcherRightVersion.Core;
+using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Player;
 using WitcherRightVersion.UI;
@@ -25,8 +27,11 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("VillageBlockoutGround");
             RemoveIfExists("VillagePropRoot");
             RemoveIfExists("InteractionCanvas");
+            RemoveIfExists("DialogueCanvas");
             RemoveIfExists("InteractionDemoRoot");
+            RemoveIfExists("RuntimeServices");
 
+            CreateRuntimeServices();
             CreateLighting();
             var ground = CreateGround();
             var player = CreatePlayer();
@@ -35,6 +40,7 @@ namespace WitcherRightVersion.Editor
             CreateVillageProps();
             CreateInteractionDemoObjects();
             CreateInteractionCanvas();
+            CreateDialogueCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -204,14 +210,7 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("InteractionDemoRoot");
             root.transform.position = Vector3.zero;
 
-            CreateInteractableCapsule(
-                root.transform,
-                "ElderVoytsekh_Prototype",
-                "Elder Voytsekh",
-                "Talk",
-                "Voytsekh: The beast was seen near the swamp road.",
-                new Vector3(2.2f, 1f, -1.7f),
-                new Color(0.22f, 0.18f, 0.13f, 1f));
+            CreateElderDialogue(root.transform);
 
             CreateInteractableCapsule(
                 root.transform,
@@ -243,6 +242,63 @@ namespace WitcherRightVersion.Editor
 
             var interactable = npc.AddComponent<SimpleInteractable>();
             interactable.Configure(displayName, prompt, message);
+        }
+
+        private static void CreateElderDialogue(Transform parent)
+        {
+            var elder = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            elder.name = "ElderVoytsekh_Prototype";
+            elder.transform.SetParent(parent, true);
+            elder.transform.position = new Vector3(2.2f, 1f, -1.7f);
+            elder.transform.rotation = Quaternion.identity;
+            elder.transform.localScale = new Vector3(0.75f, 1f, 0.75f);
+            elder.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/ElderVoytsekh_Prototype.mat", new Color(0.22f, 0.18f, 0.13f, 1f));
+
+            var dialogue = elder.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Elder Voytsekh",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Elder Voytsekh",
+                        "Witcher. You came for the notice, then listen well. Something from the swamp drags people off the southern road.",
+                        new[]
+                        {
+                            new DialogueChoice("Tell me about the contract.", "contract"),
+                            new DialogueChoice("Why blame the swamp so quickly?", "doubt"),
+                            new DialogueChoice("I will come back later.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "contract",
+                        "Elder Voytsekh",
+                        "Find the tracks near the reeds, kill the beast, and return with proof. Fifty crowns when the road is safe again.",
+                        new[]
+                        {
+                            new DialogueChoice("I accept the contract.", "accepted", "acceptedSwampContract"),
+                            new DialogueChoice("I need more answers first.", "doubt"),
+                            new DialogueChoice("Not now.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "doubt",
+                        "Elder Voytsekh",
+                        "Because I have buried three villagers this month. If you want old stories, ask Marta. If you want coin, go south.",
+                        new[]
+                        {
+                            new DialogueChoice("I accept the contract.", "accepted", "acceptedSwampContract"),
+                            new DialogueChoice("I will speak with Marta first.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "accepted",
+                        "Elder Voytsekh",
+                        "Good. Start at the muddy road south of the village. And witcher... do not stir up fears you cannot put back down.",
+                        new[]
+                        {
+                            new DialogueChoice("I will find your beast.", "", "", true)
+                        })
+                });
         }
 
         private static void CreateInteractableTrace(Transform parent, string objectName, string displayName, string prompt, string message, Vector3 position)
@@ -286,6 +342,83 @@ namespace WitcherRightVersion.Editor
             SetSerializedObjectReference(prompt, "actionText", action);
             SetSerializedObjectReference(prompt, "messageRoot", messageRoot);
             SetSerializedObjectReference(prompt, "messageText", message);
+        }
+
+        private static void CreateDialogueCanvas()
+        {
+            var canvasObject = new GameObject("DialogueCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 70;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var dialogueRoot = CreatePanel(
+                canvasObject.transform,
+                "DialoguePanel",
+                new Vector2(0.5f, 0f),
+                new Vector2(0.5f, 0f),
+                new Vector2(0.5f, 0f),
+                new Vector2(1180f, 330f),
+                new Vector2(0f, 54f),
+                new Color(0.045f, 0.04f, 0.033f, 0.94f));
+
+            var speaker = CreateText(
+                dialogueRoot.transform,
+                "DialogueSpeaker",
+                new Vector2(0f, 0.76f),
+                new Vector2(1f, 1f),
+                new Vector2(0.5f, 1f),
+                new Vector2(-72f, -28f),
+                new Vector2(0f, -18f),
+                26,
+                TextAnchor.MiddleLeft,
+                new Color(0.94f, 0.78f, 0.42f, 1f));
+
+            var body = CreateText(
+                dialogueRoot.transform,
+                "DialogueBody",
+                new Vector2(0f, 0.42f),
+                new Vector2(1f, 0.78f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-72f, -18f),
+                new Vector2(0f, -4f),
+                22,
+                TextAnchor.UpperLeft,
+                new Color(0.94f, 0.91f, 0.84f, 1f));
+
+            var choices = new Text[4];
+            for (var i = 0; i < choices.Length; i++)
+            {
+                choices[i] = CreateText(
+                    dialogueRoot.transform,
+                    $"DialogueChoice_{i + 1}",
+                    new Vector2(0f, 0.08f + i * 0.085f),
+                    new Vector2(1f, 0.18f + i * 0.085f),
+                    new Vector2(0.5f, 0.5f),
+                    new Vector2(-72f, -6f),
+                    Vector2.zero,
+                    19,
+                    TextAnchor.MiddleLeft,
+                    Color.white);
+            }
+
+            var service = canvasObject.AddComponent<DialogueService>();
+            SetSerializedObjectReference(service, "dialogueRoot", dialogueRoot);
+            SetSerializedObjectReference(service, "speakerText", speaker);
+            SetSerializedObjectReference(service, "bodyText", body);
+            SetSerializedArrayReferences(service, "choiceTexts", choices);
+        }
+
+        private static void CreateRuntimeServices()
+        {
+            var services = new GameObject("RuntimeServices");
+            services.AddComponent<DecisionFlagService>();
         }
 
         private static void PlaceProp(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
@@ -393,6 +526,20 @@ namespace WitcherRightVersion.Editor
         {
             var serializedObject = new SerializedObject(target);
             serializedObject.FindProperty(propertyName).objectReferenceValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetSerializedArrayReferences(Object target, string propertyName, Object[] values)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            property.arraySize = values.Length;
+
+            for (var i = 0; i < values.Length; i++)
+            {
+                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            }
+
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
