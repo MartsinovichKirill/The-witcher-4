@@ -6,7 +6,7 @@ This file is the shared memory of the project. Read it before every new developm
 The goal is to avoid losing context, changing core decisions by accident, or building several unrelated systems at the same time.
 
 ## Current Project Status
-- Current workspace: `G:\The witcher 2`
+- Current workspace: `G:\The witcher 4`
 - Current stage: Stage 3 player movement and camera created
 - Current focus: prepare Stage 4 interaction system
 - Next focus: implement reusable interaction prompt and interactable interface
@@ -405,7 +405,7 @@ Current asset usage:
 - Confirmed Unity Hub is installed.
 - Confirmed Unity Editor `6000.4.9f1` is installed.
 - Confirmed Windows Standalone support is installed.
-- Created Unity project skeleton in `G:\The witcher 2`.
+- Created Unity project skeleton in `G:\The witcher 2`; project folder was later renamed to `G:\The witcher 4`.
 - Created initial Unity folders under `Assets`.
 - Created `Assets/Scenes/MainMenuScene.unity`.
 - Created `Assets/Scenes/VillageScene.unity`.
