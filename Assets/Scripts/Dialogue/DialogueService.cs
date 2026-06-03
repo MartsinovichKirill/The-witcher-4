@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Quest;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Dialogue
@@ -166,6 +167,11 @@ namespace WitcherRightVersion.Dialogue
             if (!string.IsNullOrWhiteSpace(choice.FlagToSet))
             {
                 DecisionFlagService.Instance?.SetFlag(choice.FlagToSet);
+            }
+
+            if (!string.IsNullOrWhiteSpace(choice.QuestAction))
+            {
+                QuestService.Instance?.RunAction(choice.QuestAction);
             }
 
             if (choice.ClosesDialogue)

@@ -7,6 +7,7 @@ using WitcherRightVersion.Core;
 using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Player;
+using WitcherRightVersion.Quest;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Editor
@@ -28,6 +29,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("VillagePropRoot");
             RemoveIfExists("InteractionCanvas");
             RemoveIfExists("DialogueCanvas");
+            RemoveIfExists("QuestCanvas");
             RemoveIfExists("InteractionDemoRoot");
             RemoveIfExists("RuntimeServices");
 
@@ -41,6 +43,7 @@ namespace WitcherRightVersion.Editor
             CreateInteractionDemoObjects();
             CreateInteractionCanvas();
             CreateDialogueCanvas();
+            CreateQuestCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -226,7 +229,9 @@ namespace WitcherRightVersion.Editor
                 "SwampTrace_Prototype",
                 "Swamp tracks",
                 "Inspect",
+                QuestService.ActionSwampTracesFound,
                 "Fresh mud, torn reeds, and a rotten smell. The trail leads south.",
+                "These tracks may matter after Marta explains the swamp poison.",
                 new Vector3(0.8f, 0.08f, 3.2f));
         }
 
@@ -277,7 +282,7 @@ namespace WitcherRightVersion.Editor
                         "Find the tracks near the reeds, kill the beast, and return with proof. Fifty crowns when the road is safe again.",
                         new[]
                         {
-                            new DialogueChoice("I accept the contract.", "accepted", "acceptedSwampContract"),
+                            new DialogueChoice("I accept the contract.", "accepted", "acceptedSwampContract", false, QuestService.ActionStartSwampContract),
                             new DialogueChoice("I need more answers first.", "doubt"),
                             new DialogueChoice("Not now.", "", "", true)
                         }),
@@ -287,7 +292,7 @@ namespace WitcherRightVersion.Editor
                         "Because I have buried three villagers this month. If you want old stories, ask Marta. If you want coin, go south.",
                         new[]
                         {
-                            new DialogueChoice("I accept the contract.", "accepted", "acceptedSwampContract"),
+                            new DialogueChoice("I accept the contract.", "accepted", "acceptedSwampContract", false, QuestService.ActionStartSwampContract),
                             new DialogueChoice("I will speak with Marta first.", "", "", true)
                         }),
                     new DialogueNode(
@@ -301,7 +306,7 @@ namespace WitcherRightVersion.Editor
                 });
         }
 
-        private static void CreateInteractableTrace(Transform parent, string objectName, string displayName, string prompt, string message, Vector3 position)
+        private static void CreateInteractableTrace(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position)
         {
             var trace = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             trace.name = objectName;
@@ -311,8 +316,8 @@ namespace WitcherRightVersion.Editor
             trace.transform.localScale = new Vector3(0.75f, 0.04f, 0.75f);
             trace.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", new Color(0.18f, 0.12f, 0.08f, 1f));
 
-            var interactable = trace.AddComponent<SimpleInteractable>();
-            interactable.Configure(displayName, prompt, message);
+            var interactable = trace.AddComponent<QuestProgressInteractable>();
+            interactable.Configure(displayName, prompt, questAction, successMessage, blockedMessage);
         }
 
         private static void CreateInteractionCanvas()
@@ -415,10 +420,65 @@ namespace WitcherRightVersion.Editor
             SetSerializedArrayReferences(service, "choiceTexts", choices);
         }
 
+        private static void CreateQuestCanvas()
+        {
+            var canvasObject = new GameObject("QuestCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 40;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var hudRoot = CreatePanel(
+                canvasObject.transform,
+                "QuestHudPanel",
+                new Vector2(1f, 1f),
+                new Vector2(1f, 1f),
+                new Vector2(1f, 1f),
+                new Vector2(560f, 122f),
+                new Vector2(-44f, -44f),
+                new Color(0.045f, 0.04f, 0.032f, 0.88f));
+
+            var title = CreateText(
+                hudRoot.transform,
+                "QuestHudTitle",
+                new Vector2(0f, 0.58f),
+                new Vector2(1f, 1f),
+                new Vector2(0.5f, 1f),
+                new Vector2(-44f, -16f),
+                new Vector2(0f, -10f),
+                21,
+                TextAnchor.MiddleLeft,
+                new Color(0.94f, 0.78f, 0.42f, 1f));
+
+            var objective = CreateText(
+                hudRoot.transform,
+                "QuestHudObjective",
+                new Vector2(0f, 0f),
+                new Vector2(1f, 0.62f),
+                new Vector2(0.5f, 0f),
+                new Vector2(-44f, -16f),
+                new Vector2(0f, 10f),
+                18,
+                TextAnchor.MiddleLeft,
+                new Color(0.93f, 0.9f, 0.82f, 1f));
+
+            var hud = canvasObject.AddComponent<QuestHudUI>();
+            SetSerializedObjectReference(hud, "hudRoot", hudRoot);
+            SetSerializedObjectReference(hud, "titleText", title);
+            SetSerializedObjectReference(hud, "objectiveText", objective);
+        }
+
         private static void CreateRuntimeServices()
         {
             var services = new GameObject("RuntimeServices");
             services.AddComponent<DecisionFlagService>();
+            services.AddComponent<QuestService>();
         }
 
         private static void PlaceProp(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
