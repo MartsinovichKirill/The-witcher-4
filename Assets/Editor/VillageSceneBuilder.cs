@@ -2,7 +2,10 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Player;
+using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Editor
 {
@@ -21,6 +24,8 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("VillageMovementTestArea");
             RemoveIfExists("VillageBlockoutGround");
             RemoveIfExists("VillagePropRoot");
+            RemoveIfExists("InteractionCanvas");
+            RemoveIfExists("InteractionDemoRoot");
 
             CreateLighting();
             var ground = CreateGround();
@@ -28,6 +33,8 @@ namespace WitcherRightVersion.Editor
             CreateCamera(player.transform);
             CreateMovementMarkers(ground.transform);
             CreateVillageProps();
+            CreateInteractionDemoObjects();
+            CreateInteractionCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -63,6 +70,7 @@ namespace WitcherRightVersion.Editor
             controller.slopeLimit = 45f;
 
             player.AddComponent<PlayerController>();
+            player.AddComponent<InteractionController>();
             CreatePlayerVisual(player.transform);
             return player;
         }
@@ -191,6 +199,95 @@ namespace WitcherRightVersion.Editor
             PlaceProp(root.transform, "VillageBanner_01", "banner-red.fbx", new Vector3(-4.4f, 0f, -1.4f), Quaternion.Euler(0f, -35f, 0f), Vector3.one);
         }
 
+        private static void CreateInteractionDemoObjects()
+        {
+            var root = new GameObject("InteractionDemoRoot");
+            root.transform.position = Vector3.zero;
+
+            CreateInteractableCapsule(
+                root.transform,
+                "ElderVoytsekh_Prototype",
+                "Elder Voytsekh",
+                "Talk",
+                "Voytsekh: The beast was seen near the swamp road.",
+                new Vector3(2.2f, 1f, -1.7f),
+                new Color(0.22f, 0.18f, 0.13f, 1f));
+
+            CreateInteractableCapsule(
+                root.transform,
+                "MartaLozovaya_Prototype",
+                "Marta Lozovaya",
+                "Talk",
+                "Marta: Bring me herbs and I will teach you antitoxin.",
+                new Vector3(-2.4f, 1f, -1.3f),
+                new Color(0.16f, 0.24f, 0.17f, 1f));
+
+            CreateInteractableTrace(
+                root.transform,
+                "SwampTrace_Prototype",
+                "Swamp tracks",
+                "Inspect",
+                "Fresh mud, torn reeds, and a rotten smell. The trail leads south.",
+                new Vector3(0.8f, 0.08f, 3.2f));
+        }
+
+        private static void CreateInteractableCapsule(Transform parent, string objectName, string displayName, string prompt, string message, Vector3 position, Color color)
+        {
+            var npc = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            npc.name = objectName;
+            npc.transform.SetParent(parent, true);
+            npc.transform.position = position;
+            npc.transform.rotation = Quaternion.identity;
+            npc.transform.localScale = new Vector3(0.75f, 1f, 0.75f);
+            npc.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            var interactable = npc.AddComponent<SimpleInteractable>();
+            interactable.Configure(displayName, prompt, message);
+        }
+
+        private static void CreateInteractableTrace(Transform parent, string objectName, string displayName, string prompt, string message, Vector3 position)
+        {
+            var trace = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            trace.name = objectName;
+            trace.transform.SetParent(parent, true);
+            trace.transform.position = position;
+            trace.transform.rotation = Quaternion.identity;
+            trace.transform.localScale = new Vector3(0.75f, 0.04f, 0.75f);
+            trace.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", new Color(0.18f, 0.12f, 0.08f, 1f));
+
+            var interactable = trace.AddComponent<SimpleInteractable>();
+            interactable.Configure(displayName, prompt, message);
+        }
+
+        private static void CreateInteractionCanvas()
+        {
+            var canvasObject = new GameObject("InteractionCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 50;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var promptRoot = CreatePanel(canvasObject.transform, "InteractionPrompt", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(520f, 86f), new Vector2(0f, 76f), new Color(0.05f, 0.045f, 0.035f, 0.86f));
+            var title = CreateText(promptRoot.transform, "PromptTitle", new Vector2(0f, 0.42f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-36f, -16f), new Vector2(0f, -10f), 22, TextAnchor.MiddleLeft, new Color(0.94f, 0.84f, 0.58f, 1f));
+            var action = CreateText(promptRoot.transform, "PromptAction", new Vector2(0f, 0f), new Vector2(1f, 0.58f), new Vector2(0.5f, 0f), new Vector2(-36f, -12f), new Vector2(0f, 10f), 18, TextAnchor.MiddleLeft, Color.white);
+
+            var messageRoot = CreatePanel(canvasObject.transform, "InteractionMessage", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(720f, 64f), new Vector2(0f, 178f), new Color(0.08f, 0.07f, 0.055f, 0.9f));
+            var message = CreateText(messageRoot.transform, "MessageText", new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(0.5f, 0.5f), new Vector2(-40f, -18f), Vector2.zero, 19, TextAnchor.MiddleCenter, new Color(0.95f, 0.92f, 0.84f, 1f));
+
+            var prompt = canvasObject.AddComponent<InteractionPromptUI>();
+            SetSerializedObjectReference(prompt, "promptRoot", promptRoot);
+            SetSerializedObjectReference(prompt, "titleText", title);
+            SetSerializedObjectReference(prompt, "actionText", action);
+            SetSerializedObjectReference(prompt, "messageRoot", messageRoot);
+            SetSerializedObjectReference(prompt, "messageText", message);
+        }
+
         private static void PlaceProp(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
         {
             var prop = InstantiateModel(
@@ -251,6 +348,52 @@ namespace WitcherRightVersion.Editor
             material.color = color;
             AssetDatabase.CreateAsset(material, path);
             return material;
+        }
+
+        private static GameObject CreatePanel(Transform parent, string name, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 sizeDelta, Vector2 anchoredPosition, Color color)
+        {
+            var panel = new GameObject(name);
+            panel.transform.SetParent(parent, false);
+
+            var rectTransform = panel.AddComponent<RectTransform>();
+            rectTransform.anchorMin = anchorMin;
+            rectTransform.anchorMax = anchorMax;
+            rectTransform.pivot = pivot;
+            rectTransform.sizeDelta = sizeDelta;
+            rectTransform.anchoredPosition = anchoredPosition;
+
+            var image = panel.AddComponent<Image>();
+            image.color = color;
+            return panel;
+        }
+
+        private static Text CreateText(Transform parent, string name, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 sizeDelta, Vector2 anchoredPosition, int fontSize, TextAnchor alignment, Color color)
+        {
+            var textObject = new GameObject(name);
+            textObject.transform.SetParent(parent, false);
+
+            var rectTransform = textObject.AddComponent<RectTransform>();
+            rectTransform.anchorMin = anchorMin;
+            rectTransform.anchorMax = anchorMax;
+            rectTransform.pivot = pivot;
+            rectTransform.sizeDelta = sizeDelta;
+            rectTransform.anchoredPosition = anchoredPosition;
+
+            var text = textObject.AddComponent<Text>();
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+            text.fontSize = fontSize;
+            text.alignment = alignment;
+            text.color = color;
+            text.horizontalOverflow = HorizontalWrapMode.Wrap;
+            text.verticalOverflow = VerticalWrapMode.Truncate;
+            return text;
+        }
+
+        private static void SetSerializedObjectReference(Object target, string propertyName, Object value)
+        {
+            var serializedObject = new SerializedObject(target);
+            serializedObject.FindProperty(propertyName).objectReferenceValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void RemoveIfExists(string name)
