@@ -10,6 +10,7 @@ The goal is to avoid losing context, changing core decisions by accident, or bui
 - Current stage: Stage 3 player movement and camera created
 - Current focus: prepare Stage 4 interaction system
 - Next focus: implement reusable interaction prompt and interactable interface
+- Latest asset pass: discussed CC0 placeholder models are imported and used in `VillageScene`
 - Unity project status: created
 - Git status: local repository initialized; Git is available through Visual Studio bundled `git.exe`, not through PATH
 - Unity status: Unity Hub is installed; Unity Editor `6000.4.9f1` is installed at `C:\Program Files\Unity\Hub\Editor\6000.4.9f1\Editor\Unity.exe`
@@ -372,6 +373,18 @@ Visual style:
 - red danger/blood accents
 - purple Mirror magic
 
+Imported asset packs:
+- Kenney Fantasy Town Kit 2.0, CC0, local path `Assets/Art/External/Kenney_FantasyTownKit`
+- Quaternius LowPoly Animated Knight, CC0 on OpenGameArt, local path `Assets/Art/External/Quaternius_Knight`
+- Quaternius Animated Human, CC0, local path `Assets/Art/External/Quaternius_AnimatedHuman`
+
+Current asset usage:
+- `Reynard_Player` now uses `ReynardKnightModel` as temporary witcher-style visual.
+- `Reynard_Player` has temporary steel and silver sword visual children.
+- `VillageScene` includes Kenney road, cart, fence, lantern, rock, and banner props under `VillagePropRoot`.
+- Raw download archives are ignored by Git in `Assets/Art/External/_Downloads`.
+- Duplicate source formats like Blend, DAE, OBJ, and GLB are not part of the Unity runtime asset set for now; FBX is the project import format.
+
 ## What Must Not Change Without A Good Reason
 - Engine remains Unity.
 - Language remains C#.
@@ -413,9 +426,15 @@ Visual style:
 - Controls for Stage 3: WASD/arrows move, Left Shift runs, hold right mouse to orbit camera.
 - Added placeholder materials for the player, ground, and directional markers.
 - Added `Assets/Docs/STAGE_3_PLAYER_CAMERA.md`.
+- Added `Assets/Docs/ASSET_CREDITS.md`.
+- Imported legal placeholder model packs from Kenney and Quaternius.
+- Updated `VillageSceneBuilder` so `Reynard_Player` uses the Quaternius knight model and temporary sword visuals when assets are available.
+- Added Kenney village props to `VillageScene` through `VillagePropRoot`.
+- Cleaned duplicate source model formats from imported packs, keeping FBX-focused Unity assets.
 
 ## Current Work
 - Stage 3 is complete.
+- Asset pass for discussed placeholder models is complete.
 - Next concrete step: Stage 4, add the reusable interaction system.
 
 ## Update Log Template

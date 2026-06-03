@@ -46,4 +46,17 @@ desktop.ini
 Saves/
 *.tmp
 *.bak
+Assets/Art/External/_Downloads/
 
+# Imported source packs can contain duplicate model formats.
+# The Unity prototype currently keeps FBX runtime assets only.
+Assets/Art/External/**/Blends/
+Assets/Art/External/**/Blend/
+Assets/Art/External/**/DAE/
+Assets/Art/External/**/OBJ/
+Assets/Art/External/**/OBJ format/
+Assets/Art/External/**/GLB format/
+Assets/Art/External/**/Previews/
+Assets/Art/External/**/Sample.png
+Assets/Art/External/**/Preview*.png
+*.blend
