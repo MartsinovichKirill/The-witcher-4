@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using WitcherRightVersion.Inventory;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Core
@@ -79,6 +80,14 @@ namespace WitcherRightVersion.Core
             AddCoins(10);
             DecisionFlagService.Instance?.SetFlag("missingHunterCompleted");
             InteractionPromptUI.Instance?.ShowMessage("Reward: 25 XP and 10 coins.");
+        }
+
+        public void GrantSmithDebtReward()
+        {
+            AddExperience(30);
+            InventoryService.Instance?.AddWeapon("Improved Steel Sword");
+            DecisionFlagService.Instance?.SetFlag("smithDebtCompleted");
+            InteractionPromptUI.Instance?.ShowMessage("Reward: 30 XP and Improved Steel Sword.");
         }
 
         public PlayerRewardSnapshot CaptureSnapshot()

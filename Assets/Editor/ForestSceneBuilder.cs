@@ -202,6 +202,18 @@ namespace WitcherRightVersion.Editor
                 new Vector3(0.35f, 0.18f, 0.25f),
                 new Color(0.48f, 0.34f, 0.16f, 1f),
                 true);
+
+            CreateQuestObject(
+                root.transform,
+                "OldCampBlade",
+                "Old camp blade",
+                "Take",
+                QuestService.ActionOldCampBladeFound,
+                "The blade is old, nicked, and still useful. Boris will want this.",
+                "Boris has not asked Reynard to recover this blade yet.",
+                new Vector3(4.05f, 0.12f, 2.85f),
+                new Vector3(0.75f, 0.055f, 0.22f),
+                new Color(0.42f, 0.4f, 0.34f, 1f));
         }
 
         private static void CreateQuestObject(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color, bool rewardPouch = false)

@@ -111,6 +111,8 @@ namespace WitcherRightVersion.Editor
             RequireObject<DialogueInteractable>("ElderVoytsekh_Prototype", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_Prototype", failures);
             RequireObject<SceneTransitionInteractable>("ForestPathTransition", failures);
+            ValidateForestQuestObject("BorisSmithQuest_Start", failures);
+            ValidateForestQuestObject("BorisSmithQuest_Return", failures);
 
             RequireObject("SwampMoodRoot", failures);
             RequireObject("SwampBogGround", failures);
@@ -172,6 +174,7 @@ namespace WitcherRightVersion.Editor
             ValidateForestQuestObject("HunterClue_BloodTrail", failures);
             ValidateForestQuestObject("HunterClue_BrokenKnife", failures);
             ValidateForestQuestObject("HunterCamp_RewardPouch", failures);
+            ValidateForestQuestObject("OldCampBlade", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
             RequireObject("ThirdPersonCamera", failures);
         }
@@ -210,6 +213,7 @@ namespace WitcherRightVersion.Editor
         {
             ResetSingleton<DecisionFlagService>();
             ResetSingleton<PlayerRewardService>();
+            ResetSingleton<InventoryService>();
             ResetSingleton<QuestService>();
 
             var root = new GameObject("VerticalSliceQuestFlowSimulation");
@@ -217,10 +221,12 @@ namespace WitcherRightVersion.Editor
             {
                 var flags = root.AddComponent<DecisionFlagService>();
                 var rewards = root.AddComponent<PlayerRewardService>();
+                var inventory = root.AddComponent<InventoryService>();
                 var quest = root.AddComponent<QuestService>();
 
                 InvokeAwake(flags);
                 InvokeAwake(rewards);
+                InvokeAwake(inventory);
                 InvokeAwake(quest);
 
                 flags.SetFlag("acceptedSwampContract");
@@ -274,12 +280,30 @@ namespace WitcherRightVersion.Editor
                 Require(rewards.Coins == coinsAfterSwamp + 10, failures, "Missing Hunter must grant 10 coins.");
                 Require(flags.HasFlag("missingHunterStarted"), failures, "Missing Hunter must set missingHunterStarted flag.");
                 Require(flags.HasFlag("missingHunterCompleted"), failures, "Missing Hunter must set missingHunterCompleted flag.");
+
+                var xpAfterHunter = rewards.Experience;
+
+                Require(quest.RunAction(QuestService.ActionStartSmithDebt), failures, "Smith's Debt must start.");
+                Require(quest.SmithDebtState == QuestState.Active, failures, "Smith's Debt must become active.");
+                Require(quest.CurrentSmithDebtStage == SmithDebtStage.FindOldCampBlade, failures, "Smith's Debt must start at FindOldCampBlade.");
+                Require(quest.RunAction(QuestService.ActionOldCampBladeFound), failures, "Smith's Debt must accept old camp blade.");
+                Require(quest.CurrentSmithDebtStage == SmithDebtStage.ReturnToSmith, failures, "Smith's Debt must move to ReturnToSmith after blade.");
+                Require(inventory.HasItem("Old Camp Blade"), failures, "Smith's Debt must add Old Camp Blade to inventory.");
+                Require(quest.RunAction(QuestService.ActionSmithDebtReturned), failures, "Smith's Debt must complete at Boris's anvil.");
+                Require(quest.SmithDebtState == QuestState.Completed, failures, "Smith's Debt must be completed.");
+                Require(quest.CurrentSmithDebtStage == SmithDebtStage.Completed, failures, "Smith's Debt stage must be completed.");
+                Require(rewards.Experience == xpAfterHunter + 30, failures, "Smith's Debt must grant 30 XP.");
+                Require(inventory.HasWeapon("Improved Steel Sword"), failures, "Smith's Debt must add Improved Steel Sword.");
+                Require(flags.HasFlag("smithDebtStarted"), failures, "Smith's Debt must set smithDebtStarted flag.");
+                Require(flags.HasFlag("oldCampBladeFound"), failures, "Smith's Debt must set oldCampBladeFound flag.");
+                Require(flags.HasFlag("smithDebtCompleted"), failures, "Smith's Debt must set smithDebtCompleted flag.");
             }
             finally
             {
                 UnityEngine.Object.DestroyImmediate(root);
                 ResetSingleton<DecisionFlagService>();
                 ResetSingleton<PlayerRewardService>();
+                ResetSingleton<InventoryService>();
                 ResetSingleton<QuestService>();
             }
         }

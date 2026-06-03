@@ -322,6 +322,47 @@ namespace WitcherRightVersion.Editor
             CreateSwampTraceObjects(root.transform);
             CreateFirstDrowner(root.transform);
             CreateForestTransition(root.transform);
+            CreateSmithDebtObjects(root.transform);
+        }
+
+        private static void CreateSmithDebtObjects(Transform parent)
+        {
+            CreateQuestMarker(
+                parent,
+                "BorisSmithQuest_Start",
+                "Boris's forge notice",
+                "Inspect",
+                QuestService.ActionStartSmithDebt,
+                "Boris needs an old camp blade from the forest. The steel can be reforged.",
+                "Boris has already told Reynard what he needs.",
+                new Vector3(-3.85f, 0.18f, -2.75f),
+                new Vector3(0.55f, 0.18f, 0.35f),
+                new Color(0.42f, 0.24f, 0.1f, 1f));
+
+            CreateQuestMarker(
+                parent,
+                "BorisSmithQuest_Return",
+                "Boris's anvil",
+                "Return blade",
+                QuestService.ActionSmithDebtReturned,
+                "Boris reforges the camp blade into an Improved Steel Sword.",
+                "Find the old camp blade in the forest first.",
+                new Vector3(-4.45f, 0.24f, -2.2f),
+                new Vector3(0.8f, 0.22f, 0.45f),
+                new Color(0.24f, 0.23f, 0.2f, 1f));
+        }
+
+        private static void CreateQuestMarker(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color)
+        {
+            var marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            marker.name = objectName;
+            marker.transform.SetParent(parent, true);
+            marker.transform.position = position;
+            marker.transform.localScale = scale;
+            marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            var interactable = marker.AddComponent<QuestProgressInteractable>();
+            interactable.Configure(displayName, prompt, questAction, successMessage, blockedMessage);
         }
 
         private static void CreateForestTransition(Transform parent)

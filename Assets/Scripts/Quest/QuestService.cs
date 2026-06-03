@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Inventory;
 
 namespace WitcherRightVersion.Quest
 {
@@ -11,6 +12,7 @@ namespace WitcherRightVersion.Quest
 
         public const string SwampContractQuestId = "contract_swamp_beast";
         public const string MissingHunterQuestId = "missing_hunter";
+        public const string SmithDebtQuestId = "smith_debt";
         public const string ActionStartSwampContract = "start_swamp_contract";
         public const string ActionMartaSpoken = "marta_spoken";
         public const string ActionSwampTracesFound = "swamp_traces_found";
@@ -23,6 +25,9 @@ namespace WitcherRightVersion.Quest
         public const string ActionMissingHunterClueFound = "missing_hunter_clue_found";
         public const string ActionMissingHunterReturned = "missing_hunter_returned";
         public const string ActionMissingHunterRewardReceived = "missing_hunter_reward_received";
+        public const string ActionStartSmithDebt = "start_smith_debt";
+        public const string ActionOldCampBladeFound = "old_camp_blade_found";
+        public const string ActionSmithDebtReturned = "smith_debt_returned";
 
         private QuestState swampContractState = QuestState.NotStarted;
         private SwampContractStage swampContractStage = SwampContractStage.TalkToElder;
@@ -30,6 +35,8 @@ namespace WitcherRightVersion.Quest
         private QuestState missingHunterState = QuestState.NotStarted;
         private MissingHunterStage missingHunterStage = MissingHunterStage.FindClues;
         private int missingHunterClueCount;
+        private QuestState smithDebtState = QuestState.NotStarted;
+        private SmithDebtStage smithDebtStage = SmithDebtStage.FindOldCampBlade;
 
         public static QuestService Instance { get; private set; }
         public event Action QuestChanged;
@@ -42,10 +49,14 @@ namespace WitcherRightVersion.Quest
         public MissingHunterStage CurrentMissingHunterStage => missingHunterStage;
         public int MissingHunterClueCount => missingHunterClueCount;
         public int MissingHunterClueTarget => RequiredMissingHunterClueCount;
+        public QuestState SmithDebtState => smithDebtState;
+        public SmithDebtStage CurrentSmithDebtStage => smithDebtStage;
         public bool HasActiveQuest => swampContractState == QuestState.Active
             || missingHunterState == QuestState.Active
+            || smithDebtState == QuestState.Active
             || swampContractState == QuestState.Completed
-            || missingHunterState == QuestState.Completed;
+            || missingHunterState == QuestState.Completed
+            || smithDebtState == QuestState.Completed;
 
         public string ActiveQuestTitle
         {
@@ -61,9 +72,19 @@ namespace WitcherRightVersion.Quest
                     return "Missing Hunter";
                 }
 
+                if (smithDebtState == QuestState.Active)
+                {
+                    return "Smith's Debt";
+                }
+
                 if (missingHunterState == QuestState.Completed)
                 {
                     return "Missing Hunter";
+                }
+
+                if (smithDebtState == QuestState.Completed)
+                {
+                    return "Smith's Debt";
                 }
 
                 return swampContractState == QuestState.Completed ? "Contract: Beast from the Swamp" : string.Empty;
@@ -82,6 +103,11 @@ namespace WitcherRightVersion.Quest
                 if (missingHunterState == QuestState.Active || missingHunterState == QuestState.Completed)
                 {
                     return GetMissingHunterObjective();
+                }
+
+                if (smithDebtState == QuestState.Active || smithDebtState == QuestState.Completed)
+                {
+                    return GetSmithDebtObjective();
                 }
 
                 return swampContractState == QuestState.Completed ? GetSwampContractObjective() : string.Empty;
@@ -132,6 +158,12 @@ namespace WitcherRightVersion.Quest
                     return ReturnAndCompleteMissingHunter();
                 case ActionMissingHunterRewardReceived:
                     return CompleteMissingHunter();
+                case ActionStartSmithDebt:
+                    return StartSmithDebt();
+                case ActionOldCampBladeFound:
+                    return FindOldCampBlade();
+                case ActionSmithDebtReturned:
+                    return ReturnAndCompleteSmithDebt();
                 default:
                     Debug.LogWarning($"Unknown quest action: {actionId}", this);
                     return false;
@@ -299,6 +331,70 @@ namespace WitcherRightVersion.Quest
             return CompleteMissingHunter();
         }
 
+        private bool StartSmithDebt()
+        {
+            if (smithDebtState != QuestState.NotStarted)
+            {
+                Debug.Log($"Quest already started: {SmithDebtQuestId}", this);
+                return false;
+            }
+
+            smithDebtState = QuestState.Active;
+            smithDebtStage = SmithDebtStage.FindOldCampBlade;
+            DecisionFlagService.Instance?.SetFlag("smithDebtStarted");
+            NotifyQuestChanged("Quest started", SmithDebtQuestId, smithDebtStage.ToString());
+            return true;
+        }
+
+        private bool FindOldCampBlade()
+        {
+            if (smithDebtState != QuestState.Active)
+            {
+                Debug.Log($"Cannot find old camp blade: quest is {smithDebtState}.", this);
+                return false;
+            }
+
+            if (smithDebtStage != SmithDebtStage.FindOldCampBlade)
+            {
+                Debug.Log($"Cannot find old camp blade: current stage is {smithDebtStage}.", this);
+                return false;
+            }
+
+            smithDebtStage = SmithDebtStage.ReturnToSmith;
+            InventoryService.Instance?.AddItem("Old Camp Blade");
+            DecisionFlagService.Instance?.SetFlag("oldCampBladeFound");
+            NotifyQuestChanged("Old camp blade found", SmithDebtQuestId, smithDebtStage.ToString());
+            return true;
+        }
+
+        private bool ReturnAndCompleteSmithDebt()
+        {
+            if (smithDebtState != QuestState.Active || smithDebtStage != SmithDebtStage.ReturnToSmith)
+            {
+                Debug.Log($"Cannot return {SmithDebtQuestId}: current stage is {smithDebtStage}.", this);
+                return false;
+            }
+
+            smithDebtStage = SmithDebtStage.ReceiveReward;
+            NotifyQuestChanged("Quest advanced", SmithDebtQuestId, smithDebtStage.ToString());
+            return CompleteSmithDebt();
+        }
+
+        private bool CompleteSmithDebt()
+        {
+            if (smithDebtState != QuestState.Active || smithDebtStage != SmithDebtStage.ReceiveReward)
+            {
+                Debug.Log($"Cannot complete {SmithDebtQuestId}: current stage is {smithDebtStage}.", this);
+                return false;
+            }
+
+            smithDebtState = QuestState.Completed;
+            smithDebtStage = SmithDebtStage.Completed;
+            PlayerRewardService.Instance?.GrantSmithDebtReward();
+            NotifyQuestChanged("Quest completed", SmithDebtQuestId, smithDebtStage.ToString());
+            return true;
+        }
+
         private string GetSwampContractObjective()
         {
             switch (swampContractStage)
@@ -339,6 +435,23 @@ namespace WitcherRightVersion.Quest
             }
         }
 
+        private string GetSmithDebtObjective()
+        {
+            switch (smithDebtStage)
+            {
+                case SmithDebtStage.FindOldCampBlade:
+                    return "Find the old camp blade in the Old Forest.";
+                case SmithDebtStage.ReturnToSmith:
+                    return "Return the old camp blade to Boris in Vereskovy Brod.";
+                case SmithDebtStage.ReceiveReward:
+                    return "Receive the Improved Steel Sword.";
+                case SmithDebtStage.Completed:
+                    return "Smith's Debt completed.";
+                default:
+                    return "Speak with Boris the smith.";
+            }
+        }
+
         private void NotifyQuestChanged(string reason)
         {
             NotifyQuestChanged(reason, SwampContractQuestId, swampContractStage.ToString());
@@ -360,7 +473,9 @@ namespace WitcherRightVersion.Quest
                 swampTraceCount = swampTraceCount,
                 missingHunterState = missingHunterState.ToString(),
                 missingHunterStage = missingHunterStage.ToString(),
-                missingHunterClueCount = missingHunterClueCount
+                missingHunterClueCount = missingHunterClueCount,
+                smithDebtState = smithDebtState.ToString(),
+                smithDebtStage = smithDebtStage.ToString()
             };
         }
 
@@ -374,6 +489,8 @@ namespace WitcherRightVersion.Quest
                 missingHunterState = QuestState.NotStarted;
                 missingHunterStage = MissingHunterStage.FindClues;
                 missingHunterClueCount = 0;
+                smithDebtState = QuestState.NotStarted;
+                smithDebtStage = SmithDebtStage.FindOldCampBlade;
                 NotifyQuestChanged("Quest restored");
                 return;
             }
@@ -400,6 +517,16 @@ namespace WitcherRightVersion.Quest
             }
 
             missingHunterClueCount = Mathf.Clamp(snapshot.missingHunterClueCount, 0, RequiredMissingHunterClueCount);
+            if (!Enum.TryParse(snapshot.smithDebtState, out smithDebtState))
+            {
+                smithDebtState = QuestState.NotStarted;
+            }
+
+            if (!Enum.TryParse(snapshot.smithDebtStage, out smithDebtStage))
+            {
+                smithDebtStage = SmithDebtStage.FindOldCampBlade;
+            }
+
             NotifyQuestChanged("Quest restored");
         }
     }
@@ -413,5 +540,7 @@ namespace WitcherRightVersion.Quest
         public string missingHunterState;
         public string missingHunterStage;
         public int missingHunterClueCount;
+        public string smithDebtState;
+        public string smithDebtStage;
     }
 }

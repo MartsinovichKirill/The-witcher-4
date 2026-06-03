@@ -43,6 +43,33 @@ namespace WitcherRightVersion.Inventory
             return !string.IsNullOrWhiteSpace(weaponName) && weapons.Contains(weaponName);
         }
 
+        public bool HasItem(string itemName)
+        {
+            return !string.IsNullOrWhiteSpace(itemName) && items.Contains(itemName);
+        }
+
+        public void AddWeapon(string weaponName)
+        {
+            if (string.IsNullOrWhiteSpace(weaponName) || weapons.Contains(weaponName))
+            {
+                return;
+            }
+
+            weapons.Add(weaponName);
+            Debug.Log($"Weapon added: {weaponName}", this);
+        }
+
+        public void AddItem(string itemName)
+        {
+            if (string.IsNullOrWhiteSpace(itemName) || items.Contains(itemName))
+            {
+                return;
+            }
+
+            items.Add(itemName);
+            Debug.Log($"Item added: {itemName}", this);
+        }
+
         public void EquipWeapon(string weaponName)
         {
             if (!HasWeapon(weaponName))
