@@ -104,6 +104,11 @@ namespace WitcherRightVersion.Editor
             RequireObject<DialogueInteractable>("ElderVoytsekh_Prototype", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_Prototype", failures);
 
+            RequireObject("SwampMoodRoot", failures);
+            RequireObject("SwampBogGround", failures);
+            RequireObject("SwampBlackWaterPool_01", failures);
+            RequireObject("SwampReeds_01", failures);
+
             ValidateTrace("SwampTrace_ClawMarks", failures);
             ValidateTrace("SwampTrace_SlimeTrail", failures);
             ValidateTrace("SwampTrace_TornCloth", failures);

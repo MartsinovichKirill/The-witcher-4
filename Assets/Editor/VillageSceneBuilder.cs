@@ -30,6 +30,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("VillageMovementTestArea");
             RemoveIfExists("VillageBlockoutGround");
             RemoveIfExists("VillagePropRoot");
+            RemoveIfExists("SwampMoodRoot");
             RemoveIfExists("InteractionCanvas");
             RemoveIfExists("DialogueCanvas");
             RemoveIfExists("QuestCanvas");
@@ -46,6 +47,7 @@ namespace WitcherRightVersion.Editor
             CreateCamera(player.transform);
             CreateMovementMarkers(ground.transform);
             CreateVillageProps();
+            CreateSwampMoodArea();
             CreateInteractionDemoObjects();
             CreateInteractionCanvas();
             CreateDialogueCanvas();
@@ -218,6 +220,95 @@ namespace WitcherRightVersion.Editor
             PlaceProp(root.transform, "VillageLantern_01", "lantern.fbx", new Vector3(-1.9f, 0f, 3.8f), Quaternion.identity, Vector3.one);
             PlaceProp(root.transform, "VillageRock_01", "rock-small.fbx", new Vector3(4.4f, 0f, -2.6f), Quaternion.Euler(0f, 20f, 0f), Vector3.one);
             PlaceProp(root.transform, "VillageBanner_01", "banner-red.fbx", new Vector3(-4.4f, 0f, -1.4f), Quaternion.Euler(0f, -35f, 0f), Vector3.one);
+        }
+
+        private static void CreateSwampMoodArea()
+        {
+            var root = new GameObject("SwampMoodRoot");
+            root.transform.position = Vector3.zero;
+
+            CreateFlatCylinder(
+                root.transform,
+                "SwampBogGround",
+                new Vector3(2.85f, 0.035f, 4.75f),
+                new Vector3(4.6f, 0.035f, 3.2f),
+                new Color(0.075f, 0.13f, 0.095f, 1f));
+
+            CreateFlatCylinder(
+                root.transform,
+                "SwampBlackWaterPool_01",
+                new Vector3(3.9f, 0.06f, 5.55f),
+                new Vector3(1.45f, 0.025f, 0.8f),
+                new Color(0.035f, 0.07f, 0.06f, 1f));
+
+            CreateFlatCylinder(
+                root.transform,
+                "SwampBlackWaterPool_02",
+                new Vector3(1.5f, 0.06f, 4.0f),
+                new Vector3(1.2f, 0.025f, 0.65f),
+                new Color(0.025f, 0.06f, 0.055f, 1f));
+
+            CreateFlatCylinder(
+                root.transform,
+                "SwampRotStain",
+                new Vector3(5.05f, 0.065f, 6.0f),
+                new Vector3(1.6f, 0.025f, 1.35f),
+                new Color(0.11f, 0.095f, 0.035f, 1f));
+
+            CreateReedCluster(root.transform, "SwampReeds_01", new Vector3(0.2f, 0f, 3.2f), 0.85f);
+            CreateReedCluster(root.transform, "SwampReeds_02", new Vector3(2.7f, 0f, 5.75f), 0.7f);
+            CreateReedCluster(root.transform, "SwampReeds_03", new Vector3(4.9f, 0f, 4.75f), 0.95f);
+
+            CreateMistMarker(root.transform, "SwampMistMarker_01", new Vector3(2.35f, 0.65f, 4.85f), new Vector3(1.8f, 0.18f, 0.55f));
+            CreateMistMarker(root.transform, "SwampMistMarker_02", new Vector3(4.5f, 0.8f, 6.15f), new Vector3(1.45f, 0.15f, 0.48f));
+        }
+
+        private static void CreateFlatCylinder(Transform parent, string name, Vector3 position, Vector3 scale, Color color)
+        {
+            var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            cylinder.name = name;
+            cylinder.transform.SetParent(parent, true);
+            cylinder.transform.position = position;
+            cylinder.transform.rotation = Quaternion.identity;
+            cylinder.transform.localScale = scale;
+            cylinder.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", color);
+
+            var collider = cylinder.GetComponent<Collider>();
+            Object.DestroyImmediate(collider);
+        }
+
+        private static void CreateReedCluster(Transform parent, string name, Vector3 position, float height)
+        {
+            var cluster = new GameObject(name);
+            cluster.transform.SetParent(parent, true);
+            cluster.transform.position = position;
+
+            for (var i = 0; i < 5; i++)
+            {
+                var reed = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                reed.name = $"{name}_Reed_{i + 1}";
+                reed.transform.SetParent(cluster.transform, false);
+                reed.transform.localPosition = new Vector3((i - 2) * 0.12f, height * 0.5f, (i % 2) * 0.1f);
+                reed.transform.localRotation = Quaternion.Euler(0f, i * 21f, (i - 2) * 7f);
+                reed.transform.localScale = new Vector3(0.055f, height, 0.055f);
+                reed.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/SwampReed.mat", new Color(0.18f, 0.24f, 0.11f, 1f));
+
+                var collider = reed.GetComponent<Collider>();
+                Object.DestroyImmediate(collider);
+            }
+        }
+
+        private static void CreateMistMarker(Transform parent, string name, Vector3 position, Vector3 scale)
+        {
+            var mist = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            mist.name = name;
+            mist.transform.SetParent(parent, true);
+            mist.transform.position = position;
+            mist.transform.localScale = scale;
+            mist.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/SwampMistMarker.mat", new Color(0.42f, 0.48f, 0.43f, 0.38f));
+
+            var collider = mist.GetComponent<Collider>();
+            Object.DestroyImmediate(collider);
         }
 
         private static void CreateInteractionDemoObjects()
