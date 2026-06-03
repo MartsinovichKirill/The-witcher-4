@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using WitcherRightVersion.Save;
 
 namespace WitcherRightVersion.UI
 {
@@ -39,7 +40,14 @@ namespace WitcherRightVersion.UI
 
         public void ContinueGame()
         {
-            SetStatus("No save file yet. Start a new game first.");
+            if (!SaveService.HasAutosave())
+            {
+                SetStatus("No autosave yet. Start a new game first.");
+                return;
+            }
+
+            SaveService.RequestAutosaveLoadOnNextScene();
+            SceneManager.LoadScene(FirstGameScene);
         }
 
         public void ShowSettingsPanel()
@@ -129,4 +137,3 @@ namespace WitcherRightVersion.UI
         }
     }
 }
-

@@ -16,10 +16,12 @@ namespace WitcherRightVersion.Save
         private const string ManualSlotPrefix = "manual_slot_";
         private const string ManualSlotExtension = ".json";
         private const int ManualSlotCount = 3;
+        private const string PendingAutosaveLoadKey = "save.pendingAutosaveLoad";
 
         public static SaveService Instance { get; private set; }
 
-        public string SaveDirectory => Path.Combine(Application.persistentDataPath, "WitcherRightVersion");
+        public string SaveDirectory => SaveRootDirectory;
+        public static string SaveRootDirectory => Path.Combine(Application.persistentDataPath, "WitcherRightVersion");
 
         private bool isRestoring;
         private bool questEventsAttached;
@@ -43,6 +45,13 @@ namespace WitcherRightVersion.Save
         private void Start()
         {
             AttachQuestEvents();
+
+            if (PlayerPrefs.GetInt(PendingAutosaveLoadKey, 0) == 1)
+            {
+                PlayerPrefs.DeleteKey(PendingAutosaveLoadKey);
+                PlayerPrefs.Save();
+                LoadAutosave();
+            }
         }
 
         private void OnDisable()
@@ -121,6 +130,17 @@ namespace WitcherRightVersion.Save
             }
 
             return LoadFromPath(GetManualSlotPath(slotNumber), $"Manual slot {slotNumber}");
+        }
+
+        public static bool HasAutosave()
+        {
+            return File.Exists(GetStaticAutosavePath());
+        }
+
+        public static void RequestAutosaveLoadOnNextScene()
+        {
+            PlayerPrefs.SetInt(PendingAutosaveLoadKey, 1);
+            PlayerPrefs.Save();
         }
 
         private bool SaveToPath(string path, string label)
@@ -255,7 +275,7 @@ namespace WitcherRightVersion.Save
 
         private string GetAutosavePath()
         {
-            return Path.Combine(SaveDirectory, AutosaveFileName);
+            return GetStaticAutosavePath();
         }
 
         private string GetManualSlotPath(int slotNumber)
@@ -266,6 +286,11 @@ namespace WitcherRightVersion.Save
         private static bool IsValidManualSlot(int slotNumber)
         {
             return slotNumber >= 1 && slotNumber <= ManualSlotCount;
+        }
+
+        private static string GetStaticAutosavePath()
+        {
+            return Path.Combine(SaveRootDirectory, AutosaveFileName);
         }
     }
 }
