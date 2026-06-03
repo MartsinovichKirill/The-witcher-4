@@ -7,8 +7,10 @@ namespace WitcherRightVersion.Quest
     public sealed class QuestService : MonoBehaviour
     {
         private const int RequiredSwampTraceCount = 3;
+        private const int RequiredMissingHunterClueCount = 2;
 
         public const string SwampContractQuestId = "contract_swamp_beast";
+        public const string MissingHunterQuestId = "missing_hunter";
         public const string ActionStartSwampContract = "start_swamp_contract";
         public const string ActionMartaSpoken = "marta_spoken";
         public const string ActionSwampTracesFound = "swamp_traces_found";
@@ -17,10 +19,17 @@ namespace WitcherRightVersion.Quest
         public const string ActionAcceptedElderVersion = "accepted_elder_version";
         public const string ActionQuestionedElderVersion = "questioned_elder_version";
         public const string ActionRewardReceived = "swamp_contract_reward_received";
+        public const string ActionStartMissingHunter = "start_missing_hunter";
+        public const string ActionMissingHunterClueFound = "missing_hunter_clue_found";
+        public const string ActionMissingHunterReturned = "missing_hunter_returned";
+        public const string ActionMissingHunterRewardReceived = "missing_hunter_reward_received";
 
         private QuestState swampContractState = QuestState.NotStarted;
         private SwampContractStage swampContractStage = SwampContractStage.TalkToElder;
         private int swampTraceCount;
+        private QuestState missingHunterState = QuestState.NotStarted;
+        private MissingHunterStage missingHunterStage = MissingHunterStage.FindClues;
+        private int missingHunterClueCount;
 
         public static QuestService Instance { get; private set; }
         public event Action QuestChanged;
@@ -29,10 +38,55 @@ namespace WitcherRightVersion.Quest
         public SwampContractStage CurrentSwampContractStage => swampContractStage;
         public int SwampTraceCount => swampTraceCount;
         public int SwampTraceTarget => RequiredSwampTraceCount;
-        public bool HasActiveQuest => swampContractState == QuestState.Active || swampContractState == QuestState.Completed;
+        public QuestState MissingHunterState => missingHunterState;
+        public MissingHunterStage CurrentMissingHunterStage => missingHunterStage;
+        public int MissingHunterClueCount => missingHunterClueCount;
+        public int MissingHunterClueTarget => RequiredMissingHunterClueCount;
+        public bool HasActiveQuest => swampContractState == QuestState.Active
+            || missingHunterState == QuestState.Active
+            || swampContractState == QuestState.Completed
+            || missingHunterState == QuestState.Completed;
 
-        public string ActiveQuestTitle => HasActiveQuest ? "Contract: Beast from the Swamp" : string.Empty;
-        public string CurrentObjective => HasActiveQuest ? GetSwampContractObjective() : string.Empty;
+        public string ActiveQuestTitle
+        {
+            get
+            {
+                if (swampContractState == QuestState.Active)
+                {
+                    return "Contract: Beast from the Swamp";
+                }
+
+                if (missingHunterState == QuestState.Active)
+                {
+                    return "Missing Hunter";
+                }
+
+                if (missingHunterState == QuestState.Completed)
+                {
+                    return "Missing Hunter";
+                }
+
+                return swampContractState == QuestState.Completed ? "Contract: Beast from the Swamp" : string.Empty;
+            }
+        }
+
+        public string CurrentObjective
+        {
+            get
+            {
+                if (swampContractState == QuestState.Active)
+                {
+                    return GetSwampContractObjective();
+                }
+
+                if (missingHunterState == QuestState.Active || missingHunterState == QuestState.Completed)
+                {
+                    return GetMissingHunterObjective();
+                }
+
+                return swampContractState == QuestState.Completed ? GetSwampContractObjective() : string.Empty;
+            }
+        }
 
         private void Awake()
         {
@@ -70,6 +124,14 @@ namespace WitcherRightVersion.Quest
                     return AdvanceSwampContract(SwampContractStage.ChooseResponse, SwampContractStage.ReceiveReward);
                 case ActionRewardReceived:
                     return CompleteSwampContract();
+                case ActionStartMissingHunter:
+                    return StartMissingHunter();
+                case ActionMissingHunterClueFound:
+                    return RecordMissingHunterClue();
+                case ActionMissingHunterReturned:
+                    return ReturnAndCompleteMissingHunter();
+                case ActionMissingHunterRewardReceived:
+                    return CompleteMissingHunter();
                 default:
                     Debug.LogWarning($"Unknown quest action: {actionId}", this);
                     return false;
@@ -151,6 +213,92 @@ namespace WitcherRightVersion.Quest
             return true;
         }
 
+        private bool StartMissingHunter()
+        {
+            if (missingHunterState != QuestState.NotStarted)
+            {
+                Debug.Log($"Quest already started: {MissingHunterQuestId}", this);
+                return false;
+            }
+
+            missingHunterState = QuestState.Active;
+            missingHunterStage = MissingHunterStage.FindClues;
+            missingHunterClueCount = 0;
+            DecisionFlagService.Instance?.SetFlag("missingHunterStarted");
+            NotifyQuestChanged("Quest started", MissingHunterQuestId, missingHunterStage.ToString());
+            return true;
+        }
+
+        private bool RecordMissingHunterClue()
+        {
+            if (missingHunterState != QuestState.Active)
+            {
+                Debug.Log($"Cannot record hunter clue: quest is {missingHunterState}.", this);
+                return false;
+            }
+
+            if (missingHunterStage != MissingHunterStage.FindClues)
+            {
+                Debug.Log($"Cannot record hunter clue: current stage is {missingHunterStage}.", this);
+                return false;
+            }
+
+            missingHunterClueCount = Mathf.Clamp(missingHunterClueCount + 1, 0, RequiredMissingHunterClueCount);
+            if (missingHunterClueCount >= RequiredMissingHunterClueCount)
+            {
+                missingHunterStage = MissingHunterStage.ReturnToCamp;
+                NotifyQuestChanged("Hunter clues complete", MissingHunterQuestId, missingHunterStage.ToString());
+                return true;
+            }
+
+            NotifyQuestChanged("Hunter clue found", MissingHunterQuestId, missingHunterStage.ToString());
+            return true;
+        }
+
+        private bool AdvanceMissingHunter(MissingHunterStage expectedStage, MissingHunterStage nextStage)
+        {
+            if (missingHunterState != QuestState.Active)
+            {
+                Debug.Log($"Cannot advance {MissingHunterQuestId}: quest is {missingHunterState}.", this);
+                return false;
+            }
+
+            if (missingHunterStage != expectedStage)
+            {
+                Debug.Log($"Cannot advance {MissingHunterQuestId}: expected {expectedStage}, current {missingHunterStage}.", this);
+                return false;
+            }
+
+            missingHunterStage = nextStage;
+            NotifyQuestChanged("Quest advanced", MissingHunterQuestId, missingHunterStage.ToString());
+            return true;
+        }
+
+        private bool CompleteMissingHunter()
+        {
+            if (missingHunterState != QuestState.Active || missingHunterStage != MissingHunterStage.ReceiveReward)
+            {
+                Debug.Log($"Cannot complete {MissingHunterQuestId}: current stage is {missingHunterStage}.", this);
+                return false;
+            }
+
+            missingHunterState = QuestState.Completed;
+            missingHunterStage = MissingHunterStage.Completed;
+            PlayerRewardService.Instance?.GrantMissingHunterReward();
+            NotifyQuestChanged("Quest completed", MissingHunterQuestId, missingHunterStage.ToString());
+            return true;
+        }
+
+        private bool ReturnAndCompleteMissingHunter()
+        {
+            if (!AdvanceMissingHunter(MissingHunterStage.ReturnToCamp, MissingHunterStage.ReceiveReward))
+            {
+                return false;
+            }
+
+            return CompleteMissingHunter();
+        }
+
         private string GetSwampContractObjective()
         {
             switch (swampContractStage)
@@ -174,9 +322,31 @@ namespace WitcherRightVersion.Quest
             }
         }
 
+        private string GetMissingHunterObjective()
+        {
+            switch (missingHunterStage)
+            {
+                case MissingHunterStage.FindClues:
+                    return $"Search the Old Forest for hunter signs ({missingHunterClueCount}/{RequiredMissingHunterClueCount}).";
+                case MissingHunterStage.ReturnToCamp:
+                    return "Return to the hunter camp and decide what the signs mean.";
+                case MissingHunterStage.ReceiveReward:
+                    return "Take the hunter's emergency pouch: 25 XP and 10 coins.";
+                case MissingHunterStage.Completed:
+                    return "Missing Hunter completed.";
+                default:
+                    return "Search the Old Forest.";
+            }
+        }
+
         private void NotifyQuestChanged(string reason)
         {
-            Debug.Log($"{reason}: {SwampContractQuestId} -> {swampContractStage}", this);
+            NotifyQuestChanged(reason, SwampContractQuestId, swampContractStage.ToString());
+        }
+
+        private void NotifyQuestChanged(string reason, string questId, string stage)
+        {
+            Debug.Log($"{reason}: {questId} -> {stage}", this);
             AudioFeedbackService.Instance?.PlayQuest();
             QuestChanged?.Invoke();
         }
@@ -187,7 +357,10 @@ namespace WitcherRightVersion.Quest
             {
                 swampContractState = swampContractState.ToString(),
                 swampContractStage = swampContractStage.ToString(),
-                swampTraceCount = swampTraceCount
+                swampTraceCount = swampTraceCount,
+                missingHunterState = missingHunterState.ToString(),
+                missingHunterStage = missingHunterStage.ToString(),
+                missingHunterClueCount = missingHunterClueCount
             };
         }
 
@@ -198,6 +371,9 @@ namespace WitcherRightVersion.Quest
                 swampContractState = QuestState.NotStarted;
                 swampContractStage = SwampContractStage.TalkToElder;
                 swampTraceCount = 0;
+                missingHunterState = QuestState.NotStarted;
+                missingHunterStage = MissingHunterStage.FindClues;
+                missingHunterClueCount = 0;
                 NotifyQuestChanged("Quest restored");
                 return;
             }
@@ -213,6 +389,17 @@ namespace WitcherRightVersion.Quest
             }
 
             swampTraceCount = Mathf.Clamp(snapshot.swampTraceCount, 0, RequiredSwampTraceCount);
+            if (!Enum.TryParse(snapshot.missingHunterState, out missingHunterState))
+            {
+                missingHunterState = QuestState.NotStarted;
+            }
+
+            if (!Enum.TryParse(snapshot.missingHunterStage, out missingHunterStage))
+            {
+                missingHunterStage = MissingHunterStage.FindClues;
+            }
+
+            missingHunterClueCount = Mathf.Clamp(snapshot.missingHunterClueCount, 0, RequiredMissingHunterClueCount);
             NotifyQuestChanged("Quest restored");
         }
     }
@@ -223,5 +410,8 @@ namespace WitcherRightVersion.Quest
         public string swampContractState;
         public string swampContractStage;
         public int swampTraceCount;
+        public string missingHunterState;
+        public string missingHunterStage;
+        public int missingHunterClueCount;
     }
 }

@@ -166,6 +166,10 @@ namespace WitcherRightVersion.Editor
             RequireObject("ForestTree_01", failures);
             RequireObject("ForestRock_01", failures);
             RequireObject<SceneTransitionInteractable>("VillagePathTransition", failures);
+            ValidateForestQuestObject("HunterCamp_Start", failures);
+            ValidateForestQuestObject("HunterClue_BloodTrail", failures);
+            ValidateForestQuestObject("HunterClue_BrokenKnife", failures);
+            ValidateForestQuestObject("HunterCamp_RewardPouch", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
             RequireObject("ThirdPersonCamera", failures);
         }
@@ -179,6 +183,21 @@ namespace WitcherRightVersion.Editor
             }
 
             var interactable = RequireComponent<QuestProgressInteractable>(trace, failures, objectName);
+            if (interactable != null)
+            {
+                Require(!string.IsNullOrWhiteSpace(interactable.PersistentId), failures, $"{objectName} must have a persistent id.");
+            }
+        }
+
+        private static void ValidateForestQuestObject(string objectName, List<string> failures)
+        {
+            var target = RequireObject(objectName, failures);
+            if (target == null)
+            {
+                return;
+            }
+
+            var interactable = RequireComponent<QuestProgressInteractable>(target, failures, objectName);
             if (interactable != null)
             {
                 Require(!string.IsNullOrWhiteSpace(interactable.PersistentId), failures, $"{objectName} must have a persistent id.");
@@ -236,6 +255,23 @@ namespace WitcherRightVersion.Editor
                 Require(flags.HasFlag("questionedElderVersion"), failures, "Quest flow must keep questionedElderVersion flag.");
                 Require(flags.HasFlag("killedFirstDrowner"), failures, "Quest flow must keep killedFirstDrowner flag.");
                 Require(flags.HasFlag("receivedAntitoxinRecipe"), failures, "Quest flow must set receivedAntitoxinRecipe flag.");
+
+                var xpAfterSwamp = rewards.Experience;
+                var coinsAfterSwamp = rewards.Coins;
+
+                Require(quest.RunAction(QuestService.ActionStartMissingHunter), failures, "Missing Hunter must start.");
+                Require(quest.MissingHunterState == QuestState.Active, failures, "Missing Hunter must become active.");
+                Require(quest.CurrentMissingHunterStage == MissingHunterStage.FindClues, failures, "Missing Hunter must start at FindClues.");
+                Require(quest.RunAction(QuestService.ActionMissingHunterClueFound), failures, "Missing Hunter must accept first clue.");
+                Require(quest.RunAction(QuestService.ActionMissingHunterClueFound), failures, "Missing Hunter must accept second clue.");
+                Require(quest.CurrentMissingHunterStage == MissingHunterStage.ReturnToCamp, failures, "Missing Hunter must return to camp after two clues.");
+                Require(quest.RunAction(QuestService.ActionMissingHunterReturned), failures, "Missing Hunter must complete from reward pouch.");
+                Require(quest.MissingHunterState == QuestState.Completed, failures, "Missing Hunter must be completed.");
+                Require(quest.CurrentMissingHunterStage == MissingHunterStage.Completed, failures, "Missing Hunter stage must be completed.");
+                Require(rewards.Experience == xpAfterSwamp + 25, failures, "Missing Hunter must grant 25 XP.");
+                Require(rewards.Coins == coinsAfterSwamp + 10, failures, "Missing Hunter must grant 10 coins.");
+                Require(flags.HasFlag("missingHunterStarted"), failures, "Missing Hunter must set missingHunterStarted flag.");
+                Require(flags.HasFlag("missingHunterCompleted"), failures, "Missing Hunter must set missingHunterCompleted flag.");
             }
             finally
             {

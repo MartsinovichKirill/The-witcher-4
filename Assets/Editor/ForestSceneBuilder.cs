@@ -153,6 +153,68 @@ namespace WitcherRightVersion.Editor
 
             var interactable = back.AddComponent<SceneTransitionInteractable>();
             interactable.Configure("Path back to Vereskovy Brod", "Travel", "VillageScene");
+
+            CreateQuestObject(
+                root.transform,
+                "HunterCamp_Start",
+                "Hunter camp",
+                "Inspect",
+                QuestService.ActionStartMissingHunter,
+                "A cold campfire, torn bedroll, and fresh boot marks. Someone left in a hurry.",
+                "The hunter camp has already been searched.",
+                new Vector3(-1.65f, 0.12f, -1.2f),
+                new Vector3(0.9f, 0.08f, 0.65f),
+                new Color(0.24f, 0.15f, 0.08f, 1f));
+
+            CreateQuestObject(
+                root.transform,
+                "HunterClue_BloodTrail",
+                "Blood trail",
+                "Inspect",
+                QuestService.ActionMissingHunterClueFound,
+                "Dark blood on fern leaves. The trail bends toward the deeper trees.",
+                "This blood trail matters after the missing hunter search starts.",
+                new Vector3(0.9f, 0.08f, 0.65f),
+                new Vector3(0.65f, 0.035f, 0.95f),
+                new Color(0.32f, 0.03f, 0.025f, 1f));
+
+            CreateQuestObject(
+                root.transform,
+                "HunterClue_BrokenKnife",
+                "Broken hunting knife",
+                "Inspect",
+                QuestService.ActionMissingHunterClueFound,
+                "The blade snapped against something hard. No wolf did this.",
+                "The knife is only a broken tool until the hunter search starts.",
+                new Vector3(2.75f, 0.1f, 1.95f),
+                new Vector3(0.55f, 0.04f, 0.25f),
+                new Color(0.36f, 0.36f, 0.32f, 1f));
+
+            CreateQuestObject(
+                root.transform,
+                "HunterCamp_RewardPouch",
+                "Hunter's emergency pouch",
+                "Take",
+                QuestService.ActionMissingHunterReturned,
+                "The signs are enough: the hunter was dragged north. The pouch marks the completed search.",
+                "Find both hunter signs before claiming the pouch.",
+                new Vector3(-2.25f, 0.18f, -0.65f),
+                new Vector3(0.35f, 0.18f, 0.25f),
+                new Color(0.48f, 0.34f, 0.16f, 1f),
+                true);
+        }
+
+        private static void CreateQuestObject(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color, bool rewardPouch = false)
+        {
+            var marker = GameObject.CreatePrimitive(rewardPouch ? PrimitiveType.Cube : PrimitiveType.Cylinder);
+            marker.name = objectName;
+            marker.transform.SetParent(parent, true);
+            marker.transform.position = position;
+            marker.transform.localScale = scale;
+            marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            var interactable = marker.AddComponent<QuestProgressInteractable>();
+            interactable.Configure(displayName, prompt, questAction, successMessage, blockedMessage);
         }
 
         private static void CreateTree(Transform parent, string name, Vector3 position, float scale)

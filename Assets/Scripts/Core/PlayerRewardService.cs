@@ -73,6 +73,14 @@ namespace WitcherRightVersion.Core
             InteractionPromptUI.Instance?.ShowMessage("Reward: 50 XP, 20 coins, Antitoxin recipe.");
         }
 
+        public void GrantMissingHunterReward()
+        {
+            AddExperience(25);
+            AddCoins(10);
+            DecisionFlagService.Instance?.SetFlag("missingHunterCompleted");
+            InteractionPromptUI.Instance?.ShowMessage("Reward: 25 XP and 10 coins.");
+        }
+
         public PlayerRewardSnapshot CaptureSnapshot()
         {
             return new PlayerRewardSnapshot
