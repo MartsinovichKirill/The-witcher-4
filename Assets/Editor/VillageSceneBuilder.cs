@@ -316,8 +316,52 @@ namespace WitcherRightVersion.Editor
                         new[]
                         {
                             new DialogueChoice("I will find your beast.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "return",
+                        "Elder Voytsekh",
+                        "You are back. I heard the thing screaming near the reeds. Tell me the road is clear.",
+                        new[]
+                        {
+                            new DialogueChoice("The drowner is dead. Here is your proof.", "choice_response", "", false, QuestService.ActionReturnedToElder),
+                            new DialogueChoice("Not yet.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "choice_response",
+                        "Elder Voytsekh",
+                        "Then the village can breathe. The swamp gave us a beast, and you cut it down. That is the end of it.",
+                        new[]
+                        {
+                            new DialogueChoice("The swamp is guilty. Pay me.", "reward", "MayorSupported", false, QuestService.ActionAcceptedElderVersion),
+                            new DialogueChoice("This is not just a monster. Something is wrong here.", "warning_after_contract", "questionedElderVersion", false, QuestService.ActionQuestionedElderVersion)
+                        }),
+                    new DialogueNode(
+                        "warning_after_contract",
+                        "Elder Voytsekh",
+                        "Careful, witcher. People here need sleep more than old wounds. Take your coin and leave buried things buried.",
+                        new[]
+                        {
+                            new DialogueChoice("I will take the reward. But I am not done looking.", "reward")
+                        }),
+                    new DialogueNode(
+                        "reward",
+                        "Elder Voytsekh",
+                        "Fifty experience worth of work, twenty crowns, and Marta's antitoxin recipe. Spend them quietly.",
+                        new[]
+                        {
+                            new DialogueChoice("Contract complete.", "", "", true, QuestService.ActionRewardReceived)
+                        }),
+                    new DialogueNode(
+                        "completed",
+                        "Elder Voytsekh",
+                        "The road is quieter now. Let us hope it stays that way.",
+                        new[]
+                        {
+                            new DialogueChoice("For now.", "", "", true)
                         })
-                });
+                },
+                "return",
+                "completed");
         }
 
         private static void CreateMartaDialogue(Transform parent)
@@ -578,6 +622,7 @@ namespace WitcherRightVersion.Editor
         {
             var services = new GameObject("RuntimeServices");
             services.AddComponent<DecisionFlagService>();
+            services.AddComponent<PlayerRewardService>();
             services.AddComponent<QuestService>();
         }
 

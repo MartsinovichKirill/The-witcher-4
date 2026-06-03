@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using WitcherRightVersion.Core;
 
 namespace WitcherRightVersion.Quest
 {
@@ -13,6 +14,7 @@ namespace WitcherRightVersion.Quest
         public const string ActionSwampTracesFound = "swamp_traces_found";
         public const string ActionFirstDrownerKilled = "first_drowner_killed";
         public const string ActionReturnedToElder = "returned_to_elder";
+        public const string ActionAcceptedElderVersion = "accepted_elder_version";
         public const string ActionQuestionedElderVersion = "questioned_elder_version";
         public const string ActionRewardReceived = "swamp_contract_reward_received";
 
@@ -62,6 +64,8 @@ namespace WitcherRightVersion.Quest
                     return AdvanceSwampContract(SwampContractStage.KillDrowner, SwampContractStage.ReturnToElder);
                 case ActionReturnedToElder:
                     return AdvanceSwampContract(SwampContractStage.ReturnToElder, SwampContractStage.ChooseResponse);
+                case ActionAcceptedElderVersion:
+                    return AdvanceSwampContract(SwampContractStage.ChooseResponse, SwampContractStage.ReceiveReward);
                 case ActionQuestionedElderVersion:
                     return AdvanceSwampContract(SwampContractStage.ChooseResponse, SwampContractStage.ReceiveReward);
                 case ActionRewardReceived:
@@ -142,6 +146,7 @@ namespace WitcherRightVersion.Quest
 
             swampContractState = QuestState.Completed;
             swampContractStage = SwampContractStage.Completed;
+            PlayerRewardService.Instance?.GrantSwampContractReward();
             NotifyQuestChanged("Quest completed");
             return true;
         }
