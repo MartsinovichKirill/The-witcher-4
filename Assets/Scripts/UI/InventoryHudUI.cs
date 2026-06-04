@@ -147,7 +147,11 @@ namespace WitcherRightVersion.UI
             var inventory = InventoryService.Instance;
             var quest = QuestService.Instance;
 
-            builder.Append("XP: ").Append(rewards != null ? rewards.Experience : 0).Append("    ");
+            builder.Append("Level: ").Append(rewards != null ? rewards.Level : 1).Append("    ");
+            builder.Append("Skill points: ").Append(rewards != null ? rewards.SkillPoints : 0).AppendLine();
+            builder.Append("XP: ").Append(rewards != null ? rewards.Experience : 0);
+            builder.Append(" (").Append(rewards != null ? rewards.ExperienceIntoLevel : 0).Append("/");
+            builder.Append(PlayerRewardService.ExperiencePerLevel).Append(")").AppendLine();
             builder.Append("Coins: ").Append(rewards != null ? rewards.Coins : 0).AppendLine();
             builder.Append("Equipped: ").Append(inventory != null ? inventory.EquippedWeapon : "None").AppendLine();
             builder.Append("Active quest: ").Append(quest != null && quest.HasActiveQuest ? quest.ActiveQuestTitle : "None").AppendLine();

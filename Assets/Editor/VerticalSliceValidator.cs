@@ -290,6 +290,8 @@ namespace WitcherRightVersion.Editor
                 Require(quest.CurrentSwampContractStage == SwampContractStage.Completed, failures, "Quest flow stage must be completed after reward.");
                 Require(rewards.Experience == 50, failures, "Quest reward must grant exactly 50 XP.");
                 Require(rewards.Coins == 20, failures, "Quest reward must grant exactly 20 coins.");
+                Require(rewards.Level == 1, failures, "50 XP must keep the player at level 1.");
+                Require(rewards.SkillPoints == 0, failures, "Level 1 must grant 0 skill points.");
                 Require(rewards.HasRecipe("antitoxin"), failures, "Quest reward must unlock Antitoxin recipe.");
                 Require(flags.HasFlag("acceptedSwampContract"), failures, "Quest flow must keep acceptedSwampContract flag.");
                 Require(flags.HasFlag("questionedElderVersion"), failures, "Quest flow must keep questionedElderVersion flag.");
@@ -346,6 +348,9 @@ namespace WitcherRightVersion.Editor
                 Require(quest.SmithDebtState == QuestState.Completed, failures, "Smith's Debt must be completed.");
                 Require(quest.CurrentSmithDebtStage == SmithDebtStage.Completed, failures, "Smith's Debt stage must be completed.");
                 Require(rewards.Experience == xpAfterHunter + 30, failures, "Smith's Debt must grant 30 XP.");
+                Require(rewards.Experience == 105, failures, "Three MVP quests must total 105 XP.");
+                Require(rewards.Level == 2, failures, "105 XP must raise the player to level 2.");
+                Require(rewards.SkillPoints == 1, failures, "Level 2 must grant 1 skill point.");
                 Require(inventory.HasWeapon("Improved Steel Sword"), failures, "Smith's Debt must add Improved Steel Sword.");
                 Require(flags.HasFlag("smithDebtStarted"), failures, "Smith's Debt must set smithDebtStarted flag.");
                 Require(flags.HasFlag("oldCampBladeFound"), failures, "Smith's Debt must set oldCampBladeFound flag.");

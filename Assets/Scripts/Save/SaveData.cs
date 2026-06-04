@@ -9,7 +9,7 @@ namespace WitcherRightVersion.Save
     [Serializable]
     public sealed class SaveData
     {
-        public string version = "vertical-slice-0.13";
+        public string version = "mvp-level-0.16";
         public string sceneName;
         public SerializableVector3 playerPosition;
         public float playerHealth;

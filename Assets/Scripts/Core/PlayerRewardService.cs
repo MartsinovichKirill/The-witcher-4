@@ -7,12 +7,18 @@ namespace WitcherRightVersion.Core
 {
     public sealed class PlayerRewardService : MonoBehaviour
     {
+        public const int ExperiencePerLevel = 100;
+
         private readonly HashSet<string> unlockedRecipes = new HashSet<string>();
 
         public static PlayerRewardService Instance { get; private set; }
 
         public int Experience { get; private set; }
         public int Coins { get; private set; }
+        public int Level { get; private set; } = 1;
+        public int SkillPoints { get; private set; }
+        public int ExperienceIntoLevel => Experience % ExperiencePerLevel;
+        public int ExperienceToNextLevel => ExperiencePerLevel - ExperienceIntoLevel;
 
         private void Awake()
         {
@@ -33,6 +39,7 @@ namespace WitcherRightVersion.Core
             }
 
             Experience += amount;
+            RecalculateLevel();
             Debug.Log($"XP received: {amount}. Total XP: {Experience}", this);
         }
 
@@ -96,6 +103,8 @@ namespace WitcherRightVersion.Core
             {
                 experience = Experience,
                 coins = Coins,
+                level = Level,
+                skillPoints = SkillPoints,
                 unlockedRecipes = new List<string>(unlockedRecipes).ToArray()
             };
         }
@@ -104,6 +113,7 @@ namespace WitcherRightVersion.Core
         {
             Experience = snapshot != null ? Mathf.Max(0, snapshot.experience) : 0;
             Coins = snapshot != null ? Mathf.Max(0, snapshot.coins) : 0;
+            RecalculateLevel();
 
             unlockedRecipes.Clear();
             if (snapshot?.unlockedRecipes != null)
@@ -119,6 +129,12 @@ namespace WitcherRightVersion.Core
 
             Debug.Log($"Rewards restored. XP: {Experience}, Coins: {Coins}", this);
         }
+
+        private void RecalculateLevel()
+        {
+            Level = Mathf.Max(1, Experience / ExperiencePerLevel + 1);
+            SkillPoints = Mathf.Max(0, Level - 1);
+        }
     }
 
     [System.Serializable]
@@ -126,6 +142,8 @@ namespace WitcherRightVersion.Core
     {
         public int experience;
         public int coins;
+        public int level;
+        public int skillPoints;
         public string[] unlockedRecipes;
     }
 }
