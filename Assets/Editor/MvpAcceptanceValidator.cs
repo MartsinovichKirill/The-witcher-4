@@ -158,6 +158,8 @@ namespace WitcherRightVersion.Editor
             RequireObject("WorldGameplayRoot", failures);
             RequireObject<DialogueInteractable>("ElderVoytsekh_World", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_World", failures);
+            RequireObject<DialogueInteractable>("ElsaCherntravka_World", failures);
+            RequireObject<DialogueInteractable>("OrtenMirrorMage_World", failures);
             RequireObject<QuestProgressInteractable>("WorldTrace_ClawMarks", failures);
             RequireObject<QuestProgressInteractable>("WorldTrace_SlimeTrail", failures);
             RequireObject<QuestProgressInteractable>("WorldTrace_TornCloth", failures);
@@ -168,6 +170,8 @@ namespace WitcherRightVersion.Editor
             RequireObject<DecisionFlagInteractable>("WorldGirlMedallion", failures);
             RequireObject<DecisionFlagInteractable>("WorldOrtenDiary", failures);
             RequireObject<DecisionFlagInteractable>("WorldMirrorShardCache", failures);
+            RequireObject<DecisionFlagInteractable>("WorldTowerReedCharmGate", failures);
+            RequireObject<DecisionFlagInteractable>("WorldGhostMemory", failures);
             RequireObject<DecisionFlagInteractable>("WorldElderSealProof", failures);
             RequireObject<EndingAltarInteractable>("WorldFinalTruthAltar", failures);
             RequireObject<EndingAltarInteractable>("WorldFinalLieAltar", failures);

@@ -234,6 +234,8 @@ namespace WitcherRightVersion.Editor
 
             CreateElderDialogue(root.transform);
             CreateMartaDialogue(root.transform);
+            CreateElsaDialogue(root.transform);
+            CreateOrtenDialogue(root.transform);
             CreateWorldTraceObjects(root.transform);
             CreateWorldDrowner(root.transform);
             CreateWorldCraftingObjects(root.transform);
@@ -367,6 +369,103 @@ namespace WitcherRightVersion.Editor
                 });
         }
 
+        private static void CreateElsaDialogue(Transform parent)
+        {
+            var elsa = CreateCapsule(parent, "ElsaCherntravka_World", new Vector3(12.6f, 1f, -25.6f), new Vector3(0.66f, 0.95f, 0.66f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            var dialogue = elsa.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Elsa Cherntravka",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Elsa Cherntravka",
+                        "Do not draw steel. If Voytsekh sent you, he sent you to kill the only witness who still remembers the first version.",
+                        new[]
+                        {
+                            new DialogueChoice("Tell me what the mirror did.", "mirror"),
+                            new DialogueChoice("I will protect you from the elder.", "protected", "ElsaProtected"),
+                            new DialogueChoice("The village wants you taken in.", "betrayed", "ElsaBetrayed"),
+                            new DialogueChoice("Later.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "mirror",
+                        "Elsa Cherntravka",
+                        "Orten made them a kinder memory. The girl became a witch. The killers became saviors. The swamp became a grave that could still speak.",
+                        new[]
+                        {
+                            new DialogueChoice("Help me reach the tower.", "protected", "ElsaProtected"),
+                            new DialogueChoice("I need proof, not faith.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "protected",
+                        "Elsa Cherntravka",
+                        "Then take the reed charm. It will not open the tower alone, but the ruins will know you came for the buried version.",
+                        new[]
+                        {
+                            new DialogueChoice("I will use it.", "", "TowerRouteOpened", true)
+                        }),
+                    new DialogueNode(
+                        "betrayed",
+                        "Elsa Cherntravka",
+                        "Of course. Villages are very good at hiring clean hands for dirty endings.",
+                        new[]
+                        {
+                            new DialogueChoice("This ends cleanly.", "", "MayorSupported", true)
+                        })
+                });
+        }
+
+        private static void CreateOrtenDialogue(Transform parent)
+        {
+            var orten = CreateCapsule(parent, "OrtenMirrorMage_World", new Vector3(0f, 1f, 30.2f), new Vector3(0.72f, 1.05f, 0.72f), new Color(0.24f, 0.18f, 0.32f, 1f));
+            var dialogue = orten.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Orten",
+                "Confront",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Orten",
+                        "You call it a lie because you arrived after the blood dried. I call it surgery. A village cannot live while staring at its own wound.",
+                        new[]
+                        {
+                            new DialogueChoice("Your surgery made a curse.", "accuse", "OrtenConfronted"),
+                            new DialogueChoice("Maybe the lie saved them.", "agree", "MayorSupported"),
+                            new DialogueChoice("I will break the mirror.", "sacrifice", "MirrorShardsDestroyed"),
+                            new DialogueChoice("Leave.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "accuse",
+                        "Orten",
+                        "Then bring a better ending, witcher. Truth, comfort, or fire. The mirror only obeys a hand that has chosen.",
+                        new[]
+                        {
+                            new DialogueChoice("I have chosen enough.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "agree",
+                        "Orten",
+                        "A practical monster hunter. Voytsekh would have liked you before fear taught him manners.",
+                        new[]
+                        {
+                            new DialogueChoice("This version survives.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "sacrifice",
+                        "Orten",
+                        "Break it, then. But when the curse leaves, it will take what it still owns.",
+                        new[]
+                        {
+                            new DialogueChoice("Better a cruel end than an endless rot.", "", "OrtenDiaryFound", true)
+                        })
+                });
+        }
+
         private static void CreateWorldTraceObjects(Transform parent)
         {
             CreateQuestMarker(parent, "WorldTrace_ClawMarks", "Claw marks", "Inspect", QuestService.ActionSwampTracesFound, "Deep claw cuts in the mud point toward the south pool.", "Marta should explain what to look for first.", new Vector3(1.4f, 0.08f, -23.2f), new Vector3(0.9f, 0.04f, 0.55f), new Color(0.18f, 0.12f, 0.08f, 1f));
@@ -435,6 +534,28 @@ namespace WitcherRightVersion.Editor
                 new Vector3(1.7f, 0.32f, 27.4f),
                 new Vector3(0.5f, 0.32f, 0.5f),
                 new Color(0.28f, 0.18f, 0.44f, 1f));
+
+            CreateDecisionFlagMarker(
+                parent,
+                "WorldTowerReedCharmGate",
+                "Reed charm mark",
+                "Touch",
+                "TowerRouteOpened",
+                "The tower stones answer the reed charm. The ruin route is marked for Reynard.",
+                new Vector3(5.2f, 0.28f, 24.6f),
+                new Vector3(0.65f, 0.12f, 0.65f),
+                new Color(0.16f, 0.28f, 0.21f, 1f));
+
+            CreateDecisionFlagMarker(
+                parent,
+                "WorldGhostMemory",
+                "Ghost memory",
+                "Listen",
+                "GhostMemoryHeard",
+                "A girl's voice names the well, the seal, and the men who called murder mercy.",
+                new Vector3(-2.9f, 0.45f, 26.8f),
+                new Vector3(0.42f, 0.42f, 0.42f),
+                new Color(0.58f, 0.52f, 0.82f, 1f));
 
             CreateDecisionFlagMarker(
                 parent,
