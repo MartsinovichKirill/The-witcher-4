@@ -33,6 +33,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("AshRoadMoodRoot");
             RemoveIfExists("FinalTruthAltar");
             RemoveIfExists("InteractionCanvas");
+            RemoveIfExists("EndingCanvas");
             RemoveIfExists("RuntimeServices");
 
             CreateRuntimeServices();
@@ -43,6 +44,7 @@ namespace WitcherRightVersion.Editor
             CreateAshRoadMood();
             CreateFinalAltar();
             CreateInteractionCanvas();
+            CreateEndingCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -203,6 +205,30 @@ namespace WitcherRightVersion.Editor
             SetSerializedObjectReference(prompt, "actionText", action);
             SetSerializedObjectReference(prompt, "messageRoot", messageRoot);
             SetSerializedObjectReference(prompt, "messageText", message);
+        }
+
+        private static void CreateEndingCanvas()
+        {
+            var canvasObject = new GameObject("EndingCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 90;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var panel = CreatePanel(canvasObject.transform, "EndingPanel", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(920f, 340f), Vector2.zero, new Color(0.045f, 0.038f, 0.032f, 0.94f));
+            var title = CreateText(panel.transform, "EndingTitle", new Vector2(0f, 0.68f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-96f, -42f), new Vector2(0f, -34f), 42, TextAnchor.MiddleCenter, new Color(0.94f, 0.78f, 0.42f, 1f));
+            var body = CreateText(panel.transform, "EndingBody", new Vector2(0f, 0f), new Vector2(1f, 0.7f), new Vector2(0.5f, 0.5f), new Vector2(-128f, -64f), new Vector2(0f, 18f), 24, TextAnchor.MiddleCenter, new Color(0.94f, 0.91f, 0.84f, 1f));
+
+            var endingHud = canvasObject.AddComponent<EndingHudUI>();
+            SetSerializedObjectReference(endingHud, "panelRoot", panel);
+            SetSerializedObjectReference(endingHud, "titleText", title);
+            SetSerializedObjectReference(endingHud, "bodyText", body);
         }
 
         private static Material CreateMaterial(string path, Color color)

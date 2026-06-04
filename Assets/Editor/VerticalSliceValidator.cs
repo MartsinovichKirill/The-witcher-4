@@ -228,6 +228,7 @@ namespace WitcherRightVersion.Editor
             RequireObject("BurnedRoadStrip", failures);
             RequireObject<EndingAltarInteractable>("FinalTruthAltar", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
+            RequireObject<EndingHudUI>("EndingCanvas", failures);
             RequireObject("ThirdPersonCamera", failures);
         }
 

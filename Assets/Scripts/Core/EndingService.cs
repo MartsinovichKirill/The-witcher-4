@@ -55,6 +55,7 @@ namespace WitcherRightVersion.Core
             DecisionFlagService.Instance?.SetFlag(TruthEndingFlag);
             DecisionFlagService.Instance?.SetFlag("VillageTruthExposed");
             SaveService.Instance?.SaveAutosave();
+            EndingHudUI.Instance?.ShowEnding(CompletedEnding);
             InteractionPromptUI.Instance?.ShowMessage("Ending reached: Truth. The first right version is no longer buried.");
             Debug.Log("Ending completed: Truth", this);
             return true;
