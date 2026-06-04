@@ -23,7 +23,8 @@ namespace WitcherRightVersion.Editor
                 {
                     "Assets/Scenes/MainMenuScene.unity",
                     "Assets/Scenes/VillageScene.unity",
-                    "Assets/Scenes/ForestScene.unity"
+                    "Assets/Scenes/ForestScene.unity",
+                    "Assets/Scenes/AshRoadScene.unity"
                 },
                 locationPathName = OutputPath,
                 target = BuildTarget.StandaloneWindows64,

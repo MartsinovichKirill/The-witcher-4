@@ -325,6 +325,21 @@ namespace WitcherRightVersion.Editor
             CreateForestTransition(root.transform);
             CreateSmithDebtObjects(root.transform);
             CreateCraftingObjects(root.transform);
+            CreateEndingPath(root.transform);
+        }
+
+        private static void CreateEndingPath(Transform parent)
+        {
+            var transition = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            transition.name = "AshRoadFinalPath";
+            transition.transform.SetParent(parent, true);
+            transition.transform.position = new Vector3(5.85f, 0.55f, -3.8f);
+            transition.transform.rotation = Quaternion.Euler(0f, 24f, 0f);
+            transition.transform.localScale = new Vector3(0.6f, 1.1f, 2.4f);
+            transition.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/AshRoadFinalPath.mat", new Color(0.31f, 0.23f, 0.18f, 1f));
+
+            var interactable = transition.AddComponent<EndingGateInteractable>();
+            interactable.Configure("Road to the final altar", "Travel", "AshRoadScene");
         }
 
         private static void CreateCraftingObjects(Transform parent)
@@ -1011,6 +1026,7 @@ namespace WitcherRightVersion.Editor
             var services = new GameObject("RuntimeServices");
             services.AddComponent<AudioFeedbackService>();
             services.AddComponent<DecisionFlagService>();
+            services.AddComponent<EndingService>();
             services.AddComponent<PlayerRewardService>();
             services.AddComponent<InventoryService>();
             services.AddComponent<CraftingService>();

@@ -55,6 +55,7 @@ namespace WitcherRightVersion.Editor
             var services = new GameObject("RuntimeServices");
             services.AddComponent<AudioFeedbackService>();
             services.AddComponent<DecisionFlagService>();
+            services.AddComponent<EndingService>();
             services.AddComponent<PlayerRewardService>();
             services.AddComponent<InventoryService>();
             services.AddComponent<CraftingService>();

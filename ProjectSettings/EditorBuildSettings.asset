@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ForestScene.unity
     guid: dad112492308ffa4590ab66b7bc6359f
+  - enabled: 1
+    path: Assets/Scenes/AshRoadScene.unity
+    guid: 6248961b013fe144ea0bfd062b421230
   m_configObjects: {}

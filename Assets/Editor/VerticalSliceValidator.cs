@@ -22,6 +22,7 @@ namespace WitcherRightVersion.Editor
         private const string MainMenuScenePath = "Assets/Scenes/MainMenuScene.unity";
         private const string VillageScenePath = "Assets/Scenes/VillageScene.unity";
         private const string ForestScenePath = "Assets/Scenes/ForestScene.unity";
+        private const string AshRoadScenePath = "Assets/Scenes/AshRoadScene.unity";
 
         [MenuItem("Tools/Witcher Right Version/Validate Vertical Slice")]
         public static void Validate()
@@ -32,6 +33,7 @@ namespace WitcherRightVersion.Editor
             ValidateMainMenuScene(failures);
             ValidateVillageScene(failures);
             ValidateForestScene(failures);
+            ValidateAshRoadScene(failures);
             ValidateQuestFlowSimulation(failures);
 
             if (failures.Count > 0)
@@ -49,6 +51,7 @@ namespace WitcherRightVersion.Editor
             var hasMainMenu = false;
             var hasVillage = false;
             var hasForest = false;
+            var hasAshRoad = false;
 
             for (var i = 0; i < EditorBuildSettings.scenes.Length; i++)
             {
@@ -61,11 +64,13 @@ namespace WitcherRightVersion.Editor
                 hasMainMenu |= scene.path == MainMenuScenePath;
                 hasVillage |= scene.path == VillageScenePath;
                 hasForest |= scene.path == ForestScenePath;
+                hasAshRoad |= scene.path == AshRoadScenePath;
             }
 
             Require(hasMainMenu, failures, "Build Settings must include enabled MainMenuScene.");
             Require(hasVillage, failures, "Build Settings must include enabled VillageScene.");
             Require(hasForest, failures, "Build Settings must include enabled ForestScene.");
+            Require(hasAshRoad, failures, "Build Settings must include enabled AshRoadScene.");
         }
 
         private static void ValidateMainMenuScene(List<string> failures)
@@ -103,6 +108,7 @@ namespace WitcherRightVersion.Editor
             {
                 RequireComponent<AudioFeedbackService>(services, failures, "RuntimeServices");
                 RequireComponent<DecisionFlagService>(services, failures, "RuntimeServices");
+                RequireComponent<EndingService>(services, failures, "RuntimeServices");
                 RequireComponent<PlayerRewardService>(services, failures, "RuntimeServices");
                 RequireComponent<InventoryService>(services, failures, "RuntimeServices");
                 RequireComponent<CraftingService>(services, failures, "RuntimeServices");
@@ -113,6 +119,7 @@ namespace WitcherRightVersion.Editor
             RequireObject<DialogueInteractable>("ElderVoytsekh_Prototype", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_Prototype", failures);
             RequireObject<SceneTransitionInteractable>("ForestPathTransition", failures);
+            RequireObject<EndingGateInteractable>("AshRoadFinalPath", failures);
             ValidateForestQuestObject("BorisSmithQuest_Start", failures);
             ValidateForestQuestObject("BorisSmithQuest_Return", failures);
             ValidateInventoryGrantObject("MartaHerbBasket", failures);
@@ -166,6 +173,7 @@ namespace WitcherRightVersion.Editor
             {
                 RequireComponent<AudioFeedbackService>(services, failures, "Forest RuntimeServices");
                 RequireComponent<DecisionFlagService>(services, failures, "Forest RuntimeServices");
+                RequireComponent<EndingService>(services, failures, "Forest RuntimeServices");
                 RequireComponent<PlayerRewardService>(services, failures, "Forest RuntimeServices");
                 RequireComponent<InventoryService>(services, failures, "Forest RuntimeServices");
                 RequireComponent<CraftingService>(services, failures, "Forest RuntimeServices");
@@ -185,6 +193,41 @@ namespace WitcherRightVersion.Editor
             ValidateForestQuestObject("OldCampBlade", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
             RequireObject<InventoryHudUI>("InventoryCanvas", failures);
+            RequireObject("ThirdPersonCamera", failures);
+        }
+
+        private static void ValidateAshRoadScene(List<string> failures)
+        {
+            EditorSceneManager.OpenScene(AshRoadScenePath, OpenSceneMode.Single);
+
+            var player = RequireObject("Reynard_Player", failures);
+            if (player != null)
+            {
+                RequireComponent<CharacterController>(player, failures, "Ash Road Reynard_Player");
+                RequireComponent<PlayerController>(player, failures, "Ash Road Reynard_Player");
+                RequireComponent<InteractionController>(player, failures, "Ash Road Reynard_Player");
+                RequireComponent<Health>(player, failures, "Ash Road Reynard_Player");
+                RequireComponent<CombatController>(player, failures, "Ash Road Reynard_Player");
+            }
+
+            var services = RequireObject("RuntimeServices", failures);
+            if (services != null)
+            {
+                RequireComponent<AudioFeedbackService>(services, failures, "Ash Road RuntimeServices");
+                RequireComponent<DecisionFlagService>(services, failures, "Ash Road RuntimeServices");
+                RequireComponent<EndingService>(services, failures, "Ash Road RuntimeServices");
+                RequireComponent<PlayerRewardService>(services, failures, "Ash Road RuntimeServices");
+                RequireComponent<InventoryService>(services, failures, "Ash Road RuntimeServices");
+                RequireComponent<CraftingService>(services, failures, "Ash Road RuntimeServices");
+                RequireComponent<QuestService>(services, failures, "Ash Road RuntimeServices");
+                RequireComponent<SaveService>(services, failures, "Ash Road RuntimeServices");
+            }
+
+            RequireObject("AshRoadBlockoutGround", failures);
+            RequireObject("AshRoadMoodRoot", failures);
+            RequireObject("BurnedRoadStrip", failures);
+            RequireObject<EndingAltarInteractable>("FinalTruthAltar", failures);
+            RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
             RequireObject("ThirdPersonCamera", failures);
         }
 
@@ -239,6 +282,7 @@ namespace WitcherRightVersion.Editor
         private static void ValidateQuestFlowSimulation(List<string> failures)
         {
             ResetSingleton<DecisionFlagService>();
+            ResetSingleton<EndingService>();
             ResetSingleton<PlayerRewardService>();
             ResetSingleton<InventoryService>();
             ResetSingleton<CraftingService>();
@@ -247,13 +291,19 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("VerticalSliceQuestFlowSimulation");
             try
             {
+                PlayerPrefs.DeleteKey(EndingService.PendingTruthRouteKey);
+                PlayerPrefs.DeleteKey(EndingService.CompletedEndingKey);
+                PlayerPrefs.Save();
+
                 var flags = root.AddComponent<DecisionFlagService>();
+                var endings = root.AddComponent<EndingService>();
                 var rewards = root.AddComponent<PlayerRewardService>();
                 var inventory = root.AddComponent<InventoryService>();
                 var crafting = root.AddComponent<CraftingService>();
                 var quest = root.AddComponent<QuestService>();
 
                 InvokeAwake(flags);
+                InvokeAwake(endings);
                 InvokeAwake(rewards);
                 InvokeAwake(inventory);
                 InvokeAwake(crafting);
@@ -355,11 +405,24 @@ namespace WitcherRightVersion.Editor
                 Require(flags.HasFlag("smithDebtStarted"), failures, "Smith's Debt must set smithDebtStarted flag.");
                 Require(flags.HasFlag("oldCampBladeFound"), failures, "Smith's Debt must set oldCampBladeFound flag.");
                 Require(flags.HasFlag("smithDebtCompleted"), failures, "Smith's Debt must set smithDebtCompleted flag.");
+
+                Require(!endings.CanCompleteTruthEnding(), failures, "Truth ending must be locked before the final route opens.");
+                EndingService.UnlockTruthRoute();
+                Require(endings.CanCompleteTruthEnding(), failures, "Truth ending must unlock after entering Ash Road route.");
+                Require(endings.CompleteTruthEnding(), failures, "Truth ending must complete from final altar.");
+                Require(endings.CompletedEnding == EndingService.TruthEndingType, failures, "Truth ending type must be stored.");
+                Require(flags.HasFlag(EndingService.TruthEndingFlag), failures, "Truth ending must set MVP ending flag.");
+                Require(flags.HasFlag("VillageTruthExposed"), failures, "Truth ending must set VillageTruthExposed flag.");
             }
             finally
             {
+                PlayerPrefs.DeleteKey(EndingService.PendingTruthRouteKey);
+                PlayerPrefs.DeleteKey(EndingService.CompletedEndingKey);
+                PlayerPrefs.Save();
+
                 UnityEngine.Object.DestroyImmediate(root);
                 ResetSingleton<DecisionFlagService>();
+                ResetSingleton<EndingService>();
                 ResetSingleton<PlayerRewardService>();
                 ResetSingleton<InventoryService>();
                 ResetSingleton<CraftingService>();
