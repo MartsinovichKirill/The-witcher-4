@@ -385,9 +385,9 @@ namespace WitcherRightVersion.Editor
                         "Do not draw steel. If Voytsekh sent you, he sent you to kill the only witness who still remembers the first version.",
                         new[]
                         {
-                            new DialogueChoice("Tell me what the mirror did.", "mirror"),
-                            new DialogueChoice("I will protect you from the elder.", "protected", "ElsaProtected"),
-                            new DialogueChoice("The village wants you taken in.", "betrayed", "ElsaBetrayed"),
+                            new DialogueChoice("Tell me what the mirror did.", "mirror", "", false, QuestService.ActionStartRightVersion),
+                            new DialogueChoice("I will protect you from the elder.", "protected", "ElsaProtected", false, QuestService.ActionElsaProtected),
+                            new DialogueChoice("The village wants you taken in.", "betrayed", "ElsaBetrayed", false, QuestService.ActionElsaBetrayed),
                             new DialogueChoice("Later.", "", "", true)
                         }),
                     new DialogueNode(
@@ -396,7 +396,7 @@ namespace WitcherRightVersion.Editor
                         "Orten made them a kinder memory. The girl became a witch. The killers became saviors. The swamp became a grave that could still speak.",
                         new[]
                         {
-                            new DialogueChoice("Help me reach the tower.", "protected", "ElsaProtected"),
+                            new DialogueChoice("Help me reach the tower.", "protected", "ElsaProtected", false, QuestService.ActionElsaProtected),
                             new DialogueChoice("I need proof, not faith.", "", "", true)
                         }),
                     new DialogueNode(
@@ -405,7 +405,7 @@ namespace WitcherRightVersion.Editor
                         "Then take the reed charm. It will not open the tower alone, but the ruins will know you came for the buried version.",
                         new[]
                         {
-                            new DialogueChoice("I will use it.", "", "TowerRouteOpened", true)
+                            new DialogueChoice("I will use it.", "", "TowerRouteOpened", true, QuestService.ActionTowerRouteOpened)
                         }),
                     new DialogueNode(
                         "betrayed",
@@ -413,7 +413,7 @@ namespace WitcherRightVersion.Editor
                         "Of course. Villages are very good at hiring clean hands for dirty endings.",
                         new[]
                         {
-                            new DialogueChoice("This ends cleanly.", "", "MayorSupported", true)
+                            new DialogueChoice("This ends cleanly.", "", "MayorSupported", true, QuestService.ActionElsaBetrayed)
                         })
                 });
         }
@@ -434,9 +434,9 @@ namespace WitcherRightVersion.Editor
                         "You call it a lie because you arrived after the blood dried. I call it surgery. A village cannot live while staring at its own wound.",
                         new[]
                         {
-                            new DialogueChoice("Your surgery made a curse.", "accuse", "OrtenConfronted"),
+                            new DialogueChoice("Your surgery made a curse.", "accuse", "OrtenConfronted", false, QuestService.ActionOrtenConfronted),
                             new DialogueChoice("Maybe the lie saved them.", "agree", "MayorSupported"),
-                            new DialogueChoice("I will break the mirror.", "sacrifice", "MirrorShardsDestroyed"),
+                            new DialogueChoice("I will break the mirror.", "sacrifice", "MirrorShardsDestroyed", false, QuestService.ActionMirrorShardsDestroyed),
                             new DialogueChoice("Leave.", "", "", true)
                         }),
                     new DialogueNode(
@@ -461,7 +461,7 @@ namespace WitcherRightVersion.Editor
                         "Break it, then. But when the curse leaves, it will take what it still owns.",
                         new[]
                         {
-                            new DialogueChoice("Better a cruel end than an endless rot.", "", "OrtenDiaryFound", true)
+                            new DialogueChoice("Better a cruel end than an endless rot.", "", "OrtenDiaryFound", true, QuestService.ActionOrtenDiaryFound)
                         })
                 });
         }
@@ -511,7 +511,8 @@ namespace WitcherRightVersion.Editor
                 "The medallion is old, scratched, and still warm near the mirror rot. Truth ending evidence recorded.",
                 new Vector3(2.5f, 0.18f, -31.4f),
                 new Vector3(0.38f, 0.08f, 0.38f),
-                new Color(0.82f, 0.66f, 0.28f, 1f));
+                new Color(0.82f, 0.66f, 0.28f, 1f),
+                QuestService.ActionMedallionFound);
 
             CreateDecisionFlagMarker(
                 parent,
@@ -522,7 +523,8 @@ namespace WitcherRightVersion.Editor
                 "Orten wrote how the mirror rewrites memory. Sacrifice ending evidence recorded.",
                 new Vector3(-1.4f, 0.28f, 28.4f),
                 new Vector3(0.52f, 0.08f, 0.72f),
-                new Color(0.22f, 0.15f, 0.1f, 1f));
+                new Color(0.22f, 0.15f, 0.1f, 1f),
+                QuestService.ActionOrtenDiaryFound);
 
             CreateDecisionFlagMarker(
                 parent,
@@ -533,7 +535,8 @@ namespace WitcherRightVersion.Editor
                 "The shard cache cracks. The mirror loses one anchor in the living world.",
                 new Vector3(1.7f, 0.32f, 27.4f),
                 new Vector3(0.5f, 0.32f, 0.5f),
-                new Color(0.28f, 0.18f, 0.44f, 1f));
+                new Color(0.28f, 0.18f, 0.44f, 1f),
+                QuestService.ActionMirrorShardsDestroyed);
 
             CreateDecisionFlagMarker(
                 parent,
@@ -544,7 +547,8 @@ namespace WitcherRightVersion.Editor
                 "The tower stones answer the reed charm. The ruin route is marked for Reynard.",
                 new Vector3(5.2f, 0.28f, 24.6f),
                 new Vector3(0.65f, 0.12f, 0.65f),
-                new Color(0.16f, 0.28f, 0.21f, 1f));
+                new Color(0.16f, 0.28f, 0.21f, 1f),
+                QuestService.ActionTowerRouteOpened);
 
             CreateDecisionFlagMarker(
                 parent,
@@ -608,7 +612,8 @@ namespace WitcherRightVersion.Editor
             string message,
             Vector3 position,
             Vector3 scale,
-            Color color)
+            Color color,
+            string questAction = "")
         {
             var marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
             marker.name = objectName;
@@ -617,7 +622,7 @@ namespace WitcherRightVersion.Editor
             marker.transform.localScale = scale;
             marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
             var interactable = marker.AddComponent<DecisionFlagInteractable>();
-            interactable.Configure(displayName, prompt, flagToSet, message);
+            interactable.Configure(displayName, prompt, flagToSet, message, false, questAction);
         }
 
         private static void CreateEndingAltar(

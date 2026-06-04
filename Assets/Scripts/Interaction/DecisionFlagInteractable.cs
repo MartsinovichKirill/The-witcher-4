@@ -1,5 +1,6 @@
 using UnityEngine;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Quest;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Interaction
@@ -9,6 +10,7 @@ namespace WitcherRightVersion.Interaction
         [SerializeField] private string displayName = "Evidence";
         [SerializeField] private string interactionPrompt = "Inspect";
         [SerializeField] private string flagToSet = "EvidenceFound";
+        [SerializeField] private string questAction;
         [SerializeField] private string interactionMessage = "Evidence recorded.";
         [SerializeField] private bool canRepeat;
         [SerializeField] private bool completed;
@@ -17,13 +19,14 @@ namespace WitcherRightVersion.Interaction
         public string InteractionPrompt => interactionPrompt;
         public bool CanInteract => canRepeat || !completed;
 
-        public void Configure(string newDisplayName, string newPrompt, string newFlagToSet, string newMessage, bool newCanRepeat = false)
+        public void Configure(string newDisplayName, string newPrompt, string newFlagToSet, string newMessage, bool newCanRepeat = false, string newQuestAction = "")
         {
             displayName = newDisplayName;
             interactionPrompt = newPrompt;
             flagToSet = newFlagToSet;
             interactionMessage = newMessage;
             canRepeat = newCanRepeat;
+            questAction = newQuestAction;
         }
 
         public void Interact(InteractionController interactor)
@@ -34,6 +37,11 @@ namespace WitcherRightVersion.Interaction
             }
 
             DecisionFlagService.Instance?.SetFlag(flagToSet);
+            if (!string.IsNullOrWhiteSpace(questAction))
+            {
+                QuestService.Instance?.RunAction(questAction);
+            }
+
             completed = true;
             InteractionPromptUI.Instance?.ShowMessage(interactionMessage);
             Debug.Log($"Decision evidence recorded: {flagToSet}", this);

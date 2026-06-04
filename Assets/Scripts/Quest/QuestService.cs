@@ -11,6 +11,8 @@ namespace WitcherRightVersion.Quest
         private const int RequiredMissingHunterClueCount = 2;
 
         public const string SwampContractQuestId = "contract_swamp_beast";
+        public const string RightVersionQuestId = "right_version";
+        public const string MirrorTruthQuestId = "mirror_truth";
         public const string MissingHunterQuestId = "missing_hunter";
         public const string SmithDebtQuestId = "smith_debt";
         public const string ActionStartSwampContract = "start_swamp_contract";
@@ -28,10 +30,22 @@ namespace WitcherRightVersion.Quest
         public const string ActionStartSmithDebt = "start_smith_debt";
         public const string ActionOldCampBladeFound = "old_camp_blade_found";
         public const string ActionSmithDebtReturned = "smith_debt_returned";
+        public const string ActionStartRightVersion = "start_right_version";
+        public const string ActionElsaProtected = "elsa_protected";
+        public const string ActionElsaBetrayed = "elsa_betrayed";
+        public const string ActionMedallionFound = "medallion_found";
+        public const string ActionTowerRouteOpened = "tower_route_opened";
+        public const string ActionOrtenDiaryFound = "orten_diary_found";
+        public const string ActionOrtenConfronted = "orten_confronted";
+        public const string ActionMirrorShardsDestroyed = "mirror_shards_destroyed";
 
         private QuestState swampContractState = QuestState.NotStarted;
         private SwampContractStage swampContractStage = SwampContractStage.TalkToElder;
         private int swampTraceCount;
+        private QuestState rightVersionState = QuestState.NotStarted;
+        private RightVersionStage rightVersionStage = RightVersionStage.FindElsa;
+        private QuestState mirrorTruthState = QuestState.NotStarted;
+        private MirrorTruthStage mirrorTruthStage = MirrorTruthStage.EnterTower;
         private QuestState missingHunterState = QuestState.NotStarted;
         private MissingHunterStage missingHunterStage = MissingHunterStage.FindClues;
         private int missingHunterClueCount;
@@ -45,6 +59,10 @@ namespace WitcherRightVersion.Quest
         public SwampContractStage CurrentSwampContractStage => swampContractStage;
         public int SwampTraceCount => swampTraceCount;
         public int SwampTraceTarget => RequiredSwampTraceCount;
+        public QuestState RightVersionState => rightVersionState;
+        public RightVersionStage CurrentRightVersionStage => rightVersionStage;
+        public QuestState MirrorTruthState => mirrorTruthState;
+        public MirrorTruthStage CurrentMirrorTruthStage => mirrorTruthStage;
         public QuestState MissingHunterState => missingHunterState;
         public MissingHunterStage CurrentMissingHunterStage => missingHunterStage;
         public int MissingHunterClueCount => missingHunterClueCount;
@@ -52,9 +70,13 @@ namespace WitcherRightVersion.Quest
         public QuestState SmithDebtState => smithDebtState;
         public SmithDebtStage CurrentSmithDebtStage => smithDebtStage;
         public bool HasActiveQuest => swampContractState == QuestState.Active
+            || rightVersionState == QuestState.Active
+            || mirrorTruthState == QuestState.Active
             || missingHunterState == QuestState.Active
             || smithDebtState == QuestState.Active
             || swampContractState == QuestState.Completed
+            || rightVersionState == QuestState.Completed
+            || mirrorTruthState == QuestState.Completed
             || missingHunterState == QuestState.Completed
             || smithDebtState == QuestState.Completed;
 
@@ -62,6 +84,16 @@ namespace WitcherRightVersion.Quest
         {
             get
             {
+                if (mirrorTruthState == QuestState.Active || mirrorTruthState == QuestState.Completed)
+                {
+                    return "Mirror of Truth";
+                }
+
+                if (rightVersionState == QuestState.Active || rightVersionState == QuestState.Completed)
+                {
+                    return "Right Version";
+                }
+
                 if (swampContractState == QuestState.Active)
                 {
                     return "Contract: Beast from the Swamp";
@@ -95,6 +127,16 @@ namespace WitcherRightVersion.Quest
         {
             get
             {
+                if (mirrorTruthState == QuestState.Active || mirrorTruthState == QuestState.Completed)
+                {
+                    return GetMirrorTruthObjective();
+                }
+
+                if (rightVersionState == QuestState.Active || rightVersionState == QuestState.Completed)
+                {
+                    return GetRightVersionObjective();
+                }
+
                 if (swampContractState == QuestState.Active)
                 {
                     return GetSwampContractObjective();
@@ -164,6 +206,22 @@ namespace WitcherRightVersion.Quest
                     return FindOldCampBlade();
                 case ActionSmithDebtReturned:
                     return ReturnAndCompleteSmithDebt();
+                case ActionStartRightVersion:
+                    return StartRightVersion();
+                case ActionElsaProtected:
+                    return ResolveElsa(true);
+                case ActionElsaBetrayed:
+                    return ResolveElsa(false);
+                case ActionMedallionFound:
+                    return RecordMedallionFound();
+                case ActionTowerRouteOpened:
+                    return OpenTowerRoute();
+                case ActionOrtenDiaryFound:
+                    return RecordOrtenDiary();
+                case ActionOrtenConfronted:
+                    return ConfrontOrten();
+                case ActionMirrorShardsDestroyed:
+                    return DestroyMirrorShards();
                 default:
                     Debug.LogWarning($"Unknown quest action: {actionId}", this);
                     return false;
@@ -242,6 +300,176 @@ namespace WitcherRightVersion.Quest
             swampContractStage = SwampContractStage.Completed;
             PlayerRewardService.Instance?.GrantSwampContractReward();
             NotifyQuestChanged("Quest completed");
+            return true;
+        }
+
+        private bool StartRightVersion()
+        {
+            if (rightVersionState != QuestState.NotStarted)
+            {
+                Debug.Log($"Quest already started: {RightVersionQuestId}", this);
+                return false;
+            }
+
+            rightVersionState = QuestState.Active;
+            rightVersionStage = RightVersionStage.FindElsa;
+            DecisionFlagService.Instance?.SetFlag("rightVersionStarted");
+            NotifyQuestChanged("Quest started", RightVersionQuestId, rightVersionStage.ToString());
+            return true;
+        }
+
+        private bool EnsureRightVersionStarted()
+        {
+            return rightVersionState != QuestState.NotStarted || StartRightVersion();
+        }
+
+        private bool ResolveElsa(bool protectedElsa)
+        {
+            if (!EnsureRightVersionStarted())
+            {
+                return false;
+            }
+
+            if (rightVersionState != QuestState.Active)
+            {
+                Debug.Log($"Cannot resolve Elsa: quest is {rightVersionState}.", this);
+                return false;
+            }
+
+            rightVersionStage = RightVersionStage.FindMedallion;
+            DecisionFlagService.Instance?.SetFlag(protectedElsa ? "ElsaProtected" : "ElsaBetrayed");
+            if (!protectedElsa)
+            {
+                DecisionFlagService.Instance?.SetFlag("MayorSupported");
+            }
+
+            NotifyQuestChanged("Elsa decision recorded", RightVersionQuestId, rightVersionStage.ToString());
+            return true;
+        }
+
+        private bool RecordMedallionFound()
+        {
+            if (!EnsureRightVersionStarted())
+            {
+                return false;
+            }
+
+            if (rightVersionState != QuestState.Active)
+            {
+                Debug.Log($"Cannot record medallion: quest is {rightVersionState}.", this);
+                return false;
+            }
+
+            rightVersionStage = RightVersionStage.OpenTowerRoute;
+            DecisionFlagService.Instance?.SetFlag("MedallionFound");
+            NotifyQuestChanged("Medallion found", RightVersionQuestId, rightVersionStage.ToString());
+            return true;
+        }
+
+        private bool OpenTowerRoute()
+        {
+            if (!EnsureRightVersionStarted())
+            {
+                return false;
+            }
+
+            if (rightVersionState == QuestState.Active)
+            {
+                rightVersionState = QuestState.Completed;
+                rightVersionStage = RightVersionStage.Completed;
+            }
+
+            DecisionFlagService.Instance?.SetFlag("TowerRouteOpened");
+            StartMirrorTruth();
+            NotifyQuestChanged("Tower route opened", MirrorTruthQuestId, mirrorTruthStage.ToString());
+            return true;
+        }
+
+        private bool StartMirrorTruth()
+        {
+            if (mirrorTruthState != QuestState.NotStarted)
+            {
+                return false;
+            }
+
+            mirrorTruthState = QuestState.Active;
+            mirrorTruthStage = MirrorTruthStage.ReadOrtenDiary;
+            DecisionFlagService.Instance?.SetFlag("mirrorTruthStarted");
+            NotifyQuestChanged("Quest started", MirrorTruthQuestId, mirrorTruthStage.ToString());
+            return true;
+        }
+
+        private bool EnsureMirrorTruthStarted()
+        {
+            if (mirrorTruthState != QuestState.NotStarted)
+            {
+                return true;
+            }
+
+            if (rightVersionState == QuestState.NotStarted)
+            {
+                StartRightVersion();
+            }
+
+            rightVersionState = QuestState.Completed;
+            rightVersionStage = RightVersionStage.Completed;
+            return StartMirrorTruth();
+        }
+
+        private bool RecordOrtenDiary()
+        {
+            if (!EnsureMirrorTruthStarted())
+            {
+                return false;
+            }
+
+            if (mirrorTruthState != QuestState.Active)
+            {
+                Debug.Log($"Cannot record Orten diary: quest is {mirrorTruthState}.", this);
+                return false;
+            }
+
+            mirrorTruthStage = MirrorTruthStage.ConfrontOrten;
+            DecisionFlagService.Instance?.SetFlag("OrtenDiaryFound");
+            NotifyQuestChanged("Orten diary found", MirrorTruthQuestId, mirrorTruthStage.ToString());
+            return true;
+        }
+
+        private bool ConfrontOrten()
+        {
+            if (!EnsureMirrorTruthStarted())
+            {
+                return false;
+            }
+
+            if (mirrorTruthState != QuestState.Active)
+            {
+                Debug.Log($"Cannot confront Orten: quest is {mirrorTruthState}.", this);
+                return false;
+            }
+
+            mirrorTruthStage = MirrorTruthStage.ChooseEnding;
+            DecisionFlagService.Instance?.SetFlag("OrtenConfronted");
+            NotifyQuestChanged("Orten confronted", MirrorTruthQuestId, mirrorTruthStage.ToString());
+            return true;
+        }
+
+        private bool DestroyMirrorShards()
+        {
+            if (!EnsureMirrorTruthStarted())
+            {
+                return false;
+            }
+
+            if (mirrorTruthState != QuestState.Active)
+            {
+                Debug.Log($"Cannot destroy mirror shards: quest is {mirrorTruthState}.", this);
+                return false;
+            }
+
+            mirrorTruthStage = MirrorTruthStage.ChooseEnding;
+            DecisionFlagService.Instance?.SetFlag("MirrorShardsDestroyed");
+            NotifyQuestChanged("Mirror shards destroyed", MirrorTruthQuestId, mirrorTruthStage.ToString());
             return true;
         }
 
@@ -435,6 +663,44 @@ namespace WitcherRightVersion.Quest
             }
         }
 
+        private string GetRightVersionObjective()
+        {
+            switch (rightVersionStage)
+            {
+                case RightVersionStage.FindElsa:
+                    return "Find Elsa in the Black Swamp and hear the first version.";
+                case RightVersionStage.DecideElsa:
+                    return "Decide whether Elsa is witness, suspect, or bait.";
+                case RightVersionStage.FindMedallion:
+                    return "Find the girl's medallion near the drowned reeds.";
+                case RightVersionStage.OpenTowerRoute:
+                    return "Use Elsa's clue or the reed charm mark to open the tower route.";
+                case RightVersionStage.Completed:
+                    return "Right Version completed. The tower route is open.";
+                default:
+                    return "Follow the version the village tried to bury.";
+            }
+        }
+
+        private string GetMirrorTruthObjective()
+        {
+            switch (mirrorTruthStage)
+            {
+                case MirrorTruthStage.EnterTower:
+                    return "Enter the ruined tower above the swamp.";
+                case MirrorTruthStage.ReadOrtenDiary:
+                    return "Read Orten's diary in the tower ruins.";
+                case MirrorTruthStage.ConfrontOrten:
+                    return "Confront Orten in the mirror hall.";
+                case MirrorTruthStage.ChooseEnding:
+                    return "Return to the Ash Road altars and choose Truth, Lie, or Sacrifice.";
+                case MirrorTruthStage.Completed:
+                    return "Mirror of Truth completed.";
+                default:
+                    return "Follow the mirror's last memory.";
+            }
+        }
+
         private string GetSmithDebtObjective()
         {
             switch (smithDebtStage)
@@ -471,6 +737,10 @@ namespace WitcherRightVersion.Quest
                 swampContractState = swampContractState.ToString(),
                 swampContractStage = swampContractStage.ToString(),
                 swampTraceCount = swampTraceCount,
+                rightVersionState = rightVersionState.ToString(),
+                rightVersionStage = rightVersionStage.ToString(),
+                mirrorTruthState = mirrorTruthState.ToString(),
+                mirrorTruthStage = mirrorTruthStage.ToString(),
                 missingHunterState = missingHunterState.ToString(),
                 missingHunterStage = missingHunterStage.ToString(),
                 missingHunterClueCount = missingHunterClueCount,
@@ -486,6 +756,10 @@ namespace WitcherRightVersion.Quest
                 swampContractState = QuestState.NotStarted;
                 swampContractStage = SwampContractStage.TalkToElder;
                 swampTraceCount = 0;
+                rightVersionState = QuestState.NotStarted;
+                rightVersionStage = RightVersionStage.FindElsa;
+                mirrorTruthState = QuestState.NotStarted;
+                mirrorTruthStage = MirrorTruthStage.EnterTower;
                 missingHunterState = QuestState.NotStarted;
                 missingHunterStage = MissingHunterStage.FindClues;
                 missingHunterClueCount = 0;
@@ -506,6 +780,26 @@ namespace WitcherRightVersion.Quest
             }
 
             swampTraceCount = Mathf.Clamp(snapshot.swampTraceCount, 0, RequiredSwampTraceCount);
+            if (!Enum.TryParse(snapshot.rightVersionState, out rightVersionState))
+            {
+                rightVersionState = QuestState.NotStarted;
+            }
+
+            if (!Enum.TryParse(snapshot.rightVersionStage, out rightVersionStage))
+            {
+                rightVersionStage = RightVersionStage.FindElsa;
+            }
+
+            if (!Enum.TryParse(snapshot.mirrorTruthState, out mirrorTruthState))
+            {
+                mirrorTruthState = QuestState.NotStarted;
+            }
+
+            if (!Enum.TryParse(snapshot.mirrorTruthStage, out mirrorTruthStage))
+            {
+                mirrorTruthStage = MirrorTruthStage.EnterTower;
+            }
+
             if (!Enum.TryParse(snapshot.missingHunterState, out missingHunterState))
             {
                 missingHunterState = QuestState.NotStarted;
@@ -537,6 +831,10 @@ namespace WitcherRightVersion.Quest
         public string swampContractState;
         public string swampContractStage;
         public int swampTraceCount;
+        public string rightVersionState;
+        public string rightVersionStage;
+        public string mirrorTruthState;
+        public string mirrorTruthStage;
         public string missingHunterState;
         public string missingHunterStage;
         public int missingHunterClueCount;

@@ -417,6 +417,26 @@ namespace WitcherRightVersion.Editor
                 Require(flags.HasFlag("oldCampBladeFound"), failures, "Smith's Debt must set oldCampBladeFound flag.");
                 Require(flags.HasFlag("smithDebtCompleted"), failures, "Smith's Debt must set smithDebtCompleted flag.");
 
+                Require(quest.RunAction(QuestService.ActionStartRightVersion), failures, "Right Version must start.");
+                Require(quest.RightVersionState == QuestState.Active, failures, "Right Version must become active.");
+                Require(quest.CurrentRightVersionStage == RightVersionStage.FindElsa, failures, "Right Version must start at FindElsa.");
+                Require(quest.RunAction(QuestService.ActionElsaProtected), failures, "Right Version must accept Elsa protection.");
+                Require(quest.CurrentRightVersionStage == RightVersionStage.FindMedallion, failures, "Right Version must move to FindMedallion after Elsa.");
+                Require(flags.HasFlag("ElsaProtected"), failures, "Right Version must set ElsaProtected flag.");
+                Require(quest.RunAction(QuestService.ActionMedallionFound), failures, "Right Version must accept medallion evidence.");
+                Require(quest.CurrentRightVersionStage == RightVersionStage.OpenTowerRoute, failures, "Right Version must move to OpenTowerRoute after medallion.");
+                Require(flags.HasFlag("MedallionFound"), failures, "Right Version must set MedallionFound flag.");
+                Require(quest.RunAction(QuestService.ActionTowerRouteOpened), failures, "Tower route must complete Right Version and start Mirror of Truth.");
+                Require(quest.RightVersionState == QuestState.Completed, failures, "Right Version must complete when tower route opens.");
+                Require(quest.MirrorTruthState == QuestState.Active, failures, "Mirror of Truth must start when tower route opens.");
+                Require(quest.CurrentMirrorTruthStage == MirrorTruthStage.ReadOrtenDiary, failures, "Mirror of Truth must start at ReadOrtenDiary.");
+                Require(quest.RunAction(QuestService.ActionOrtenDiaryFound), failures, "Mirror of Truth must accept Orten diary.");
+                Require(quest.CurrentMirrorTruthStage == MirrorTruthStage.ConfrontOrten, failures, "Mirror of Truth must move to ConfrontOrten.");
+                Require(flags.HasFlag("OrtenDiaryFound"), failures, "Mirror of Truth must set OrtenDiaryFound flag.");
+                Require(quest.RunAction(QuestService.ActionOrtenConfronted), failures, "Mirror of Truth must accept Orten confrontation.");
+                Require(quest.CurrentMirrorTruthStage == MirrorTruthStage.ChooseEnding, failures, "Mirror of Truth must move to ChooseEnding.");
+                Require(flags.HasFlag("OrtenConfronted"), failures, "Mirror of Truth must set OrtenConfronted flag.");
+
                 Require(SaveService.PrepareSceneTransfer(), failures, "Scene transfer must capture current session state.");
                 ValidateSceneTransferRestore(failures);
                 SetSingleton(flags);
@@ -492,6 +512,9 @@ namespace WitcherRightVersion.Editor
                 InvokeStart(restoreSave);
 
                 Require(restoreQuest.SwampContractState == QuestState.Completed, failures, "Scene transfer must restore completed swamp contract.");
+                Require(restoreQuest.RightVersionState == QuestState.Completed, failures, "Scene transfer must restore completed Right Version.");
+                Require(restoreQuest.MirrorTruthState == QuestState.Active, failures, "Scene transfer must restore active Mirror of Truth.");
+                Require(restoreQuest.CurrentMirrorTruthStage == MirrorTruthStage.ChooseEnding, failures, "Scene transfer must restore Mirror of Truth ending stage.");
                 Require(restoreQuest.MissingHunterState == QuestState.Completed, failures, "Scene transfer must restore completed Missing Hunter.");
                 Require(restoreQuest.SmithDebtState == QuestState.Completed, failures, "Scene transfer must restore completed Smith's Debt.");
                 Require(restoreRewards.Experience == 105, failures, "Scene transfer must restore XP.");
@@ -500,6 +523,9 @@ namespace WitcherRightVersion.Editor
                 Require(restoreInventory.HasWeapon("Improved Steel Sword"), failures, "Scene transfer must restore improved steel sword.");
                 Require(restoreInventory.HasItem("Antitoxin"), failures, "Scene transfer must restore crafted Antitoxin.");
                 Require(restoreFlags.HasFlag("questionedElderVersion"), failures, "Scene transfer must restore questionedElderVersion flag.");
+                Require(restoreFlags.HasFlag("ElsaProtected"), failures, "Scene transfer must restore ElsaProtected flag.");
+                Require(restoreFlags.HasFlag("MedallionFound"), failures, "Scene transfer must restore MedallionFound flag.");
+                Require(restoreFlags.HasFlag("OrtenConfronted"), failures, "Scene transfer must restore OrtenConfronted flag.");
                 Require(restoreFlags.HasFlag("smithDebtCompleted"), failures, "Scene transfer must restore smithDebtCompleted flag.");
             }
             finally
