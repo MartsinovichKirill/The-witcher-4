@@ -627,6 +627,18 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateWorldStoryEvidenceObjects(Transform parent)
         {
+            CreateQuestMarker(
+                parent,
+                "WorldWellWhisper",
+                "Old village well",
+                "Listen",
+                QuestService.ActionStartVoiceWell,
+                "A voice rises from the stones: find what she wore when the village named her a witch.",
+                "The well is silent now.",
+                new Vector3(0f, 0.32f, -4.35f),
+                new Vector3(0.5f, 0.16f, 0.5f),
+                new Color(0.2f, 0.22f, 0.25f, 1f));
+
             CreateDecisionFlagMarker(
                 parent,
                 "WorldGirlMedallion",
@@ -675,13 +687,14 @@ namespace WitcherRightVersion.Editor
                 new Color(0.16f, 0.28f, 0.21f, 1f),
                 QuestService.ActionTowerRouteOpened);
 
-            CreateDecisionFlagMarker(
+            CreateQuestMarker(
                 parent,
                 "WorldGhostMemory",
                 "Ghost memory",
                 "Listen",
-                "GhostMemoryHeard",
+                QuestService.ActionGhostMemoryHeard,
                 "A girl's voice names the well, the seal, and the men who called murder mercy.",
+                "The memory will not answer without the girl's medallion.",
                 new Vector3(-2.9f, 0.45f, 26.8f),
                 new Vector3(0.42f, 0.42f, 0.42f),
                 new Color(0.58f, 0.52f, 0.82f, 1f));

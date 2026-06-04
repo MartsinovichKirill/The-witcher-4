@@ -15,6 +15,7 @@ namespace WitcherRightVersion.Quest
         public const string MirrorTruthQuestId = "mirror_truth";
         public const string MissingHunterQuestId = "missing_hunter";
         public const string SmithDebtQuestId = "smith_debt";
+        public const string VoiceWellQuestId = "voice_well";
         public const string ActionStartSwampContract = "start_swamp_contract";
         public const string ActionMartaSpoken = "marta_spoken";
         public const string ActionSwampTracesFound = "swamp_traces_found";
@@ -38,6 +39,8 @@ namespace WitcherRightVersion.Quest
         public const string ActionOrtenDiaryFound = "orten_diary_found";
         public const string ActionOrtenConfronted = "orten_confronted";
         public const string ActionMirrorShardsDestroyed = "mirror_shards_destroyed";
+        public const string ActionStartVoiceWell = "start_voice_well";
+        public const string ActionGhostMemoryHeard = "ghost_memory_heard";
 
         private QuestState swampContractState = QuestState.NotStarted;
         private SwampContractStage swampContractStage = SwampContractStage.TalkToElder;
@@ -51,6 +54,8 @@ namespace WitcherRightVersion.Quest
         private int missingHunterClueCount;
         private QuestState smithDebtState = QuestState.NotStarted;
         private SmithDebtStage smithDebtStage = SmithDebtStage.FindOldCampBlade;
+        private QuestState voiceWellState = QuestState.NotStarted;
+        private VoiceWellStage voiceWellStage = VoiceWellStage.ListenAtWell;
 
         public static QuestService Instance { get; private set; }
         public event Action QuestChanged;
@@ -69,16 +74,20 @@ namespace WitcherRightVersion.Quest
         public int MissingHunterClueTarget => RequiredMissingHunterClueCount;
         public QuestState SmithDebtState => smithDebtState;
         public SmithDebtStage CurrentSmithDebtStage => smithDebtStage;
+        public QuestState VoiceWellState => voiceWellState;
+        public VoiceWellStage CurrentVoiceWellStage => voiceWellStage;
         public bool HasActiveQuest => swampContractState == QuestState.Active
             || rightVersionState == QuestState.Active
             || mirrorTruthState == QuestState.Active
             || missingHunterState == QuestState.Active
             || smithDebtState == QuestState.Active
+            || voiceWellState == QuestState.Active
             || swampContractState == QuestState.Completed
             || rightVersionState == QuestState.Completed
             || mirrorTruthState == QuestState.Completed
             || missingHunterState == QuestState.Completed
-            || smithDebtState == QuestState.Completed;
+            || smithDebtState == QuestState.Completed
+            || voiceWellState == QuestState.Completed;
 
         public string ActiveQuestTitle
         {
@@ -87,6 +96,11 @@ namespace WitcherRightVersion.Quest
                 if (mirrorTruthState == QuestState.Active || mirrorTruthState == QuestState.Completed)
                 {
                     return "Mirror of Truth";
+                }
+
+                if (voiceWellState == QuestState.Active || voiceWellState == QuestState.Completed)
+                {
+                    return "Voice from the Well";
                 }
 
                 if (rightVersionState == QuestState.Active || rightVersionState == QuestState.Completed)
@@ -130,6 +144,11 @@ namespace WitcherRightVersion.Quest
                 if (mirrorTruthState == QuestState.Active || mirrorTruthState == QuestState.Completed)
                 {
                     return GetMirrorTruthObjective();
+                }
+
+                if (voiceWellState == QuestState.Active || voiceWellState == QuestState.Completed)
+                {
+                    return GetVoiceWellObjective();
                 }
 
                 if (rightVersionState == QuestState.Active || rightVersionState == QuestState.Completed)
@@ -222,6 +241,10 @@ namespace WitcherRightVersion.Quest
                     return ConfrontOrten();
                 case ActionMirrorShardsDestroyed:
                     return DestroyMirrorShards();
+                case ActionStartVoiceWell:
+                    return StartVoiceWell();
+                case ActionGhostMemoryHeard:
+                    return RecordGhostMemoryHeard();
                 default:
                     Debug.LogWarning($"Unknown quest action: {actionId}", this);
                     return false;
@@ -362,6 +385,8 @@ namespace WitcherRightVersion.Quest
 
             rightVersionStage = RightVersionStage.OpenTowerRoute;
             DecisionFlagService.Instance?.SetFlag("MedallionFound");
+            InventoryService.Instance?.AddItem("Girl's Medallion");
+            AdvanceVoiceWellAfterMedallion();
             NotifyQuestChanged("Medallion found", RightVersionQuestId, rightVersionStage.ToString());
             return true;
         }
@@ -623,6 +648,62 @@ namespace WitcherRightVersion.Quest
             return true;
         }
 
+        private bool StartVoiceWell()
+        {
+            if (voiceWellState != QuestState.NotStarted)
+            {
+                Debug.Log($"Quest already started: {VoiceWellQuestId}", this);
+                return false;
+            }
+
+            voiceWellState = QuestState.Active;
+            voiceWellStage = DecisionFlagService.Instance != null && DecisionFlagService.Instance.HasFlag("MedallionFound")
+                ? VoiceWellStage.HearGhostMemory
+                : VoiceWellStage.FindMedallion;
+            DecisionFlagService.Instance?.SetFlag("voiceWellStarted");
+            NotifyQuestChanged("Quest started", VoiceWellQuestId, voiceWellStage.ToString());
+            return true;
+        }
+
+        private void AdvanceVoiceWellAfterMedallion()
+        {
+            if (voiceWellState == QuestState.Completed)
+            {
+                return;
+            }
+
+            if (voiceWellState == QuestState.NotStarted)
+            {
+                voiceWellState = QuestState.Active;
+                DecisionFlagService.Instance?.SetFlag("voiceWellStarted");
+            }
+
+            voiceWellStage = VoiceWellStage.HearGhostMemory;
+            NotifyQuestChanged("Medallion recovered", VoiceWellQuestId, voiceWellStage.ToString());
+        }
+
+        private bool RecordGhostMemoryHeard()
+        {
+            if (voiceWellState != QuestState.Active)
+            {
+                Debug.Log($"Cannot record ghost memory: quest is {voiceWellState}.", this);
+                return false;
+            }
+
+            if (voiceWellStage != VoiceWellStage.HearGhostMemory)
+            {
+                Debug.Log($"Cannot record ghost memory: current stage is {voiceWellStage}.", this);
+                return false;
+            }
+
+            voiceWellState = QuestState.Completed;
+            voiceWellStage = VoiceWellStage.Completed;
+            DecisionFlagService.Instance?.SetFlag("GhostMemoryHeard");
+            PlayerRewardService.Instance?.GrantVoiceWellReward();
+            NotifyQuestChanged("Quest completed", VoiceWellQuestId, voiceWellStage.ToString());
+            return true;
+        }
+
         private string GetSwampContractObjective()
         {
             switch (swampContractStage)
@@ -718,6 +799,23 @@ namespace WitcherRightVersion.Quest
             }
         }
 
+        private string GetVoiceWellObjective()
+        {
+            switch (voiceWellStage)
+            {
+                case VoiceWellStage.ListenAtWell:
+                    return "Listen to the old village well.";
+                case VoiceWellStage.FindMedallion:
+                    return "Find the girl's medallion near the drowned reeds.";
+                case VoiceWellStage.HearGhostMemory:
+                    return "Listen to the ghost memory in the tower ruins.";
+                case VoiceWellStage.Completed:
+                    return "Voice from the Well completed.";
+                default:
+                    return "Follow the voice buried under the village.";
+            }
+        }
+
         private void NotifyQuestChanged(string reason)
         {
             NotifyQuestChanged(reason, SwampContractQuestId, swampContractStage.ToString());
@@ -745,7 +843,9 @@ namespace WitcherRightVersion.Quest
                 missingHunterStage = missingHunterStage.ToString(),
                 missingHunterClueCount = missingHunterClueCount,
                 smithDebtState = smithDebtState.ToString(),
-                smithDebtStage = smithDebtStage.ToString()
+                smithDebtStage = smithDebtStage.ToString(),
+                voiceWellState = voiceWellState.ToString(),
+                voiceWellStage = voiceWellStage.ToString()
             };
         }
 
@@ -765,6 +865,8 @@ namespace WitcherRightVersion.Quest
                 missingHunterClueCount = 0;
                 smithDebtState = QuestState.NotStarted;
                 smithDebtStage = SmithDebtStage.FindOldCampBlade;
+                voiceWellState = QuestState.NotStarted;
+                voiceWellStage = VoiceWellStage.ListenAtWell;
                 NotifyQuestChanged("Quest restored");
                 return;
             }
@@ -821,6 +923,16 @@ namespace WitcherRightVersion.Quest
                 smithDebtStage = SmithDebtStage.FindOldCampBlade;
             }
 
+            if (!Enum.TryParse(snapshot.voiceWellState, out voiceWellState))
+            {
+                voiceWellState = QuestState.NotStarted;
+            }
+
+            if (!Enum.TryParse(snapshot.voiceWellStage, out voiceWellStage))
+            {
+                voiceWellStage = VoiceWellStage.ListenAtWell;
+            }
+
             NotifyQuestChanged("Quest restored");
         }
     }
@@ -840,5 +952,7 @@ namespace WitcherRightVersion.Quest
         public int missingHunterClueCount;
         public string smithDebtState;
         public string smithDebtStage;
+        public string voiceWellState;
+        public string voiceWellStage;
     }
 }

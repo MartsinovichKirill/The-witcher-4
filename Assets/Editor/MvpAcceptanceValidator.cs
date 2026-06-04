@@ -171,6 +171,7 @@ namespace WitcherRightVersion.Editor
             RequireObject<QuestProgressInteractable>("WorldTrace_SlimeTrail", failures);
             RequireObject<QuestProgressInteractable>("WorldTrace_TornCloth", failures);
             RequireObject<QuestProgressInteractable>("WorldHunterCamp_Start", failures);
+            RequireObject<QuestProgressInteractable>("WorldWellWhisper", failures);
             RequireObject<CraftingInteractable>("WorldAlchemyTable_Swallow", failures);
             RequireObject<CraftingInteractable>("WorldAlchemyTable_Antitoxin", failures);
             RequireObject<CraftingInteractable>("WorldForge_ReinforcedArmor", failures);
@@ -178,7 +179,7 @@ namespace WitcherRightVersion.Editor
             RequireObject<DecisionFlagInteractable>("WorldOrtenDiary", failures);
             RequireObject<DecisionFlagInteractable>("WorldMirrorShardCache", failures);
             RequireObject<DecisionFlagInteractable>("WorldTowerReedCharmGate", failures);
-            RequireObject<DecisionFlagInteractable>("WorldGhostMemory", failures);
+            RequireObject<QuestProgressInteractable>("WorldGhostMemory", failures);
             RequireObject<DecisionFlagInteractable>("WorldElderSealProof", failures);
             RequireObject<EndingAltarInteractable>("WorldFinalTruthAltar", failures);
             RequireObject<EndingAltarInteractable>("WorldFinalLieAltar", failures);

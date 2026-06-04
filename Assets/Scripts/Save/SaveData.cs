@@ -9,7 +9,7 @@ namespace WitcherRightVersion.Save
     [Serializable]
     public sealed class SaveData
     {
-        public string version = "mvp-scene-transfer-0.17";
+        public string version = "voice-well-quest-0.18";
         public string sceneName;
         public SerializableVector3 playerPosition;
         public float playerHealth;

@@ -97,6 +97,13 @@ namespace WitcherRightVersion.Core
             InteractionPromptUI.Instance?.ShowMessage("Reward: 30 XP and Improved Steel Sword.");
         }
 
+        public void GrantVoiceWellReward()
+        {
+            AddExperience(20);
+            DecisionFlagService.Instance?.SetFlag("voiceWellCompleted");
+            InteractionPromptUI.Instance?.ShowMessage("Reward: 20 XP. Truth evidence strengthened.");
+        }
+
         public PlayerRewardSnapshot CaptureSnapshot()
         {
             return new PlayerRewardSnapshot
