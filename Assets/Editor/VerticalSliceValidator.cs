@@ -287,6 +287,7 @@ namespace WitcherRightVersion.Editor
             ResetSingleton<InventoryService>();
             ResetSingleton<CraftingService>();
             ResetSingleton<QuestService>();
+            ResetSingleton<SaveService>();
 
             var root = new GameObject("VerticalSliceQuestFlowSimulation");
             try
@@ -301,6 +302,7 @@ namespace WitcherRightVersion.Editor
                 var inventory = root.AddComponent<InventoryService>();
                 var crafting = root.AddComponent<CraftingService>();
                 var quest = root.AddComponent<QuestService>();
+                var save = root.AddComponent<SaveService>();
 
                 InvokeAwake(flags);
                 InvokeAwake(endings);
@@ -308,6 +310,7 @@ namespace WitcherRightVersion.Editor
                 InvokeAwake(inventory);
                 InvokeAwake(crafting);
                 InvokeAwake(quest);
+                InvokeAwake(save);
 
                 Require(crafting.Recipes.Count == 3, failures, "Crafting must expose three MVP recipes.");
 
@@ -406,6 +409,16 @@ namespace WitcherRightVersion.Editor
                 Require(flags.HasFlag("oldCampBladeFound"), failures, "Smith's Debt must set oldCampBladeFound flag.");
                 Require(flags.HasFlag("smithDebtCompleted"), failures, "Smith's Debt must set smithDebtCompleted flag.");
 
+                Require(SaveService.PrepareSceneTransfer(), failures, "Scene transfer must capture current session state.");
+                ValidateSceneTransferRestore(failures);
+                SetSingleton(flags);
+                SetSingleton(endings);
+                SetSingleton(rewards);
+                SetSingleton(inventory);
+                SetSingleton(crafting);
+                SetSingleton(quest);
+                SetSingleton(save);
+
                 Require(!endings.CanCompleteTruthEnding(), failures, "Truth ending must be locked before the final route opens.");
                 EndingService.UnlockTruthRoute();
                 Require(endings.CanCompleteTruthEnding(), failures, "Truth ending must unlock after entering Ash Road route.");
@@ -427,6 +440,61 @@ namespace WitcherRightVersion.Editor
                 ResetSingleton<InventoryService>();
                 ResetSingleton<CraftingService>();
                 ResetSingleton<QuestService>();
+                ResetSingleton<SaveService>();
+            }
+        }
+
+        private static void ValidateSceneTransferRestore(List<string> failures)
+        {
+            ResetSingleton<DecisionFlagService>();
+            ResetSingleton<EndingService>();
+            ResetSingleton<PlayerRewardService>();
+            ResetSingleton<InventoryService>();
+            ResetSingleton<CraftingService>();
+            ResetSingleton<QuestService>();
+            ResetSingleton<SaveService>();
+
+            var restoreRoot = new GameObject("SceneTransferRestoreSimulation");
+            try
+            {
+                var restoreFlags = restoreRoot.AddComponent<DecisionFlagService>();
+                var restoreEndings = restoreRoot.AddComponent<EndingService>();
+                var restoreRewards = restoreRoot.AddComponent<PlayerRewardService>();
+                var restoreInventory = restoreRoot.AddComponent<InventoryService>();
+                var restoreCrafting = restoreRoot.AddComponent<CraftingService>();
+                var restoreQuest = restoreRoot.AddComponent<QuestService>();
+                var restoreSave = restoreRoot.AddComponent<SaveService>();
+
+                InvokeAwake(restoreFlags);
+                InvokeAwake(restoreEndings);
+                InvokeAwake(restoreRewards);
+                InvokeAwake(restoreInventory);
+                InvokeAwake(restoreCrafting);
+                InvokeAwake(restoreQuest);
+                InvokeAwake(restoreSave);
+                InvokeStart(restoreSave);
+
+                Require(restoreQuest.SwampContractState == QuestState.Completed, failures, "Scene transfer must restore completed swamp contract.");
+                Require(restoreQuest.MissingHunterState == QuestState.Completed, failures, "Scene transfer must restore completed Missing Hunter.");
+                Require(restoreQuest.SmithDebtState == QuestState.Completed, failures, "Scene transfer must restore completed Smith's Debt.");
+                Require(restoreRewards.Experience == 105, failures, "Scene transfer must restore XP.");
+                Require(restoreRewards.Level == 2, failures, "Scene transfer must restore level from XP.");
+                Require(restoreRewards.Coins == 30, failures, "Scene transfer must restore coins.");
+                Require(restoreInventory.HasWeapon("Improved Steel Sword"), failures, "Scene transfer must restore improved steel sword.");
+                Require(restoreInventory.HasItem("Antitoxin"), failures, "Scene transfer must restore crafted Antitoxin.");
+                Require(restoreFlags.HasFlag("questionedElderVersion"), failures, "Scene transfer must restore questionedElderVersion flag.");
+                Require(restoreFlags.HasFlag("smithDebtCompleted"), failures, "Scene transfer must restore smithDebtCompleted flag.");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(restoreRoot);
+                ResetSingleton<DecisionFlagService>();
+                ResetSingleton<EndingService>();
+                ResetSingleton<PlayerRewardService>();
+                ResetSingleton<InventoryService>();
+                ResetSingleton<CraftingService>();
+                ResetSingleton<QuestService>();
+                ResetSingleton<SaveService>();
             }
         }
 
@@ -491,10 +559,22 @@ namespace WitcherRightVersion.Editor
             method?.Invoke(component, null);
         }
 
+        private static void InvokeStart(MonoBehaviour component)
+        {
+            var method = component.GetType().GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic);
+            method?.Invoke(component, null);
+        }
+
         private static void ResetSingleton<T>() where T : Component
         {
             var backingField = typeof(T).GetField("<Instance>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic);
             backingField?.SetValue(null, null);
+        }
+
+        private static void SetSingleton<T>(T component) where T : Component
+        {
+            var backingField = typeof(T).GetField("<Instance>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic);
+            backingField?.SetValue(null, component);
         }
     }
 }

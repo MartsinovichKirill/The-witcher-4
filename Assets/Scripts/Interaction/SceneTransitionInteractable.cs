@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using WitcherRightVersion.Save;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Interaction
@@ -29,6 +30,7 @@ namespace WitcherRightVersion.Interaction
             }
 
             InteractionPromptUI.Instance?.ShowMessage($"Traveling to {targetSceneName}.");
+            SaveService.PrepareSceneTransfer();
             SceneManager.LoadScene(targetSceneName);
         }
     }

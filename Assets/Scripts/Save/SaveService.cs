@@ -23,6 +23,7 @@ namespace WitcherRightVersion.Save
         public string SaveDirectory => SaveRootDirectory;
         public static string SaveRootDirectory => Path.Combine(Application.persistentDataPath, "WitcherRightVersion");
 
+        private static SaveData pendingSceneTransferData;
         private bool isRestoring;
         private bool questEventsAttached;
 
@@ -45,6 +46,11 @@ namespace WitcherRightVersion.Save
         private void Start()
         {
             AttachQuestEvents();
+
+            if (TryApplyPendingSceneTransfer())
+            {
+                return;
+            }
 
             if (PlayerPrefs.GetInt(PendingAutosaveLoadKey, 0) == 1)
             {
@@ -141,6 +147,24 @@ namespace WitcherRightVersion.Save
         {
             PlayerPrefs.SetInt(PendingAutosaveLoadKey, 1);
             PlayerPrefs.Save();
+        }
+
+        public static bool PrepareSceneTransfer()
+        {
+            if (Instance == null)
+            {
+                return false;
+            }
+
+            var data = Instance.CaptureSaveData();
+            if (data == null)
+            {
+                return false;
+            }
+
+            pendingSceneTransferData = data;
+            Debug.Log($"Scene transfer prepared from {data.sceneName}.");
+            return true;
         }
 
         private bool SaveToPath(string path, string label)
@@ -249,6 +273,46 @@ namespace WitcherRightVersion.Save
                         controller.enabled = true;
                     }
 
+                    var health = player.GetComponent<Health>();
+                    health?.RestoreCurrentHealth(data.playerHealth);
+                }
+            }
+            finally
+            {
+                isRestoring = false;
+            }
+        }
+
+        private bool TryApplyPendingSceneTransfer()
+        {
+            if (pendingSceneTransferData == null)
+            {
+                return false;
+            }
+
+            var data = pendingSceneTransferData;
+            pendingSceneTransferData = null;
+
+            RestoreSharedState(data);
+            Debug.Log($"Scene transfer restored from {data.sceneName} to {SceneManager.GetActiveScene().name}.", this);
+            InteractionPromptUI.Instance?.ShowMessage("Progress carried into this area.");
+            return true;
+        }
+
+        private void RestoreSharedState(SaveData data)
+        {
+            isRestoring = true;
+            try
+            {
+                DecisionFlagService.Instance?.RestoreFlags(data.decisionFlags);
+                PlayerRewardService.Instance?.RestoreSnapshot(data.rewards);
+                InventoryService.Instance?.RestoreSnapshot(data.inventory);
+                RestoreCompletedQuestInteractables(data.completedQuestInteractables);
+                QuestService.Instance?.RestoreSnapshot(data.quest);
+
+                var player = GameObject.FindGameObjectWithTag("Player");
+                if (player != null)
+                {
                     var health = player.GetComponent<Health>();
                     health?.RestoreCurrentHealth(data.playerHealth);
                 }

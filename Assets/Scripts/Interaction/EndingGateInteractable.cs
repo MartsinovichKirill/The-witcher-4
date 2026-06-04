@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using WitcherRightVersion.Core;
 using WitcherRightVersion.Quest;
+using WitcherRightVersion.Save;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Interaction
@@ -33,6 +34,7 @@ namespace WitcherRightVersion.Interaction
 
             EndingService.UnlockTruthRoute();
             InteractionPromptUI.Instance?.ShowMessage("The ash road opens. The village will have to hear the truth.");
+            SaveService.PrepareSceneTransfer();
             SceneManager.LoadScene(targetSceneName);
         }
 
