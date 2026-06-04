@@ -104,6 +104,15 @@ namespace WitcherRightVersion.Core
             InteractionPromptUI.Instance?.ShowMessage("Reward: 20 XP. Truth evidence strengthened.");
         }
 
+        public void GrantDrownerNestReward()
+        {
+            AddExperience(35);
+            AddCoins(15);
+            InventoryService.Instance?.AddItem("Drowner Slime");
+            DecisionFlagService.Instance?.SetFlag("DrownerNestCleared");
+            InteractionPromptUI.Instance?.ShowMessage("Reward: 35 XP, 15 coins, Drowner Slime.");
+        }
+
         public PlayerRewardSnapshot CaptureSnapshot()
         {
             return new PlayerRewardSnapshot

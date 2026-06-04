@@ -13,6 +13,8 @@ namespace WitcherRightVersion.Combat
         [SerializeField] private bool onlyActiveDuringDrownerStage = true;
         [SerializeField] private string deathFlagToSet = "killedFirstDrowner";
         [SerializeField] private string questActionOnDeath = QuestService.ActionFirstDrownerKilled;
+        [SerializeField] private string requiredFlagToBecomeActive;
+        [SerializeField] private string deathMessage = "Enemy is dead.";
 
         [Header("Movement")]
         [SerializeField] private float aggroRange = 7f;
@@ -47,12 +49,16 @@ namespace WitcherRightVersion.Combat
             ApplyCombatActiveState(IsCombatActive());
         }
 
-        public void Configure(string newEnemyName, bool newOnlyActiveDuringDrownerStage, string newDeathFlagToSet, string newQuestActionOnDeath)
+        public void Configure(string newEnemyName, bool newOnlyActiveDuringDrownerStage, string newDeathFlagToSet, string newQuestActionOnDeath, string newRequiredFlagToBecomeActive = "", string newDeathMessage = "")
         {
             enemyName = newEnemyName;
             onlyActiveDuringDrownerStage = newOnlyActiveDuringDrownerStage;
             deathFlagToSet = newDeathFlagToSet;
             questActionOnDeath = newQuestActionOnDeath;
+            requiredFlagToBecomeActive = newRequiredFlagToBecomeActive;
+            deathMessage = string.IsNullOrWhiteSpace(newDeathMessage)
+                ? $"{enemyName} is dead."
+                : newDeathMessage;
         }
 
         private void Update()
@@ -168,7 +174,8 @@ namespace WitcherRightVersion.Combat
 
             if (!onlyActiveDuringDrownerStage)
             {
-                return true;
+                return string.IsNullOrWhiteSpace(requiredFlagToBecomeActive)
+                    || (DecisionFlagService.Instance != null && DecisionFlagService.Instance.HasFlag(requiredFlagToBecomeActive));
             }
 
             var quest = QuestService.Instance;
@@ -212,7 +219,7 @@ namespace WitcherRightVersion.Combat
                 QuestService.Instance?.RunAction(questActionOnDeath);
             }
 
-            InteractionPromptUI.Instance?.ShowMessage($"{enemyName} is dead. Return to Elder Voytsekh.");
+            InteractionPromptUI.Instance?.ShowMessage(deathMessage);
         }
     }
 }

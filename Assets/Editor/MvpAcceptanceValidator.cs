@@ -172,6 +172,8 @@ namespace WitcherRightVersion.Editor
             RequireObject<QuestProgressInteractable>("WorldTrace_TornCloth", failures);
             RequireObject<QuestProgressInteractable>("WorldHunterCamp_Start", failures);
             RequireObject<QuestProgressInteractable>("WorldWellWhisper", failures);
+            RequireObject<QuestProgressInteractable>("WorldDrownerNestNotice", failures);
+            RequireObject<QuestProgressInteractable>("WorldDrownerNestRewardCache", failures);
             RequireObject<CraftingInteractable>("WorldAlchemyTable_Swallow", failures);
             RequireObject<CraftingInteractable>("WorldAlchemyTable_Antitoxin", failures);
             RequireObject<CraftingInteractable>("WorldForge_ReinforcedArmor", failures);
@@ -197,6 +199,9 @@ namespace WitcherRightVersion.Editor
 
             ValidateEnemy("TowerSkeletonGuard_Left", failures);
             ValidateEnemy("TowerSkeletonGuard_Right", failures);
+            ValidateEnemy("WorldDrownerNestEnemy_01", failures);
+            ValidateEnemy("WorldDrownerNestEnemy_02", failures);
+            ValidateEnemy("WorldDrownerNestEnemy_03", failures);
         }
 
         private static void ValidateEnemy(string objectName, List<string> failures)

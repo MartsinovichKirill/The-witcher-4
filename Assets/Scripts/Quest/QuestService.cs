@@ -9,6 +9,7 @@ namespace WitcherRightVersion.Quest
     {
         private const int RequiredSwampTraceCount = 3;
         private const int RequiredMissingHunterClueCount = 2;
+        private const int RequiredDrownerNestKillCount = 3;
 
         public const string SwampContractQuestId = "contract_swamp_beast";
         public const string RightVersionQuestId = "right_version";
@@ -16,6 +17,7 @@ namespace WitcherRightVersion.Quest
         public const string MissingHunterQuestId = "missing_hunter";
         public const string SmithDebtQuestId = "smith_debt";
         public const string VoiceWellQuestId = "voice_well";
+        public const string DrownerNestQuestId = "drowner_nest";
         public const string ActionStartSwampContract = "start_swamp_contract";
         public const string ActionMartaSpoken = "marta_spoken";
         public const string ActionSwampTracesFound = "swamp_traces_found";
@@ -41,6 +43,9 @@ namespace WitcherRightVersion.Quest
         public const string ActionMirrorShardsDestroyed = "mirror_shards_destroyed";
         public const string ActionStartVoiceWell = "start_voice_well";
         public const string ActionGhostMemoryHeard = "ghost_memory_heard";
+        public const string ActionStartDrownerNest = "start_drowner_nest";
+        public const string ActionDrownerNestEnemyKilled = "drowner_nest_enemy_killed";
+        public const string ActionDrownerNestRewardReceived = "drowner_nest_reward_received";
 
         private QuestState swampContractState = QuestState.NotStarted;
         private SwampContractStage swampContractStage = SwampContractStage.TalkToElder;
@@ -56,6 +61,9 @@ namespace WitcherRightVersion.Quest
         private SmithDebtStage smithDebtStage = SmithDebtStage.FindOldCampBlade;
         private QuestState voiceWellState = QuestState.NotStarted;
         private VoiceWellStage voiceWellStage = VoiceWellStage.ListenAtWell;
+        private QuestState drownerNestState = QuestState.NotStarted;
+        private DrownerNestStage drownerNestStage = DrownerNestStage.AcceptNotice;
+        private int drownerNestKillCount;
 
         public static QuestService Instance { get; private set; }
         public event Action QuestChanged;
@@ -76,18 +84,24 @@ namespace WitcherRightVersion.Quest
         public SmithDebtStage CurrentSmithDebtStage => smithDebtStage;
         public QuestState VoiceWellState => voiceWellState;
         public VoiceWellStage CurrentVoiceWellStage => voiceWellStage;
+        public QuestState DrownerNestState => drownerNestState;
+        public DrownerNestStage CurrentDrownerNestStage => drownerNestStage;
+        public int DrownerNestKillCount => drownerNestKillCount;
+        public int DrownerNestKillTarget => RequiredDrownerNestKillCount;
         public bool HasActiveQuest => swampContractState == QuestState.Active
             || rightVersionState == QuestState.Active
             || mirrorTruthState == QuestState.Active
             || missingHunterState == QuestState.Active
             || smithDebtState == QuestState.Active
             || voiceWellState == QuestState.Active
+            || drownerNestState == QuestState.Active
             || swampContractState == QuestState.Completed
             || rightVersionState == QuestState.Completed
             || mirrorTruthState == QuestState.Completed
             || missingHunterState == QuestState.Completed
             || smithDebtState == QuestState.Completed
-            || voiceWellState == QuestState.Completed;
+            || voiceWellState == QuestState.Completed
+            || drownerNestState == QuestState.Completed;
 
         public string ActiveQuestTitle
         {
@@ -113,6 +127,11 @@ namespace WitcherRightVersion.Quest
                     return "Contract: Beast from the Swamp";
                 }
 
+                if (drownerNestState == QuestState.Active)
+                {
+                    return "Drowner Nest";
+                }
+
                 if (missingHunterState == QuestState.Active)
                 {
                     return "Missing Hunter";
@@ -131,6 +150,11 @@ namespace WitcherRightVersion.Quest
                 if (smithDebtState == QuestState.Completed)
                 {
                     return "Smith's Debt";
+                }
+
+                if (drownerNestState == QuestState.Completed)
+                {
+                    return "Drowner Nest";
                 }
 
                 return swampContractState == QuestState.Completed ? "Contract: Beast from the Swamp" : string.Empty;
@@ -159,6 +183,11 @@ namespace WitcherRightVersion.Quest
                 if (swampContractState == QuestState.Active)
                 {
                     return GetSwampContractObjective();
+                }
+
+                if (drownerNestState == QuestState.Active || drownerNestState == QuestState.Completed)
+                {
+                    return GetDrownerNestObjective();
                 }
 
                 if (missingHunterState == QuestState.Active || missingHunterState == QuestState.Completed)
@@ -245,6 +274,12 @@ namespace WitcherRightVersion.Quest
                     return StartVoiceWell();
                 case ActionGhostMemoryHeard:
                     return RecordGhostMemoryHeard();
+                case ActionStartDrownerNest:
+                    return StartDrownerNest();
+                case ActionDrownerNestEnemyKilled:
+                    return RecordDrownerNestKill();
+                case ActionDrownerNestRewardReceived:
+                    return CompleteDrownerNest();
                 default:
                     Debug.LogWarning($"Unknown quest action: {actionId}", this);
                     return false;
@@ -704,6 +739,64 @@ namespace WitcherRightVersion.Quest
             return true;
         }
 
+        private bool StartDrownerNest()
+        {
+            if (drownerNestState != QuestState.NotStarted)
+            {
+                Debug.Log($"Quest already started: {DrownerNestQuestId}", this);
+                return false;
+            }
+
+            drownerNestState = QuestState.Active;
+            drownerNestStage = DrownerNestStage.ClearNest;
+            drownerNestKillCount = 0;
+            DecisionFlagService.Instance?.SetFlag("drownerNestStarted");
+            NotifyQuestChanged("Quest started", DrownerNestQuestId, drownerNestStage.ToString());
+            return true;
+        }
+
+        private bool RecordDrownerNestKill()
+        {
+            if (drownerNestState != QuestState.Active)
+            {
+                Debug.Log($"Cannot record drowner nest kill: quest is {drownerNestState}.", this);
+                return false;
+            }
+
+            if (drownerNestStage != DrownerNestStage.ClearNest)
+            {
+                Debug.Log($"Cannot record drowner nest kill: current stage is {drownerNestStage}.", this);
+                return false;
+            }
+
+            drownerNestKillCount = Mathf.Clamp(drownerNestKillCount + 1, 0, RequiredDrownerNestKillCount);
+            if (drownerNestKillCount >= RequiredDrownerNestKillCount)
+            {
+                drownerNestStage = DrownerNestStage.ReturnForReward;
+                DecisionFlagService.Instance?.SetFlag("DrownerNestCleared");
+                NotifyQuestChanged("Nest cleared", DrownerNestQuestId, drownerNestStage.ToString());
+                return true;
+            }
+
+            NotifyQuestChanged("Drowner killed", DrownerNestQuestId, drownerNestStage.ToString());
+            return true;
+        }
+
+        private bool CompleteDrownerNest()
+        {
+            if (drownerNestState != QuestState.Active || drownerNestStage != DrownerNestStage.ReturnForReward)
+            {
+                Debug.Log($"Cannot complete {DrownerNestQuestId}: current stage is {drownerNestStage}.", this);
+                return false;
+            }
+
+            drownerNestState = QuestState.Completed;
+            drownerNestStage = DrownerNestStage.Completed;
+            PlayerRewardService.Instance?.GrantDrownerNestReward();
+            NotifyQuestChanged("Quest completed", DrownerNestQuestId, drownerNestStage.ToString());
+            return true;
+        }
+
         private string GetSwampContractObjective()
         {
             switch (swampContractStage)
@@ -816,6 +909,23 @@ namespace WitcherRightVersion.Quest
             }
         }
 
+        private string GetDrownerNestObjective()
+        {
+            switch (drownerNestStage)
+            {
+                case DrownerNestStage.AcceptNotice:
+                    return "Read the drowner nest notice in Vereskovy Brod.";
+                case DrownerNestStage.ClearNest:
+                    return $"Clear the drowner nest in the Black Swamp ({drownerNestKillCount}/{RequiredDrownerNestKillCount}).";
+                case DrownerNestStage.ReturnForReward:
+                    return "Return to the notice board cache for the drowner nest reward.";
+                case DrownerNestStage.Completed:
+                    return "Drowner Nest completed. The swamp is safer.";
+                default:
+                    return "Clear the drowner nest.";
+            }
+        }
+
         private void NotifyQuestChanged(string reason)
         {
             NotifyQuestChanged(reason, SwampContractQuestId, swampContractStage.ToString());
@@ -845,7 +955,10 @@ namespace WitcherRightVersion.Quest
                 smithDebtState = smithDebtState.ToString(),
                 smithDebtStage = smithDebtStage.ToString(),
                 voiceWellState = voiceWellState.ToString(),
-                voiceWellStage = voiceWellStage.ToString()
+                voiceWellStage = voiceWellStage.ToString(),
+                drownerNestState = drownerNestState.ToString(),
+                drownerNestStage = drownerNestStage.ToString(),
+                drownerNestKillCount = drownerNestKillCount
             };
         }
 
@@ -867,6 +980,9 @@ namespace WitcherRightVersion.Quest
                 smithDebtStage = SmithDebtStage.FindOldCampBlade;
                 voiceWellState = QuestState.NotStarted;
                 voiceWellStage = VoiceWellStage.ListenAtWell;
+                drownerNestState = QuestState.NotStarted;
+                drownerNestStage = DrownerNestStage.AcceptNotice;
+                drownerNestKillCount = 0;
                 NotifyQuestChanged("Quest restored");
                 return;
             }
@@ -933,6 +1049,18 @@ namespace WitcherRightVersion.Quest
                 voiceWellStage = VoiceWellStage.ListenAtWell;
             }
 
+            if (!Enum.TryParse(snapshot.drownerNestState, out drownerNestState))
+            {
+                drownerNestState = QuestState.NotStarted;
+            }
+
+            if (!Enum.TryParse(snapshot.drownerNestStage, out drownerNestStage))
+            {
+                drownerNestStage = DrownerNestStage.AcceptNotice;
+            }
+
+            drownerNestKillCount = Mathf.Clamp(snapshot.drownerNestKillCount, 0, RequiredDrownerNestKillCount);
+
             NotifyQuestChanged("Quest restored");
         }
     }
@@ -954,5 +1082,8 @@ namespace WitcherRightVersion.Quest
         public string smithDebtStage;
         public string voiceWellState;
         public string voiceWellStage;
+        public string drownerNestState;
+        public string drownerNestStage;
+        public int drownerNestKillCount;
     }
 }

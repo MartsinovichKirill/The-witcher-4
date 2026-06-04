@@ -291,6 +291,7 @@ namespace WitcherRightVersion.Editor
             CreateOrtenDialogue(root.transform);
             CreateWorldTraceObjects(root.transform);
             CreateWorldDrowner(root.transform);
+            CreateWorldDrownerNestQuest(root.transform);
             CreateTowerSkeletonGuards(root.transform);
             CreateWorldCraftingObjects(root.transform);
             CreateWorldForestQuestObjects(root.transform);
@@ -578,6 +579,59 @@ namespace WitcherRightVersion.Editor
             health.Configure("World drowner", 72f);
             var ai = drowner.AddComponent<EnemyAI>();
             ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
+        }
+
+        private static void CreateWorldDrownerNestQuest(Transform parent)
+        {
+            CreateQuestMarker(
+                parent,
+                "WorldDrownerNestNotice",
+                "Drowner nest notice",
+                "Accept",
+                QuestService.ActionStartDrownerNest,
+                "Contract accepted: clear the drowner nest in the Black Swamp.",
+                "The notice board is already marked.",
+                new Vector3(2.8f, 0.35f, -1.2f),
+                new Vector3(0.48f, 0.18f, 0.48f),
+                new Color(0.28f, 0.18f, 0.08f, 1f));
+
+            CreateQuestMarker(
+                parent,
+                "WorldDrownerNestRewardCache",
+                "Drowner nest reward cache",
+                "Take reward",
+                QuestService.ActionDrownerNestRewardReceived,
+                "The village cache pays out for the cleared nest.",
+                "The cache is sealed until the nest is cleared.",
+                new Vector3(3.45f, 0.26f, -1.25f),
+                new Vector3(0.42f, 0.16f, 0.42f),
+                new Color(0.2f, 0.15f, 0.08f, 1f));
+
+            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_01", new Vector3(10.6f, 1f, -29.8f), Quaternion.Euler(0f, -120f, 0f), "DrownerNestEnemy01Killed");
+            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_02", new Vector3(11.8f, 1f, -26.5f), Quaternion.Euler(0f, -155f, 0f), "DrownerNestEnemy02Killed");
+            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_03", new Vector3(7.0f, 1f, -31.2f), Quaternion.Euler(0f, -80f, 0f), "DrownerNestEnemy03Killed");
+        }
+
+        private static void CreateWorldNestDrowner(Transform parent, string objectName, Vector3 position, Quaternion rotation, string deathFlag)
+        {
+            var drowner = CreateCapsule(parent, objectName, position, new Vector3(0.82f, 0.78f, 0.82f), new Color(0.06f, 0.16f, 0.12f, 1f));
+            drowner.transform.rotation = rotation;
+            var renderer = drowner.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
+
+            var slime = InstantiateModel($"{MonsterPath}/Slime.fbx", $"{objectName}_SlimeModel", drowner.transform, new Vector3(0f, -0.9f, 0f), Quaternion.identity, new Vector3(1.02f, 1.02f, 1.02f));
+            if (slime == null && renderer != null)
+            {
+                renderer.enabled = true;
+            }
+
+            var health = drowner.AddComponent<Health>();
+            health.Configure("Nest drowner", 38f);
+            var ai = drowner.AddComponent<EnemyAI>();
+            ai.Configure("Nest drowner", false, deathFlag, QuestService.ActionDrownerNestEnemyKilled, "drownerNestStarted", "Nest drowner is dead. Keep clearing the den.");
         }
 
         private static void CreateTowerSkeletonGuards(Transform parent)
