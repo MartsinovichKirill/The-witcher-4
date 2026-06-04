@@ -9,7 +9,7 @@ namespace WitcherRightVersion.Save
     [Serializable]
     public sealed class SaveData
     {
-        public string version = "drowner-nest-quest-0.19";
+        public string version = "exile-quest-0.20";
         public string sceneName;
         public SerializableVector3 playerPosition;
         public float playerHealth;

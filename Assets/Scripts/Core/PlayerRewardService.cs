@@ -113,6 +113,23 @@ namespace WitcherRightVersion.Core
             InteractionPromptUI.Instance?.ShowMessage("Reward: 35 XP, 15 coins, Drowner Slime.");
         }
 
+        public void GrantExileProtectedReward()
+        {
+            AddExperience(25);
+            InventoryService.Instance?.AddItem("Reed Charm");
+            UnlockRecipe("swamp_oil");
+            DecisionFlagService.Instance?.SetFlag("exileQuestCompleted");
+            InteractionPromptUI.Instance?.ShowMessage("Reward: 25 XP, Reed Charm, Swamp Oil recipe.");
+        }
+
+        public void GrantExileBetrayedReward()
+        {
+            AddExperience(15);
+            AddCoins(25);
+            DecisionFlagService.Instance?.SetFlag("exileQuestCompleted");
+            InteractionPromptUI.Instance?.ShowMessage("Reward: 15 XP and 25 coins. Voytsekh's version grows stronger.");
+        }
+
         public PlayerRewardSnapshot CaptureSnapshot()
         {
             return new PlayerRewardSnapshot

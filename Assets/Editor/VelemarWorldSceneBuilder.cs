@@ -440,7 +440,7 @@ namespace WitcherRightVersion.Editor
                         "Do not draw steel. If Voytsekh sent you, he sent you to kill the only witness who still remembers the first version.",
                         new[]
                         {
-                            new DialogueChoice("Tell me what the mirror did.", "mirror", "", false, QuestService.ActionStartRightVersion),
+                            new DialogueChoice("Tell me what the mirror did.", "mirror", "", false, QuestService.ActionStartExile),
                             new DialogueChoice("I will protect you from the elder.", "protected", "ElsaProtected", false, QuestService.ActionElsaProtected),
                             new DialogueChoice("The village wants you taken in.", "betrayed", "ElsaBetrayed", false, QuestService.ActionElsaBetrayed),
                             new DialogueChoice("Later.", "", "", true)

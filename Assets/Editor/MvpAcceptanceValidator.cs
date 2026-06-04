@@ -140,6 +140,7 @@ namespace WitcherRightVersion.Editor
 
             ValidatePlayer("Reynard_Player", failures);
             ValidateRuntimeServices("RuntimeServices", failures);
+            Require(File.ReadAllText(VelemarWorldScenePath).Contains(QuestService.ActionStartExile), failures, "Elsa dialogue must start the Exile quest.");
             RequireObject("VelemarWorldRoot", failures);
             RequireObject("VelemarWorldTerrain", failures);
             RequireObject("VelemarAtmosphereLights", failures);

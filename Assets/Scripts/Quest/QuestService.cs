@@ -18,6 +18,7 @@ namespace WitcherRightVersion.Quest
         public const string SmithDebtQuestId = "smith_debt";
         public const string VoiceWellQuestId = "voice_well";
         public const string DrownerNestQuestId = "drowner_nest";
+        public const string ExileQuestId = "exile";
         public const string ActionStartSwampContract = "start_swamp_contract";
         public const string ActionMartaSpoken = "marta_spoken";
         public const string ActionSwampTracesFound = "swamp_traces_found";
@@ -46,6 +47,7 @@ namespace WitcherRightVersion.Quest
         public const string ActionStartDrownerNest = "start_drowner_nest";
         public const string ActionDrownerNestEnemyKilled = "drowner_nest_enemy_killed";
         public const string ActionDrownerNestRewardReceived = "drowner_nest_reward_received";
+        public const string ActionStartExile = "start_exile";
 
         private QuestState swampContractState = QuestState.NotStarted;
         private SwampContractStage swampContractStage = SwampContractStage.TalkToElder;
@@ -64,6 +66,8 @@ namespace WitcherRightVersion.Quest
         private QuestState drownerNestState = QuestState.NotStarted;
         private DrownerNestStage drownerNestStage = DrownerNestStage.AcceptNotice;
         private int drownerNestKillCount;
+        private QuestState exileState = QuestState.NotStarted;
+        private ExileStage exileStage = ExileStage.FindElsa;
 
         public static QuestService Instance { get; private set; }
         public event Action QuestChanged;
@@ -88,6 +92,8 @@ namespace WitcherRightVersion.Quest
         public DrownerNestStage CurrentDrownerNestStage => drownerNestStage;
         public int DrownerNestKillCount => drownerNestKillCount;
         public int DrownerNestKillTarget => RequiredDrownerNestKillCount;
+        public QuestState ExileState => exileState;
+        public ExileStage CurrentExileStage => exileStage;
         public bool HasActiveQuest => swampContractState == QuestState.Active
             || rightVersionState == QuestState.Active
             || mirrorTruthState == QuestState.Active
@@ -95,13 +101,15 @@ namespace WitcherRightVersion.Quest
             || smithDebtState == QuestState.Active
             || voiceWellState == QuestState.Active
             || drownerNestState == QuestState.Active
+            || exileState == QuestState.Active
             || swampContractState == QuestState.Completed
             || rightVersionState == QuestState.Completed
             || mirrorTruthState == QuestState.Completed
             || missingHunterState == QuestState.Completed
             || smithDebtState == QuestState.Completed
             || voiceWellState == QuestState.Completed
-            || drownerNestState == QuestState.Completed;
+            || drownerNestState == QuestState.Completed
+            || exileState == QuestState.Completed;
 
         public string ActiveQuestTitle
         {
@@ -115,6 +123,11 @@ namespace WitcherRightVersion.Quest
                 if (voiceWellState == QuestState.Active || voiceWellState == QuestState.Completed)
                 {
                     return "Voice from the Well";
+                }
+
+                if (exileState == QuestState.Active || exileState == QuestState.Completed)
+                {
+                    return "Exile";
                 }
 
                 if (rightVersionState == QuestState.Active || rightVersionState == QuestState.Completed)
@@ -173,6 +186,11 @@ namespace WitcherRightVersion.Quest
                 if (voiceWellState == QuestState.Active || voiceWellState == QuestState.Completed)
                 {
                     return GetVoiceWellObjective();
+                }
+
+                if (exileState == QuestState.Active || exileState == QuestState.Completed)
+                {
+                    return GetExileObjective();
                 }
 
                 if (rightVersionState == QuestState.Active || rightVersionState == QuestState.Completed)
@@ -280,6 +298,8 @@ namespace WitcherRightVersion.Quest
                     return RecordDrownerNestKill();
                 case ActionDrownerNestRewardReceived:
                     return CompleteDrownerNest();
+                case ActionStartExile:
+                    return StartExile();
                 default:
                     Debug.LogWarning($"Unknown quest action: {actionId}", this);
                     return false;
@@ -383,6 +403,12 @@ namespace WitcherRightVersion.Quest
 
         private bool ResolveElsa(bool protectedElsa)
         {
+            if (exileState == QuestState.Completed)
+            {
+                Debug.Log($"Cannot resolve Elsa: {ExileQuestId} is already completed.", this);
+                return false;
+            }
+
             if (!EnsureRightVersionStarted())
             {
                 return false;
@@ -401,6 +427,7 @@ namespace WitcherRightVersion.Quest
                 DecisionFlagService.Instance?.SetFlag("MayorSupported");
             }
 
+            CompleteExile(protectedElsa);
             NotifyQuestChanged("Elsa decision recorded", RightVersionQuestId, rightVersionStage.ToString());
             return true;
         }
@@ -797,6 +824,51 @@ namespace WitcherRightVersion.Quest
             return true;
         }
 
+        private bool StartExile()
+        {
+            EnsureRightVersionStarted();
+
+            if (exileState == QuestState.Completed)
+            {
+                Debug.Log($"Quest already completed: {ExileQuestId}", this);
+                return false;
+            }
+
+            if (exileState == QuestState.NotStarted)
+            {
+                exileState = QuestState.Active;
+                exileStage = ExileStage.DecideElsa;
+                DecisionFlagService.Instance?.SetFlag("exileQuestStarted");
+                NotifyQuestChanged("Quest started", ExileQuestId, exileStage.ToString());
+                return true;
+            }
+
+            exileStage = ExileStage.DecideElsa;
+            NotifyQuestChanged("Quest advanced", ExileQuestId, exileStage.ToString());
+            return true;
+        }
+
+        private void CompleteExile(bool protectedElsa)
+        {
+            if (exileState == QuestState.NotStarted)
+            {
+                exileState = QuestState.Active;
+            }
+
+            exileStage = ExileStage.Completed;
+            exileState = QuestState.Completed;
+            if (protectedElsa)
+            {
+                PlayerRewardService.Instance?.GrantExileProtectedReward();
+            }
+            else
+            {
+                PlayerRewardService.Instance?.GrantExileBetrayedReward();
+            }
+
+            NotifyQuestChanged("Quest completed", ExileQuestId, exileStage.ToString());
+        }
+
         private string GetSwampContractObjective()
         {
             switch (swampContractStage)
@@ -926,6 +998,23 @@ namespace WitcherRightVersion.Quest
             }
         }
 
+        private string GetExileObjective()
+        {
+            switch (exileStage)
+            {
+                case ExileStage.FindElsa:
+                    return "Find Elsa Cherntravka in the Black Swamp.";
+                case ExileStage.HearHerVersion:
+                    return "Hear Elsa's version of the buried murder.";
+                case ExileStage.DecideElsa:
+                    return "Decide whether to protect Elsa or hand her to Voytsekh.";
+                case ExileStage.Completed:
+                    return "Exile completed. Elsa's fate is now part of the final consequences.";
+                default:
+                    return "Decide Elsa's fate.";
+            }
+        }
+
         private void NotifyQuestChanged(string reason)
         {
             NotifyQuestChanged(reason, SwampContractQuestId, swampContractStage.ToString());
@@ -958,7 +1047,9 @@ namespace WitcherRightVersion.Quest
                 voiceWellStage = voiceWellStage.ToString(),
                 drownerNestState = drownerNestState.ToString(),
                 drownerNestStage = drownerNestStage.ToString(),
-                drownerNestKillCount = drownerNestKillCount
+                drownerNestKillCount = drownerNestKillCount,
+                exileState = exileState.ToString(),
+                exileStage = exileStage.ToString()
             };
         }
 
@@ -983,6 +1074,8 @@ namespace WitcherRightVersion.Quest
                 drownerNestState = QuestState.NotStarted;
                 drownerNestStage = DrownerNestStage.AcceptNotice;
                 drownerNestKillCount = 0;
+                exileState = QuestState.NotStarted;
+                exileStage = ExileStage.FindElsa;
                 NotifyQuestChanged("Quest restored");
                 return;
             }
@@ -1060,6 +1153,15 @@ namespace WitcherRightVersion.Quest
             }
 
             drownerNestKillCount = Mathf.Clamp(snapshot.drownerNestKillCount, 0, RequiredDrownerNestKillCount);
+            if (!Enum.TryParse(snapshot.exileState, out exileState))
+            {
+                exileState = QuestState.NotStarted;
+            }
+
+            if (!Enum.TryParse(snapshot.exileStage, out exileStage))
+            {
+                exileStage = ExileStage.FindElsa;
+            }
 
             NotifyQuestChanged("Quest restored");
         }
@@ -1085,5 +1187,7 @@ namespace WitcherRightVersion.Quest
         public string drownerNestState;
         public string drownerNestStage;
         public int drownerNestKillCount;
+        public string exileState;
+        public string exileStage;
     }
 }

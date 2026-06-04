@@ -422,7 +422,11 @@ namespace WitcherRightVersion.Editor
                 Require(quest.CurrentRightVersionStage == RightVersionStage.FindElsa, failures, "Right Version must start at FindElsa.");
                 Require(quest.RunAction(QuestService.ActionElsaProtected), failures, "Right Version must accept Elsa protection.");
                 Require(quest.CurrentRightVersionStage == RightVersionStage.FindMedallion, failures, "Right Version must move to FindMedallion after Elsa.");
+                Require(quest.ExileState == QuestState.Completed, failures, "Exile must complete when Elsa is protected.");
+                Require(quest.CurrentExileStage == ExileStage.Completed, failures, "Exile stage must be completed after Elsa protection.");
                 Require(flags.HasFlag("ElsaProtected"), failures, "Right Version must set ElsaProtected flag.");
+                Require(inventory.HasItem("Reed Charm"), failures, "Exile protection must grant Reed Charm.");
+                Require(rewards.Experience == 130, failures, "Exile protection must add 25 XP after the three MVP quests.");
                 Require(quest.RunAction(QuestService.ActionMedallionFound), failures, "Right Version must accept medallion evidence.");
                 Require(quest.CurrentRightVersionStage == RightVersionStage.OpenTowerRoute, failures, "Right Version must move to OpenTowerRoute after medallion.");
                 Require(flags.HasFlag("MedallionFound"), failures, "Right Version must set MedallionFound flag.");
@@ -517,11 +521,13 @@ namespace WitcherRightVersion.Editor
                 Require(restoreQuest.CurrentMirrorTruthStage == MirrorTruthStage.ChooseEnding, failures, "Scene transfer must restore Mirror of Truth ending stage.");
                 Require(restoreQuest.MissingHunterState == QuestState.Completed, failures, "Scene transfer must restore completed Missing Hunter.");
                 Require(restoreQuest.SmithDebtState == QuestState.Completed, failures, "Scene transfer must restore completed Smith's Debt.");
-                Require(restoreRewards.Experience == 105, failures, "Scene transfer must restore XP.");
+                Require(restoreQuest.ExileState == QuestState.Completed, failures, "Scene transfer must restore completed Exile.");
+                Require(restoreRewards.Experience == 130, failures, "Scene transfer must restore XP.");
                 Require(restoreRewards.Level == 2, failures, "Scene transfer must restore level from XP.");
                 Require(restoreRewards.Coins == 30, failures, "Scene transfer must restore coins.");
                 Require(restoreInventory.HasWeapon("Improved Steel Sword"), failures, "Scene transfer must restore improved steel sword.");
                 Require(restoreInventory.HasItem("Antitoxin"), failures, "Scene transfer must restore crafted Antitoxin.");
+                Require(restoreInventory.HasItem("Reed Charm"), failures, "Scene transfer must restore Reed Charm.");
                 Require(restoreFlags.HasFlag("questionedElderVersion"), failures, "Scene transfer must restore questionedElderVersion flag.");
                 Require(restoreFlags.HasFlag("ElsaProtected"), failures, "Scene transfer must restore ElsaProtected flag.");
                 Require(restoreFlags.HasFlag("MedallionFound"), failures, "Scene transfer must restore MedallionFound flag.");
