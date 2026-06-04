@@ -46,6 +46,7 @@ namespace WitcherRightVersion.UI
             "Ritual Key",
             "Orten Diary",
             "Girl's Medallion",
+            "Reed Charm",
             "Elder's Seal"
         };
 

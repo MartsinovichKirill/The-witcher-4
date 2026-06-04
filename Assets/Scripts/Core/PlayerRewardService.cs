@@ -54,6 +54,24 @@ namespace WitcherRightVersion.Core
             Debug.Log($"Coins received: {amount}. Total coins: {Coins}", this);
         }
 
+        public bool TrySpendCoins(int amount)
+        {
+            if (amount <= 0)
+            {
+                return true;
+            }
+
+            if (Coins < amount)
+            {
+                Debug.Log($"Not enough coins. Needed: {amount}, current: {Coins}", this);
+                return false;
+            }
+
+            Coins -= amount;
+            Debug.Log($"Coins spent: {amount}. Total coins: {Coins}", this);
+            return true;
+        }
+
         public void UnlockRecipe(string recipeId)
         {
             if (string.IsNullOrWhiteSpace(recipeId))

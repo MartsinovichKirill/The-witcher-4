@@ -165,6 +165,8 @@ namespace WitcherRightVersion.Editor
             RequireObject("TowerKayKitCastleCore_World", failures);
             RequireObject<DialogueInteractable>("ElderVoytsekh_World", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_World", failures);
+            RequireObject<DialogueInteractable>("BorisSmith_World", failures);
+            RequireObject<MerchantInteractable>("RadekTrader_World", failures);
             RequireObject<DialogueInteractable>("ElsaCherntravka_World", failures);
             RequireObject<DialogueInteractable>("IvarSedoy_World", failures);
             RequireObject<DialogueInteractable>("OrtenMirrorMage_World", failures);

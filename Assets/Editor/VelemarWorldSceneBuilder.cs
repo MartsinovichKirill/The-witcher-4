@@ -286,6 +286,8 @@ namespace WitcherRightVersion.Editor
 
             CreateElderDialogue(root.transform);
             CreateMartaDialogue(root.transform);
+            CreateBorisDialogue(root.transform);
+            CreateRadekMerchant(root.transform);
             CreateElsaDialogue(root.transform);
             CreateIvarDialogue(root.transform);
             CreateOrtenDialogue(root.transform);
@@ -422,6 +424,60 @@ namespace WitcherRightVersion.Editor
                             new DialogueChoice("Enough for now.", "", "", true)
                         })
                 });
+        }
+
+        private static void CreateBorisDialogue(Transform parent)
+        {
+            var boris = CreateRpgCharacterAnchor(parent, "BorisSmith_World", "Warrior.fbx", new Vector3(-3.1f, 1f, 0.7f), Quaternion.Euler(0f, 55f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.18f, 0.14f, 0.1f, 1f));
+            var dialogue = boris.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Boris the Smith",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Boris the Smith",
+                        "If the swamp chews your armor, do not blame the armor. Blame the witcher who walked in underprepared.",
+                        new[]
+                        {
+                            new DialogueChoice("Need work done?", "debt", "", false, QuestService.ActionStartSmithDebt),
+                            new DialogueChoice("I brought the old camp blade.", "return", "", false, QuestService.ActionSmithDebtReturned),
+                            new DialogueChoice("Later.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "debt",
+                        "Boris the Smith",
+                        "There is an old blade in the forest camp. Bring it back and I will reforge steel worth carrying.",
+                        new[]
+                        {
+                            new DialogueChoice("I will look for it.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "return",
+                        "Boris the Smith",
+                        "Good metal remembers hands better than people do. Take the improved steel sword.",
+                        new[]
+                        {
+                            new DialogueChoice("Fair trade.", "", "", true)
+                        })
+                });
+        }
+
+        private static void CreateRadekMerchant(Transform parent)
+        {
+            var radek = CreateRpgCharacterAnchor(parent, "RadekTrader_World", "Rogue.fbx", new Vector3(2.4f, 1f, -0.1f), Quaternion.Euler(0f, -120f, 0f), new Vector3(0.82f, 0.82f, 0.82f), new Color(0.2f, 0.16f, 0.09f, 1f));
+            var merchant = radek.AddComponent<MerchantInteractable>();
+            merchant.Configure(
+                "Radek the Trader",
+                "Buy supplies",
+                10,
+                new[] { "Food", "Ash Salt", "Swallow Grass", "Iron Ore" },
+                "radekSupplyPackBought",
+                "Bought Radek's supply pack: Food, Ash Salt, Swallow Grass, Iron Ore.",
+                "Radek wants 10 coins for the supply pack.",
+                "Radek has no more packed supplies today.");
         }
 
         private static void CreateElsaDialogue(Transform parent)
