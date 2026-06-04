@@ -129,6 +129,7 @@ namespace WitcherRightVersion.Editor
             CreateSwampDistrict(root.transform);
             CreateAshRoadDistrict(root.transform);
             CreateTowerVistaDistrict(root.transform);
+            CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
         }
@@ -277,6 +278,95 @@ namespace WitcherRightVersion.Editor
             PlaceKenney(root.transform, "TowerVistaPillarRight_World", "pillar-stone.fbx", new Vector3(2.8f, 0f, 0.3f), Quaternion.identity, new Vector3(1.4f, 1.4f, 1.4f));
             PlaceKenney(root.transform, "TowerVistaBrokenWall_World", "wall-broken.fbx", new Vector3(0f, 0f, 1.8f), Quaternion.Euler(0f, 90f, 0f), new Vector3(1.4f, 1.4f, 1.4f));
             CreateMarker(root.transform, "TowerMirrorGlow_World", new Vector3(0f, 1.4f, 2.6f), new Vector3(0.28f, 2.1f, 0.9f), new Color(0.34f, 0.24f, 0.48f, 1f));
+        }
+
+        private static void CreateWorldDressing(Transform parent)
+        {
+            var root = new GameObject("WorldDressingRoot");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageDressing(root.transform);
+            CreateForestDressing(root.transform);
+            CreateSwampDressing(root.transform);
+            CreateTowerDressing(root.transform);
+            CreateAshRoadDressing(root.transform);
+        }
+
+        private static void CreateVillageDressing(Transform parent)
+        {
+            var root = new GameObject("VillageDressing_DailyLife");
+            root.transform.SetParent(parent, false);
+
+            PlaceKenney(root.transform, "VillageDressingNoticeBanner", "banner-red.fbx", new Vector3(-2.1f, 0f, -5.1f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.15f);
+            PlaceKenney(root.transform, "VillageDressingGreenBanner", "banner-green.fbx", new Vector3(2.0f, 0f, -5.1f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.15f);
+            PlaceKenney(root.transform, "VillageDressingMarketBench", "stall-bench.fbx", new Vector3(2.8f, 0f, -0.3f), Quaternion.Euler(0f, -22f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "VillageDressingSmithPlanks", "planks.fbx", new Vector3(-2.2f, 0f, 1.2f), Quaternion.Euler(0f, -24f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "VillageDressingWellLantern", "lantern.fbx", new Vector3(0.9f, 0f, -4.4f), Quaternion.Euler(0f, 45f, 0f), Vector3.one * 0.9f);
+            PlaceKenney(root.transform, "VillageDressingBrokenFenceNorth", "fence-broken.fbx", new Vector3(-4.2f, 0f, -6.2f), Quaternion.Euler(0f, 8f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "VillageDressingCartByGate", "cart-high.fbx", new Vector3(4.7f, 0f, -5.9f), Quaternion.Euler(0f, -55f, 0f), Vector3.one);
+        }
+
+        private static void CreateForestDressing(Transform parent)
+        {
+            var root = new GameObject("ForestDressing_WolfDen");
+            root.transform.SetParent(parent, false);
+
+            PlaceKayKit(root.transform, "ForestDressingDeepPatch_A", "detail_forestA.fbx", new Vector3(-31.3f, 0f, 10.6f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 1.3f);
+            PlaceKayKit(root.transform, "ForestDressingDeepPatch_B", "detail_forestB.fbx", new Vector3(-17.8f, 0f, 11.4f), Quaternion.Euler(0f, -35f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "ForestWolfDen_World", "rock-wide.fbx", new Vector3(-29.6f, 0f, 8.9f), Quaternion.Euler(0f, 14f, 0f), new Vector3(1.35f, 1.05f, 1.35f));
+            PlaceKenney(root.transform, "ForestWolfDenBones_World", "blade.fbx", new Vector3(-28.9f, 0.05f, 7.7f), Quaternion.Euler(80f, 0f, 24f), Vector3.one * 0.65f);
+            CreateMarker(root.transform, "ForestWolfDenScratchMarks", new Vector3(-29.2f, 0.07f, 8.2f), new Vector3(0.9f, 0.04f, 0.18f), new Color(0.33f, 0.12f, 0.07f, 1f));
+            CreateMarker(root.transform, "ForestHunterBloodPool", new Vector3(-22.9f, 0.055f, 6.8f), new Vector3(0.7f, 0.025f, 0.46f), new Color(0.28f, 0.035f, 0.025f, 1f));
+        }
+
+        private static void CreateSwampDressing(Transform parent)
+        {
+            var root = new GameObject("SwampDressing_CursedBog");
+            root.transform.SetParent(parent, false);
+
+            for (var i = 0; i < 7; i++)
+            {
+                PlaceKenney(root.transform, $"SwampPlankPath_{i + 1:00}", i % 2 == 0 ? "planks.fbx" : "planks-half.fbx", new Vector3(0.1f + i * 1.18f, 0.035f, -27.6f + (i % 2) * 0.34f), Quaternion.Euler(0f, 82f + i * 7f, 0f), new Vector3(0.95f, 1f, 0.95f));
+            }
+
+            PlaceKenney(root.transform, "SwampDressingDrownedCart", "cart.fbx", new Vector3(9.7f, -0.05f, -27.9f), Quaternion.Euler(4f, -64f, 9f), Vector3.one);
+            PlaceKenney(root.transform, "SwampDressingCrookedTreeA", "tree-high-crooked.fbx", new Vector3(-2.7f, 0f, -28.9f), Quaternion.Euler(0f, 20f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "SwampDressingCrookedTreeB", "tree-crooked.fbx", new Vector3(11.2f, 0f, -22.4f), Quaternion.Euler(0f, -42f, 0f), Vector3.one * 1.45f);
+            CreateReedCluster(root.transform, "SwampDressingTallReeds_A", new Vector3(6.2f, 0f, -30.2f), 1.3f);
+            CreateReedCluster(root.transform, "SwampDressingTallReeds_B", new Vector3(10.6f, 0f, -24.7f), 1.45f);
+            CreateMarker(root.transform, "SwampDressingPoisonPool", new Vector3(7.6f, 0.055f, -27.2f), new Vector3(1.35f, 0.035f, 0.92f), new Color(0.03f, 0.14f, 0.09f, 1f));
+
+            var foreshadow = InstantiateModel($"{MonsterPath}/Slime.fbx", "SwampBossForeshadow_Model", root.transform, new Vector3(10.8f, 0.05f, -20.9f), Quaternion.Euler(0f, 160f, 0f), new Vector3(2.2f, 2.2f, 2.2f));
+            if (foreshadow == null)
+            {
+                CreateMarker(root.transform, "SwampBossForeshadow_Fallback", new Vector3(10.8f, 0.8f, -20.9f), new Vector3(1.6f, 1.2f, 1.6f), new Color(0.06f, 0.22f, 0.12f, 1f));
+            }
+        }
+
+        private static void CreateTowerDressing(Transform parent)
+        {
+            var root = new GameObject("TowerDressing_RitualYard");
+            root.transform.SetParent(parent, false);
+
+            CreateMarker(root.transform, "TowerRitualCircle_World", new Vector3(0f, 0.06f, 24.7f), new Vector3(2.8f, 0.035f, 2.8f), new Color(0.22f, 0.16f, 0.31f, 1f));
+            PlaceKenney(root.transform, "TowerDressingBrokenArchLeft", "wall-arch.fbx", new Vector3(-4.2f, 0f, 25.0f), Quaternion.Euler(0f, -28f, 0f), new Vector3(1.15f, 1.15f, 1.15f));
+            PlaceKenney(root.transform, "TowerDressingBrokenArchRight", "wall-arch-top.fbx", new Vector3(4.0f, 0f, 25.1f), Quaternion.Euler(0f, 32f, 0f), new Vector3(1.15f, 1.15f, 1.15f));
+            PlaceKenney(root.transform, "TowerDressingPillarBackA", "pillar-stone.fbx", new Vector3(-1.6f, 0f, 29.5f), Quaternion.identity, Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "TowerDressingPillarBackB", "pillar-stone.fbx", new Vector3(1.6f, 0f, 29.5f), Quaternion.identity, Vector3.one * 1.25f);
+            CreateMarker(root.transform, "TowerDressingMirrorShardTrail", new Vector3(0.8f, 0.12f, 27.8f), new Vector3(0.42f, 0.08f, 0.42f), new Color(0.45f, 0.32f, 0.72f, 1f));
+        }
+
+        private static void CreateAshRoadDressing(Transform parent)
+        {
+            var root = new GameObject("AshRoadDressing_SurvivorCamp");
+            root.transform.SetParent(parent, false);
+
+            PlaceKenney(root.transform, "AshRoadSurvivorCamp_World", "cart-high.fbx", new Vector3(19.5f, 0f, 6.2f), Quaternion.Euler(0f, 24f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "AshRoadDressingBrokenFenceA", "fence-broken.fbx", new Vector3(20.6f, 0f, 4.2f), Quaternion.Euler(0f, 65f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "AshRoadDressingBrokenFenceB", "fence-broken.fbx", new Vector3(27.8f, 0f, 6.7f), Quaternion.Euler(0f, -50f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "AshRoadDressingCollapsedWall", "wall-broken.fbx", new Vector3(27.9f, 0f, 11.0f), Quaternion.Euler(0f, 18f, 0f), new Vector3(1.3f, 1.3f, 1.3f));
+            CreateMarker(root.transform, "AshRoadDressingCampfireCoals", new Vector3(20.8f, 0.1f, 7.4f), new Vector3(0.75f, 0.12f, 0.75f), new Color(0.46f, 0.11f, 0.035f, 1f));
+            CreateMarker(root.transform, "AshRoadDressingAshDrift", new Vector3(24.1f, 0.055f, 5.0f), new Vector3(3.6f, 0.035f, 1.3f), new Color(0.18f, 0.17f, 0.16f, 1f));
         }
 
         private static void CreateGameplayObjects(Transform parent)

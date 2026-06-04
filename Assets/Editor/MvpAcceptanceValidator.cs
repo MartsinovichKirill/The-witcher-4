@@ -150,6 +150,13 @@ namespace WitcherRightVersion.Editor
             RequireObject("SwampDistrict_BlackSwamp", failures);
             RequireObject("AshRoadDistrict_PepelnyTrakt", failures);
             RequireObject("TowerVistaDistrict_Ruins", failures);
+            RequireObject("WorldDressingRoot", failures);
+            RequireObject("VillageDressingNoticeBanner", failures);
+            RequireObject("ForestWolfDen_World", failures);
+            RequireObject("SwampPlankPath_01", failures);
+            RequireObject("SwampBossForeshadow_Model", failures);
+            RequireObject("TowerRitualCircle_World", failures);
+            RequireObject("AshRoadSurvivorCamp_World", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
             RequireObject<DialogueService>("DialogueCanvas", failures);
             RequireObject<QuestHudUI>("QuestCanvas", failures);
