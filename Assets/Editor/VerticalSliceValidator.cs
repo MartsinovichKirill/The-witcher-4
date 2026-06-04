@@ -427,7 +427,18 @@ namespace WitcherRightVersion.Editor
                 SetSingleton(quest);
                 SetSingleton(save);
 
+                flags.SetFlag("MedallionFound");
+                flags.SetFlag("MayorSupported");
+                flags.SetFlag("OrtenDiaryFound");
                 Require(endings.CanCompleteTruthEnding(), failures, "World truth ending must unlock from completed contract and questioned elder flag.");
+                Require(endings.CanCompleteLieEnding(), failures, "Lie ending must unlock from mayor support.");
+                Require(endings.CanCompleteSacrificeEnding(), failures, "Sacrifice ending must unlock from Orten diary.");
+                Require(endings.CompleteLieEnding(), failures, "Lie ending must complete from final altar.");
+                Require(endings.CompletedEnding == EndingService.LieEndingType, failures, "Lie ending type must be stored.");
+                Require(flags.HasFlag(EndingService.LieEndingFlag), failures, "Lie ending must set ending flag.");
+                Require(endings.CompleteSacrificeEnding(), failures, "Sacrifice ending must complete from final altar.");
+                Require(endings.CompletedEnding == EndingService.SacrificeEndingType, failures, "Sacrifice ending type must be stored.");
+                Require(flags.HasFlag(EndingService.SacrificeEndingFlag), failures, "Sacrifice ending must set ending flag.");
                 Require(endings.CompleteTruthEnding(), failures, "Truth ending must complete from final altar.");
                 Require(endings.CompletedEnding == EndingService.TruthEndingType, failures, "Truth ending type must be stored.");
                 Require(flags.HasFlag(EndingService.TruthEndingFlag), failures, "Truth ending must set MVP ending flag.");

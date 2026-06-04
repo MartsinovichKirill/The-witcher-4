@@ -238,7 +238,8 @@ namespace WitcherRightVersion.Editor
             CreateWorldDrowner(root.transform);
             CreateWorldCraftingObjects(root.transform);
             CreateWorldForestQuestObjects(root.transform);
-            CreateWorldFinalAltar(root.transform);
+            CreateWorldStoryEvidenceObjects(root.transform);
+            CreateWorldFinalAltars(root.transform);
         }
 
         private static void CreateElderDialogue(Transform parent)
@@ -400,16 +401,121 @@ namespace WitcherRightVersion.Editor
             CreateQuestMarker(parent, "WorldHunterCamp_RewardPouch", "Hunter's hidden pouch", "Take reward", QuestService.ActionMissingHunterReturned, "You find coin and a note: Ivar survived the first night.", "The pouch stays hidden until the trail is understood.", new Vector3(-20.8f, 0.16f, 0.5f), new Vector3(0.4f, 0.18f, 0.4f), new Color(0.24f, 0.18f, 0.1f, 1f));
         }
 
-        private static void CreateWorldFinalAltar(Transform parent)
+        private static void CreateWorldStoryEvidenceObjects(Transform parent)
+        {
+            CreateDecisionFlagMarker(
+                parent,
+                "WorldGirlMedallion",
+                "Girl's medallion",
+                "Take",
+                "MedallionFound",
+                "The medallion is old, scratched, and still warm near the mirror rot. Truth ending evidence recorded.",
+                new Vector3(2.5f, 0.18f, -31.4f),
+                new Vector3(0.38f, 0.08f, 0.38f),
+                new Color(0.82f, 0.66f, 0.28f, 1f));
+
+            CreateDecisionFlagMarker(
+                parent,
+                "WorldOrtenDiary",
+                "Orten's diary",
+                "Read",
+                "OrtenDiaryFound",
+                "Orten wrote how the mirror rewrites memory. Sacrifice ending evidence recorded.",
+                new Vector3(-1.4f, 0.28f, 28.4f),
+                new Vector3(0.52f, 0.08f, 0.72f),
+                new Color(0.22f, 0.15f, 0.1f, 1f));
+
+            CreateDecisionFlagMarker(
+                parent,
+                "WorldMirrorShardCache",
+                "Mirror shard cache",
+                "Break",
+                "MirrorShardsDestroyed",
+                "The shard cache cracks. The mirror loses one anchor in the living world.",
+                new Vector3(1.7f, 0.32f, 27.4f),
+                new Vector3(0.5f, 0.32f, 0.5f),
+                new Color(0.28f, 0.18f, 0.44f, 1f));
+
+            CreateDecisionFlagMarker(
+                parent,
+                "WorldElderSealProof",
+                "Elder's sealed order",
+                "Inspect",
+                "ElderSealFound",
+                "The elder's seal names the people who paid Orten to bury the first story.",
+                new Vector3(-5.8f, 0.22f, -1.9f),
+                new Vector3(0.5f, 0.08f, 0.5f),
+                new Color(0.48f, 0.08f, 0.06f, 1f));
+        }
+
+        private static void CreateWorldFinalAltars(Transform parent)
+        {
+            CreateEndingAltar(
+                parent,
+                "WorldFinalTruthAltar",
+                "World final truth altar",
+                "Choose truth",
+                EndingService.TruthEndingType,
+                new Vector3(22.4f, 0.45f, 8.5f),
+                new Color(0.23f, 0.2f, 0.27f, 1f));
+
+            CreateEndingAltar(
+                parent,
+                "WorldFinalLieAltar",
+                "World final corrected-story altar",
+                "Choose lie",
+                EndingService.LieEndingType,
+                new Vector3(24.4f, 0.45f, 7.4f),
+                new Color(0.26f, 0.19f, 0.11f, 1f));
+
+            CreateEndingAltar(
+                parent,
+                "WorldFinalSacrificeAltar",
+                "World final sacrifice altar",
+                "Choose sacrifice",
+                EndingService.SacrificeEndingType,
+                new Vector3(24.4f, 0.45f, 9.7f),
+                new Color(0.19f, 0.1f, 0.12f, 1f));
+        }
+
+        private static void CreateDecisionFlagMarker(
+            Transform parent,
+            string objectName,
+            string displayName,
+            string prompt,
+            string flagToSet,
+            string message,
+            Vector3 position,
+            Vector3 scale,
+            Color color)
+        {
+            var marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            marker.name = objectName;
+            marker.transform.SetParent(parent, false);
+            marker.transform.localPosition = position;
+            marker.transform.localScale = scale;
+            marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+            var interactable = marker.AddComponent<DecisionFlagInteractable>();
+            interactable.Configure(displayName, prompt, flagToSet, message);
+        }
+
+        private static void CreateEndingAltar(
+            Transform parent,
+            string objectName,
+            string displayName,
+            string prompt,
+            string endingType,
+            Vector3 position,
+            Color color)
         {
             var altar = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            altar.name = "WorldFinalTruthAltar";
+            altar.name = objectName;
             altar.transform.SetParent(parent, false);
-            altar.transform.localPosition = new Vector3(24f, 0.45f, 8.5f);
+            altar.transform.localPosition = position;
             altar.transform.localScale = new Vector3(0.95f, 0.45f, 0.95f);
-            altar.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/WorldFinalTruthAltar.mat", new Color(0.23f, 0.2f, 0.27f, 1f));
+            altar.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
             var interactable = altar.AddComponent<EndingAltarInteractable>();
-            interactable.Configure("World final truth altar", "Choose truth");
+            interactable.Configure(displayName, prompt, endingType);
         }
 
         private static void CreateWorldBoundary(Transform parent)

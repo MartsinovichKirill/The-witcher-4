@@ -8,15 +8,17 @@ namespace WitcherRightVersion.Interaction
     {
         [SerializeField] private string displayName = "Final truth altar";
         [SerializeField] private string interactionPrompt = "Choose truth";
+        [SerializeField] private string endingType = EndingService.TruthEndingType;
 
         public string DisplayName => displayName;
         public string InteractionPrompt => interactionPrompt;
         public bool CanInteract => true;
 
-        public void Configure(string newDisplayName, string newPrompt)
+        public void Configure(string newDisplayName, string newPrompt, string newEndingType = EndingService.TruthEndingType)
         {
             displayName = newDisplayName;
             interactionPrompt = newPrompt;
+            endingType = newEndingType;
         }
 
         public void Interact(InteractionController interactor)
@@ -27,7 +29,7 @@ namespace WitcherRightVersion.Interaction
                 return;
             }
 
-            EndingService.Instance.CompleteTruthEnding();
+            EndingService.Instance.CompleteEndingByType(endingType);
         }
     }
 }

@@ -165,7 +165,13 @@ namespace WitcherRightVersion.Editor
             RequireObject<CraftingInteractable>("WorldAlchemyTable_Swallow", failures);
             RequireObject<CraftingInteractable>("WorldAlchemyTable_Antitoxin", failures);
             RequireObject<CraftingInteractable>("WorldForge_ReinforcedArmor", failures);
+            RequireObject<DecisionFlagInteractable>("WorldGirlMedallion", failures);
+            RequireObject<DecisionFlagInteractable>("WorldOrtenDiary", failures);
+            RequireObject<DecisionFlagInteractable>("WorldMirrorShardCache", failures);
+            RequireObject<DecisionFlagInteractable>("WorldElderSealProof", failures);
             RequireObject<EndingAltarInteractable>("WorldFinalTruthAltar", failures);
+            RequireObject<EndingAltarInteractable>("WorldFinalLieAltar", failures);
+            RequireObject<EndingAltarInteractable>("WorldFinalSacrificeAltar", failures);
 
             var drowner = RequireObject("WorldDrowner_Prototype", failures);
             if (drowner != null)

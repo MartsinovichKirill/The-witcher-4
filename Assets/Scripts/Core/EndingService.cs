@@ -8,9 +8,13 @@ namespace WitcherRightVersion.Core
     public sealed class EndingService : MonoBehaviour
     {
         public const string TruthEndingType = "Truth";
+        public const string LieEndingType = "Lie";
+        public const string SacrificeEndingType = "Sacrifice";
         public const string PendingTruthRouteKey = "ending.pendingTruthRoute";
         public const string CompletedEndingKey = "ending.completedType";
         public const string TruthEndingFlag = "MvpTruthEndingReached";
+        public const string LieEndingFlag = "LieEndingReached";
+        public const string SacrificeEndingFlag = "SacrificeEndingReached";
 
         public static EndingService Instance { get; private set; }
 
@@ -42,6 +46,29 @@ namespace WitcherRightVersion.Core
                 || HasWorldTruthRouteRequirements();
         }
 
+        public bool CanCompleteLieEnding()
+        {
+            var flags = DecisionFlagService.Instance;
+            var quest = QuestService.Instance;
+
+            return flags != null
+                && (flags.HasFlag("MayorSupported")
+                    || flags.HasFlag(LieEndingFlag)
+                    || quest != null
+                        && quest.SwampContractState == QuestState.Completed
+                        && !flags.HasFlag("questionedElderVersion"));
+        }
+
+        public bool CanCompleteSacrificeEnding()
+        {
+            var flags = DecisionFlagService.Instance;
+
+            return flags != null
+                && (flags.HasFlag("OrtenDiaryFound")
+                    || flags.HasFlag("MirrorShardsDestroyed")
+                    || flags.HasFlag(SacrificeEndingFlag));
+        }
+
         private static bool HasWorldTruthRouteRequirements()
         {
             var quest = QuestService.Instance;
@@ -50,7 +77,8 @@ namespace WitcherRightVersion.Core
             return quest != null
                 && flags != null
                 && quest.SwampContractState == QuestState.Completed
-                && flags.HasFlag("questionedElderVersion");
+                && flags.HasFlag("questionedElderVersion")
+                && (flags.HasFlag("MedallionFound") || flags.HasFlag(TruthEndingFlag));
         }
 
         public bool CompleteTruthEnding()
@@ -61,17 +89,73 @@ namespace WitcherRightVersion.Core
                 return false;
             }
 
-            CompletedEnding = TruthEndingType;
+            return CompleteEnding(
+                TruthEndingType,
+                TruthEndingFlag,
+                "VillageTruthExposed",
+                "Ending reached: Truth. The first right version is no longer buried.");
+        }
+
+        public bool CompleteLieEnding()
+        {
+            if (!CanCompleteLieEnding())
+            {
+                InteractionPromptUI.Instance?.ShowMessage("The mirror stays dark. Reynard needs the elder's version or fewer doubts before choosing the lie.");
+                return false;
+            }
+
+            return CompleteEnding(
+                LieEndingType,
+                LieEndingFlag,
+                "MayorSupported",
+                "Ending reached: Corrected Story. Velemar survives by choosing the useful lie.");
+        }
+
+        public bool CompleteSacrificeEnding()
+        {
+            if (!CanCompleteSacrificeEnding())
+            {
+                InteractionPromptUI.Instance?.ShowMessage("The shards do not break. Reynard needs Orten's diary or destroyed mirror fragments before choosing sacrifice.");
+                return false;
+            }
+
+            return CompleteEnding(
+                SacrificeEndingType,
+                SacrificeEndingFlag,
+                "MirrorDestroyed",
+                "Ending reached: Sacrifice. The curse breaks, and Velemar pays the living price.");
+        }
+
+        public bool CompleteEndingByType(string endingType)
+        {
+            switch (endingType)
+            {
+                case TruthEndingType:
+                    return CompleteTruthEnding();
+                case LieEndingType:
+                    return CompleteLieEnding();
+                case SacrificeEndingType:
+                    return CompleteSacrificeEnding();
+                default:
+                    InteractionPromptUI.Instance?.ShowMessage("This ending has not been written yet.");
+                    return false;
+            }
+        }
+
+        private bool CompleteEnding(string endingType, string endingFlag, string consequenceFlag, string message)
+        {
+            CompletedEnding = endingType;
             PlayerPrefs.SetString(CompletedEndingKey, CompletedEnding);
             PlayerPrefs.DeleteKey(PendingTruthRouteKey);
             PlayerPrefs.Save();
 
-            DecisionFlagService.Instance?.SetFlag(TruthEndingFlag);
-            DecisionFlagService.Instance?.SetFlag("VillageTruthExposed");
+            var flags = DecisionFlagService.Instance;
+            flags?.SetFlag(endingFlag);
+            flags?.SetFlag(consequenceFlag);
             SaveService.Instance?.SaveAutosave();
             EndingHudUI.Instance?.ShowEnding(CompletedEnding);
-            InteractionPromptUI.Instance?.ShowMessage("Ending reached: Truth. The first right version is no longer buried.");
-            Debug.Log("Ending completed: Truth", this);
+            InteractionPromptUI.Instance?.ShowMessage(message);
+            Debug.Log($"Ending completed: {endingType}", this);
             return true;
         }
     }
