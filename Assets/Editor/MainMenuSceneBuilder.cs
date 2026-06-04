@@ -54,16 +54,19 @@ namespace WitcherRightVersion.Editor
             status.alignment = TextAnchor.MiddleLeft;
 
             var newGameButton = CreateButton("NewGameButton", mainPanel.transform, font, "New Game");
+            var worldGameButton = CreateButton("VelemarWorldButton", mainPanel.transform, font, "Velemar World");
             var continueButton = CreateButton("ContinueButton", mainPanel.transform, font, "Continue");
             var settingsButton = CreateButton("SettingsButton", mainPanel.transform, font, "Settings");
             var exitButton = CreateButton("ExitButton", mainPanel.transform, font, "Exit");
 
             SetStackedButtonRect(newGameButton.gameObject, 0);
-            SetStackedButtonRect(continueButton.gameObject, 1);
-            SetStackedButtonRect(settingsButton.gameObject, 2);
-            SetStackedButtonRect(exitButton.gameObject, 3);
+            SetStackedButtonRect(worldGameButton.gameObject, 1);
+            SetStackedButtonRect(continueButton.gameObject, 2);
+            SetStackedButtonRect(settingsButton.gameObject, 3);
+            SetStackedButtonRect(exitButton.gameObject, 4);
 
             UnityEventTools.AddPersistentListener(newGameButton.onClick, controller.StartNewGame);
+            UnityEventTools.AddPersistentListener(worldGameButton.onClick, controller.StartVelemarWorld);
             UnityEventTools.AddPersistentListener(continueButton.onClick, controller.ContinueGame);
             UnityEventTools.AddPersistentListener(settingsButton.onClick, controller.ShowSettingsPanel);
             UnityEventTools.AddPersistentListener(exitButton.onClick, controller.ExitGame);
@@ -118,6 +121,7 @@ namespace WitcherRightVersion.Editor
             controller.subtitleText = subtitle;
             controller.statusText = status;
             controller.newGameButtonText = GetButtonLabel(newGameButton);
+            controller.worldGameButtonText = GetButtonLabel(worldGameButton);
             controller.continueButtonText = GetButtonLabel(continueButton);
             controller.settingsButtonText = GetButtonLabel(settingsButton);
             controller.exitButtonText = GetButtonLabel(exitButton);
@@ -323,8 +327,8 @@ namespace WitcherRightVersion.Editor
 
         private static void SetStackedButtonRect(GameObject button, int index)
         {
-            var top = 1f - index * 0.24f;
-            SetRect(button, new Vector2(0f, top - 0.17f), new Vector2(1f, top), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            var top = 1f - index * 0.19f;
+            SetRect(button, new Vector2(0f, top - 0.135f), new Vector2(1f, top), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
         }
 
         private static void SetRect(GameObject obj, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 offsetMin, Vector2 offsetMax)

@@ -16,6 +16,7 @@ namespace WitcherRightVersion.UI
         public Text subtitleText;
         public Text statusText;
         public Text newGameButtonText;
+        public Text worldGameButtonText;
         public Text continueButtonText;
         public Text settingsButtonText;
         public Text exitButtonText;
@@ -36,6 +37,7 @@ namespace WitcherRightVersion.UI
         public Dropdown languageDropdown;
 
         private const string FirstGameScene = "VillageScene";
+        private const string VelemarWorldScene = "VelemarWorldScene";
         private const string VolumeKey = "settings.volume";
         private const string MusicKey = "settings.music";
         private const string ResolutionKey = "settings.resolution";
@@ -53,6 +55,11 @@ namespace WitcherRightVersion.UI
         public void StartNewGame()
         {
             SceneManager.LoadScene(FirstGameScene);
+        }
+
+        public void StartVelemarWorld()
+        {
+            SceneManager.LoadScene(VelemarWorldScene);
         }
 
         public void ContinueGame()
@@ -154,6 +161,7 @@ namespace WitcherRightVersion.UI
             SetText(titleText, "The Witcher 4", "Ведьмак 4");
             SetText(subtitleText, "Right Version", "Правильная версия");
             SetText(newGameButtonText, "New Game", "Новая игра");
+            SetText(worldGameButtonText, "Velemar World", "Мир Велемара");
             SetText(continueButtonText, "Continue", "Продолжить");
             SetText(settingsButtonText, "Settings", "Настройки");
             SetText(exitButtonText, "Exit", "Выход");

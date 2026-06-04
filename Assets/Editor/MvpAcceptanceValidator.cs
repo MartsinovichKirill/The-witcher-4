@@ -71,6 +71,7 @@ namespace WitcherRightVersion.Editor
 
             RequireObject<MainMenuController>("MainMenuController", failures);
             RequireObject("NewGameButton", failures);
+            RequireObject("VelemarWorldButton", failures);
             RequireObject("ContinueButton", failures);
             RequireObject("SettingsButton", failures);
             RequireObject("LanguageDropdown", failures);
