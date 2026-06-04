@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using WitcherRightVersion.Combat;
 using WitcherRightVersion.Core;
 using WitcherRightVersion.Crafting;
+using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Inventory;
 using WitcherRightVersion.Player;
@@ -35,6 +36,11 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("ThirdPersonCamera");
             RemoveIfExists("VelemarWorldRoot");
             RemoveIfExists("InteractionCanvas");
+            RemoveIfExists("DialogueCanvas");
+            RemoveIfExists("QuestCanvas");
+            RemoveIfExists("HealthCanvas");
+            RemoveIfExists("InventoryCanvas");
+            RemoveIfExists("EndingCanvas");
             RemoveIfExists("WorldDirectionCanvas");
 
             CreateRuntimeServices();
@@ -43,6 +49,11 @@ namespace WitcherRightVersion.Editor
             var player = CreatePlayer();
             CreateCamera(player.transform);
             CreateInteractionCanvas();
+            CreateDialogueCanvas();
+            CreateQuestCanvas();
+            CreateHealthCanvas();
+            CreateInventoryCanvas();
+            CreateEndingCanvas();
             CreateWorldDirectionCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -90,6 +101,7 @@ namespace WitcherRightVersion.Editor
             CreateSwampDistrict(root.transform);
             CreateAshRoadDistrict(root.transform);
             CreateTowerVistaDistrict(root.transform);
+            CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
         }
 
@@ -215,6 +227,191 @@ namespace WitcherRightVersion.Editor
             CreateMarker(root.transform, "TowerMirrorGlow_World", new Vector3(0f, 1.4f, 2.6f), new Vector3(0.28f, 2.1f, 0.9f), new Color(0.34f, 0.24f, 0.48f, 1f));
         }
 
+        private static void CreateGameplayObjects(Transform parent)
+        {
+            var root = new GameObject("WorldGameplayRoot");
+            root.transform.SetParent(parent, false);
+
+            CreateElderDialogue(root.transform);
+            CreateMartaDialogue(root.transform);
+            CreateWorldTraceObjects(root.transform);
+            CreateWorldDrowner(root.transform);
+            CreateWorldCraftingObjects(root.transform);
+            CreateWorldForestQuestObjects(root.transform);
+            CreateWorldFinalAltar(root.transform);
+        }
+
+        private static void CreateElderDialogue(Transform parent)
+        {
+            var elder = CreateCapsule(parent, "ElderVoytsekh_World", new Vector3(-4.1f, 1f, -3.4f), new Vector3(0.72f, 1f, 0.72f), new Color(0.22f, 0.18f, 0.13f, 1f));
+            var dialogue = elder.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Elder Voytsekh",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Elder Voytsekh",
+                        "Witcher. The whole road is open before you now: village, forest, swamp, ash tract. But the contract is still simple. Find what drags people into the reeds.",
+                        new[]
+                        {
+                            new DialogueChoice("I accept the swamp contract.", "accepted", "acceptedSwampContract", false, QuestService.ActionStartSwampContract),
+                            new DialogueChoice("Why is the village so eager to blame the swamp?", "doubt"),
+                            new DialogueChoice("Later.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "doubt",
+                        "Elder Voytsekh",
+                        "Because fear needs a shape. Give it teeth, call it a beast, and people sleep. Start south if you want coin.",
+                        new[]
+                        {
+                            new DialogueChoice("I accept. But I will look deeper.", "accepted", "acceptedSwampContract", false, QuestService.ActionStartSwampContract),
+                            new DialogueChoice("Not yet.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "accepted",
+                        "Elder Voytsekh",
+                        "Good. Speak with Marta, then follow the road into the Black Swamp. Bring proof before asking for reward.",
+                        new[]
+                        {
+                            new DialogueChoice("I am going.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "return",
+                        "Elder Voytsekh",
+                        "You came back from the reeds. Tell me the thing is dead.",
+                        new[]
+                        {
+                            new DialogueChoice("The drowner is dead. Here is your proof.", "choice_response", "", false, QuestService.ActionReturnedToElder),
+                            new DialogueChoice("Not yet.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "choice_response",
+                        "Elder Voytsekh",
+                        "Then the village can call this finished. The swamp gave us a beast, and you cut it down.",
+                        new[]
+                        {
+                            new DialogueChoice("The swamp is guilty. Pay me.", "reward", "MayorSupported", false, QuestService.ActionAcceptedElderVersion),
+                            new DialogueChoice("This is not just a monster. Something is wrong here.", "warning", "questionedElderVersion", false, QuestService.ActionQuestionedElderVersion)
+                        }),
+                    new DialogueNode(
+                        "warning",
+                        "Elder Voytsekh",
+                        "Careful. A clean ending is a mercy in a place like this.",
+                        new[]
+                        {
+                            new DialogueChoice("I will take the reward. I am not done looking.", "reward")
+                        }),
+                    new DialogueNode(
+                        "reward",
+                        "Elder Voytsekh",
+                        "Take your coin, your experience, and Marta's antitoxin recipe. Spend them before questions spend you.",
+                        new[]
+                        {
+                            new DialogueChoice("Contract complete.", "", "", true, QuestService.ActionRewardReceived)
+                        }),
+                    new DialogueNode(
+                        "completed",
+                        "Elder Voytsekh",
+                        "The road is quiet. The village prefers quiet.",
+                        new[]
+                        {
+                            new DialogueChoice("For now.", "", "", true)
+                        })
+                },
+                "return",
+                "completed");
+        }
+
+        private static void CreateMartaDialogue(Transform parent)
+        {
+            var marta = CreateCapsule(parent, "MartaLozovaya_World", new Vector3(4.2f, 1f, -3.6f), new Vector3(0.72f, 1f, 0.72f), new Color(0.16f, 0.24f, 0.17f, 1f));
+            var dialogue = marta.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Marta Lozovaya",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Marta Lozovaya",
+                        "So Voytsekh sent you south. Good. Walk with open eyes: black slime, torn reeds, tracks too heavy for a man.",
+                        new[]
+                        {
+                            new DialogueChoice("I took the contract. What should I look for?", "tracks", "", false, QuestService.ActionMartaSpoken),
+                            new DialogueChoice("Why does the swamp remember the dead?", "curse"),
+                            new DialogueChoice("Later.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "tracks",
+                        "Marta Lozovaya",
+                        "Look for claw cuts, poisoned slime, and cloth caught on the reeds. When all three agree, draw silver.",
+                        new[]
+                        {
+                            new DialogueChoice("Then I start with the tracks.", "", "", true),
+                            new DialogueChoice("Tell me about the curse.", "curse")
+                        }),
+                    new DialogueNode(
+                        "curse",
+                        "Marta Lozovaya",
+                        "People blame Elsa because a single witch is easier than a village full of liars. Survive the monster first; truth comes later.",
+                        new[]
+                        {
+                            new DialogueChoice("I will inspect the swamp.", "tracks", "", false, QuestService.ActionMartaSpoken),
+                            new DialogueChoice("Enough for now.", "", "", true)
+                        })
+                });
+        }
+
+        private static void CreateWorldTraceObjects(Transform parent)
+        {
+            CreateQuestMarker(parent, "WorldTrace_ClawMarks", "Claw marks", "Inspect", QuestService.ActionSwampTracesFound, "Deep claw cuts in the mud point toward the south pool.", "Marta should explain what to look for first.", new Vector3(1.4f, 0.08f, -23.2f), new Vector3(0.9f, 0.04f, 0.55f), new Color(0.18f, 0.12f, 0.08f, 1f));
+            CreateQuestMarker(parent, "WorldTrace_SlimeTrail", "Black slime trail", "Inspect", QuestService.ActionSwampTracesFound, "The slime bubbles like something alive. The trail bends toward the drowned reeds.", "The slime looks wrong, but Reynard needs Marta's warning first.", new Vector3(5.5f, 0.08f, -26.2f), new Vector3(0.55f, 0.04f, 1.1f), new Color(0.08f, 0.16f, 0.11f, 1f));
+            CreateQuestMarker(parent, "WorldTrace_TornCloth", "Torn cloth", "Inspect", QuestService.ActionSwampTracesFound, "A strip of wet cloth hangs from the reeds. Someone was dragged deeper.", "This cloth is just a rag until Reynard knows the swamp signs.", new Vector3(8.0f, 0.08f, -23.8f), new Vector3(0.45f, 0.04f, 0.45f), new Color(0.32f, 0.29f, 0.22f, 1f));
+        }
+
+        private static void CreateWorldDrowner(Transform parent)
+        {
+            var drowner = CreateCapsule(parent, "WorldDrowner_Prototype", new Vector3(8.5f, 1f, -28.4f), new Vector3(0.9f, 0.85f, 0.9f), new Color(0.08f, 0.18f, 0.14f, 1f));
+            drowner.transform.rotation = Quaternion.Euler(0f, -140f, 0f);
+            var health = drowner.AddComponent<Health>();
+            health.Configure("World drowner", 72f);
+            var ai = drowner.AddComponent<EnemyAI>();
+            ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
+        }
+
+        private static void CreateWorldCraftingObjects(Transform parent)
+        {
+            CreateSupplyCrate(parent, "WorldMartaHerbBasket", "Marta's herb basket", "Take herbs", new[] { "Swallow Grass", "Field Ration", "Bogweed" }, "Resources gained: Swallow Grass, Field Ration, Bogweed.", new Vector3(5.5f, 0.2f, -4.7f), new Vector3(0.5f, 0.25f, 0.5f), new Color(0.13f, 0.28f, 0.12f, 1f));
+            CreateSupplyCrate(parent, "WorldForgeSupplies", "Forge supplies", "Take supplies", new[] { "Iron Ore", "Wolf Pelt", "Drowner Slime" }, "Resources gained: Iron Ore, Wolf Pelt, Drowner Slime.", new Vector3(-2.1f, 0.2f, 1.1f), new Vector3(0.6f, 0.3f, 0.5f), new Color(0.25f, 0.19f, 0.12f, 1f));
+            CreateCraftingStation(parent, "WorldAlchemyTable_Swallow", "Alchemy table: Swallow", "Craft", "swallow", new Vector3(5.1f, 0.35f, -5.7f), new Vector3(0.95f, 0.2f, 0.58f), new Color(0.11f, 0.24f, 0.16f, 1f));
+            CreateCraftingStation(parent, "WorldAlchemyTable_Antitoxin", "Alchemy table: Antitoxin", "Craft", "antitoxin", new Vector3(5.1f, 0.62f, -5.7f), new Vector3(0.7f, 0.08f, 0.42f), new Color(0.08f, 0.36f, 0.26f, 1f));
+            CreateCraftingStation(parent, "WorldForge_ReinforcedArmor", "Boris's forge: Reinforced Armor", "Craft", "reinforced_armor", new Vector3(-2.5f, 0.55f, 0.55f), new Vector3(0.85f, 0.32f, 0.58f), new Color(0.26f, 0.16f, 0.1f, 1f));
+        }
+
+        private static void CreateWorldForestQuestObjects(Transform parent)
+        {
+            CreateQuestMarker(parent, "WorldHunterCamp_Start", "Abandoned hunter camp", "Inspect", QuestService.ActionStartMissingHunter, "The camp is torn open. Someone fled west into the trees.", "The camp waits in silence.", new Vector3(-21.6f, 0.12f, 1.8f), new Vector3(1.2f, 0.12f, 1.2f), new Color(0.24f, 0.15f, 0.08f, 1f), true);
+            CreateQuestMarker(parent, "WorldHunterClue_BloodTrail", "Blood trail", "Inspect", QuestService.ActionMissingHunterClueFound, "Fresh blood marks the moss.", "The trail makes more sense after the camp is inspected.", new Vector3(-25.5f, 0.08f, 4.2f), new Vector3(0.7f, 0.04f, 1.0f), new Color(0.3f, 0.04f, 0.03f, 1f));
+            CreateQuestMarker(parent, "WorldHunterClue_BrokenKnife", "Broken knife", "Inspect", QuestService.ActionMissingHunterClueFound, "The blade snapped against bone or old iron.", "A broken knife, but not yet a story.", new Vector3(-28.2f, 0.1f, 8.4f), new Vector3(0.45f, 0.05f, 0.55f), new Color(0.36f, 0.34f, 0.3f, 1f));
+            CreateQuestMarker(parent, "WorldHunterCamp_RewardPouch", "Hunter's hidden pouch", "Take reward", QuestService.ActionMissingHunterReturned, "You find coin and a note: Ivar survived the first night.", "The pouch stays hidden until the trail is understood.", new Vector3(-20.8f, 0.16f, 0.5f), new Vector3(0.4f, 0.18f, 0.4f), new Color(0.24f, 0.18f, 0.1f, 1f));
+        }
+
+        private static void CreateWorldFinalAltar(Transform parent)
+        {
+            var altar = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            altar.name = "WorldFinalTruthAltar";
+            altar.transform.SetParent(parent, false);
+            altar.transform.localPosition = new Vector3(24f, 0.45f, 8.5f);
+            altar.transform.localScale = new Vector3(0.95f, 0.45f, 0.95f);
+            altar.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/WorldFinalTruthAltar.mat", new Color(0.23f, 0.2f, 0.27f, 1f));
+            var interactable = altar.AddComponent<EndingAltarInteractable>();
+            interactable.Configure("World final truth altar", "Choose truth");
+        }
+
         private static void CreateWorldBoundary(Transform parent)
         {
             var root = new GameObject("VelemarWorldBoundary");
@@ -331,6 +528,126 @@ namespace WitcherRightVersion.Editor
                 .text = "Semi-open Velemar prototype: village center, forest west, swamp south, ash road east, tower ruins north.";
         }
 
+        private static void CreateDialogueCanvas()
+        {
+            var canvasObject = new GameObject("DialogueCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 80;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var dialogueRoot = CreatePanel(canvasObject.transform, "DialoguePanel", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(1180f, 360f), new Vector2(0f, 54f), new Color(0.045f, 0.04f, 0.032f, 0.94f));
+            var speaker = CreateText(dialogueRoot.transform, "DialogueSpeaker", new Vector2(0f, 0.78f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-72f, -24f), new Vector2(0f, -18f), 26, TextAnchor.MiddleLeft, new Color(0.94f, 0.78f, 0.42f, 1f));
+            var body = CreateText(dialogueRoot.transform, "DialogueBody", new Vector2(0f, 0.46f), new Vector2(1f, 0.82f), new Vector2(0.5f, 0.5f), new Vector2(-72f, -10f), Vector2.zero, 22, TextAnchor.MiddleLeft, new Color(0.94f, 0.9f, 0.82f, 1f));
+            var choices = new Text[4];
+            for (var i = 0; i < choices.Length; i++)
+            {
+                choices[i] = CreateText(dialogueRoot.transform, $"DialogueChoice_{i + 1}", new Vector2(0f, 0.08f + i * 0.085f), new Vector2(1f, 0.18f + i * 0.085f), new Vector2(0.5f, 0.5f), new Vector2(-72f, -6f), Vector2.zero, 19, TextAnchor.MiddleLeft, Color.white);
+            }
+
+            var service = canvasObject.AddComponent<DialogueService>();
+            SetSerializedObjectReference(service, "dialogueRoot", dialogueRoot);
+            SetSerializedObjectReference(service, "speakerText", speaker);
+            SetSerializedObjectReference(service, "bodyText", body);
+            SetSerializedArrayReferences(service, "choiceTexts", choices);
+        }
+
+        private static void CreateQuestCanvas()
+        {
+            var canvasObject = new GameObject("QuestCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 40;
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var hudRoot = CreatePanel(canvasObject.transform, "QuestHudPanel", new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(580f, 122f), new Vector2(-44f, -44f), new Color(0.045f, 0.04f, 0.032f, 0.88f));
+            var title = CreateText(hudRoot.transform, "QuestHudTitle", new Vector2(0f, 0.58f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-44f, -16f), new Vector2(0f, -10f), 21, TextAnchor.MiddleLeft, new Color(0.94f, 0.78f, 0.42f, 1f));
+            var objective = CreateText(hudRoot.transform, "QuestHudObjective", new Vector2(0f, 0f), new Vector2(1f, 0.62f), new Vector2(0.5f, 0f), new Vector2(-44f, -16f), new Vector2(0f, 10f), 18, TextAnchor.MiddleLeft, new Color(0.93f, 0.9f, 0.82f, 1f));
+
+            var hud = canvasObject.AddComponent<QuestHudUI>();
+            SetSerializedObjectReference(hud, "hudRoot", hudRoot);
+            SetSerializedObjectReference(hud, "titleText", title);
+            SetSerializedObjectReference(hud, "objectiveText", objective);
+        }
+
+        private static void CreateHealthCanvas()
+        {
+            var canvasObject = new GameObject("HealthCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 45;
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var hudRoot = CreatePanel(canvasObject.transform, "HealthHudPanel", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(420f, 92f), new Vector2(44f, -44f), new Color(0.045f, 0.04f, 0.032f, 0.88f));
+            var barBack = CreatePanel(hudRoot.transform, "HealthBarBack", new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f), new Vector2(-44f, 22f), new Vector2(0f, 20f), new Color(0.14f, 0.05f, 0.04f, 1f));
+            var barFillObject = CreatePanel(barBack.transform, "HealthBarFill", new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(0f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.68f, 0.11f, 0.08f, 1f));
+            var fillImage = barFillObject.GetComponent<Image>();
+            fillImage.type = Image.Type.Filled;
+            fillImage.fillMethod = Image.FillMethod.Horizontal;
+            fillImage.fillOrigin = 0;
+            fillImage.fillAmount = 1f;
+            var healthText = CreateText(hudRoot.transform, "HealthHudText", new Vector2(0f, 0.48f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-44f, -14f), new Vector2(0f, -10f), 21, TextAnchor.MiddleLeft, new Color(0.96f, 0.88f, 0.77f, 1f));
+
+            var hud = canvasObject.AddComponent<HealthHudUI>();
+            SetSerializedObjectReference(hud, "healthText", healthText);
+            SetSerializedObjectReference(hud, "healthFill", fillImage);
+        }
+
+        private static void CreateInventoryCanvas()
+        {
+            var canvasObject = new GameObject("InventoryCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 60;
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var panel = CreatePanel(canvasObject.transform, "InventoryPanel", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(720f, 600f), new Vector2(44f, -44f), new Color(0.045f, 0.04f, 0.033f, 0.93f));
+            var content = CreateText(panel.transform, "InventoryContent", new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(0.5f, 0.5f), new Vector2(-56f, -48f), Vector2.zero, 18, TextAnchor.UpperLeft, new Color(0.93f, 0.9f, 0.82f, 1f));
+
+            var hud = canvasObject.AddComponent<InventoryHudUI>();
+            SetSerializedObjectReference(hud, "panelRoot", panel);
+            SetSerializedObjectReference(hud, "contentText", content);
+        }
+
+        private static void CreateEndingCanvas()
+        {
+            var canvasObject = new GameObject("EndingCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 90;
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var panel = CreatePanel(canvasObject.transform, "EndingPanel", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(920f, 340f), Vector2.zero, new Color(0.045f, 0.038f, 0.032f, 0.94f));
+            var title = CreateText(panel.transform, "EndingTitle", new Vector2(0f, 0.68f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-96f, -42f), new Vector2(0f, -34f), 42, TextAnchor.MiddleCenter, new Color(0.94f, 0.78f, 0.42f, 1f));
+            var body = CreateText(panel.transform, "EndingBody", new Vector2(0f, 0f), new Vector2(1f, 0.7f), new Vector2(0.5f, 0.5f), new Vector2(-128f, -64f), new Vector2(0f, 18f), 24, TextAnchor.MiddleCenter, new Color(0.94f, 0.91f, 0.84f, 1f));
+
+            var endingHud = canvasObject.AddComponent<EndingHudUI>();
+            SetSerializedObjectReference(endingHud, "panelRoot", panel);
+            SetSerializedObjectReference(endingHud, "titleText", title);
+            SetSerializedObjectReference(endingHud, "bodyText", body);
+        }
+
         private static void CreateHouse(Transform parent, string name, Vector3 position, Quaternion rotation, float scale)
         {
             var house = new GameObject(name);
@@ -343,6 +660,56 @@ namespace WitcherRightVersion.Editor
             PlaceKenney(house.transform, $"{name}_WallB", "wall.fbx", new Vector3(-1.1f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), Vector3.one);
             PlaceKenney(house.transform, $"{name}_WallC", "wall.fbx", new Vector3(1.1f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), Vector3.one);
             PlaceKenney(house.transform, $"{name}_Roof", "roof-high.fbx", new Vector3(0f, 1.2f, 0f), Quaternion.identity, Vector3.one);
+        }
+
+        private static GameObject CreateCapsule(Transform parent, string name, Vector3 position, Vector3 scale, Color color)
+        {
+            var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            capsule.name = name;
+            capsule.transform.SetParent(parent, false);
+            capsule.transform.localPosition = position;
+            capsule.transform.localScale = scale;
+            capsule.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", color);
+            return capsule;
+        }
+
+        private static void CreateQuestMarker(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color, bool canRepeat = false)
+        {
+            var marker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            marker.name = objectName;
+            marker.transform.SetParent(parent, false);
+            marker.transform.localPosition = position;
+            marker.transform.localScale = scale;
+            marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            var interactable = marker.AddComponent<QuestProgressInteractable>();
+            interactable.Configure(displayName, prompt, questAction, successMessage, blockedMessage, canRepeat);
+        }
+
+        private static void CreateSupplyCrate(Transform parent, string objectName, string displayName, string prompt, string[] itemsToGrant, string message, Vector3 position, Vector3 scale, Color color)
+        {
+            var crate = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            crate.name = objectName;
+            crate.transform.SetParent(parent, false);
+            crate.transform.localPosition = position;
+            crate.transform.localScale = scale;
+            crate.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            var interactable = crate.AddComponent<InventoryGrantInteractable>();
+            interactable.Configure(displayName, prompt, itemsToGrant, message);
+        }
+
+        private static void CreateCraftingStation(Transform parent, string objectName, string displayName, string prompt, string recipeId, Vector3 position, Vector3 scale, Color color)
+        {
+            var station = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            station.name = objectName;
+            station.transform.SetParent(parent, false);
+            station.transform.localPosition = position;
+            station.transform.localScale = scale;
+            station.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            var interactable = station.AddComponent<CraftingInteractable>();
+            interactable.Configure(displayName, prompt, recipeId);
         }
 
         private static void PlaceKenney(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
@@ -489,6 +856,20 @@ namespace WitcherRightVersion.Editor
         {
             var serializedObject = new SerializedObject(target);
             serializedObject.FindProperty(propertyName).objectReferenceValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetSerializedArrayReferences(Object target, string propertyName, Object[] values)
+        {
+            var serializedObject = new SerializedObject(target);
+            var property = serializedObject.FindProperty(propertyName);
+            property.arraySize = values.Length;
+
+            for (var i = 0; i < values.Length; i++)
+            {
+                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            }
+
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 

@@ -148,7 +148,30 @@ namespace WitcherRightVersion.Editor
             RequireObject("AshRoadDistrict_PepelnyTrakt", failures);
             RequireObject("TowerVistaDistrict_Ruins", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
+            RequireObject<DialogueService>("DialogueCanvas", failures);
+            RequireObject<QuestHudUI>("QuestCanvas", failures);
+            RequireObject<HealthHudUI>("HealthCanvas", failures);
+            RequireObject<InventoryHudUI>("InventoryCanvas", failures);
+            RequireObject<EndingHudUI>("EndingCanvas", failures);
             RequireObject("WorldDirectionCanvas", failures);
+            RequireObject("WorldGameplayRoot", failures);
+            RequireObject<DialogueInteractable>("ElderVoytsekh_World", failures);
+            RequireObject<DialogueInteractable>("MartaLozovaya_World", failures);
+            RequireObject<QuestProgressInteractable>("WorldTrace_ClawMarks", failures);
+            RequireObject<QuestProgressInteractable>("WorldTrace_SlimeTrail", failures);
+            RequireObject<QuestProgressInteractable>("WorldTrace_TornCloth", failures);
+            RequireObject<QuestProgressInteractable>("WorldHunterCamp_Start", failures);
+            RequireObject<CraftingInteractable>("WorldAlchemyTable_Swallow", failures);
+            RequireObject<CraftingInteractable>("WorldAlchemyTable_Antitoxin", failures);
+            RequireObject<CraftingInteractable>("WorldForge_ReinforcedArmor", failures);
+            RequireObject<EndingAltarInteractable>("WorldFinalTruthAltar", failures);
+
+            var drowner = RequireObject("WorldDrowner_Prototype", failures);
+            if (drowner != null)
+            {
+                RequireComponent<Health>(drowner, failures, "WorldDrowner_Prototype");
+                RequireComponent<EnemyAI>(drowner, failures, "WorldDrowner_Prototype");
+            }
         }
 
         private static void ValidateEditorBuildPipeline(List<string> failures)
