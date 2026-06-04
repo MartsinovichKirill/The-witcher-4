@@ -708,6 +708,12 @@ namespace WitcherRightVersion.Editor
                 EndingService.TruthEndingType,
                 new Vector3(22.4f, 0.45f, 8.5f),
                 new Color(0.23f, 0.2f, 0.27f, 1f));
+            CreateEndingAltarSilhouette(
+                parent,
+                "WorldFinalTruthSilhouette",
+                new Vector3(22.4f, 0f, 8.5f),
+                new Color(0.88f, 0.72f, 0.36f, 1f),
+                EndingType.Truth);
 
             CreateEndingAltar(
                 parent,
@@ -717,6 +723,12 @@ namespace WitcherRightVersion.Editor
                 EndingService.LieEndingType,
                 new Vector3(24.4f, 0.45f, 7.4f),
                 new Color(0.26f, 0.19f, 0.11f, 1f));
+            CreateEndingAltarSilhouette(
+                parent,
+                "WorldFinalLieSilhouette",
+                new Vector3(24.4f, 0f, 7.4f),
+                new Color(0.72f, 0.43f, 0.17f, 1f),
+                EndingType.Lie);
 
             CreateEndingAltar(
                 parent,
@@ -726,6 +738,12 @@ namespace WitcherRightVersion.Editor
                 EndingService.SacrificeEndingType,
                 new Vector3(24.4f, 0.45f, 9.7f),
                 new Color(0.19f, 0.1f, 0.12f, 1f));
+            CreateEndingAltarSilhouette(
+                parent,
+                "WorldFinalSacrificeSilhouette",
+                new Vector3(24.4f, 0f, 9.7f),
+                new Color(0.72f, 0.12f, 0.08f, 1f),
+                EndingType.Sacrifice);
         }
 
         private static void CreateDecisionFlagMarker(
@@ -767,6 +785,59 @@ namespace WitcherRightVersion.Editor
             altar.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
             var interactable = altar.AddComponent<EndingAltarInteractable>();
             interactable.Configure(displayName, prompt, endingType);
+        }
+
+        private enum EndingType
+        {
+            Truth,
+            Lie,
+            Sacrifice
+        }
+
+        private static void CreateEndingAltarSilhouette(Transform parent, string objectName, Vector3 position, Color accentColor, EndingType endingType)
+        {
+            var root = new GameObject(objectName);
+            root.transform.SetParent(parent, false);
+            root.transform.localPosition = position;
+
+            var darkStone = CreateMaterial($"Assets/Materials/{objectName}_DarkStone.mat", new Color(0.11f, 0.1f, 0.105f, 1f));
+            var accent = CreateMaterial($"Assets/Materials/{objectName}_Accent.mat", accentColor);
+            var glass = CreateMaterial($"Assets/Materials/{objectName}_Glass.mat", new Color(accentColor.r * 0.8f, accentColor.g * 0.8f, accentColor.b, 0.9f));
+
+            switch (endingType)
+            {
+                case EndingType.Truth:
+                    CreateAltarPiece(root.transform, "TruthBackMonolith", PrimitiveType.Cube, new Vector3(0f, 1.45f, 0.58f), new Vector3(0.34f, 2.4f, 0.18f), Quaternion.Euler(0f, 0f, 0f), darkStone);
+                    CreateAltarPiece(root.transform, "TruthLeftShard", PrimitiveType.Cube, new Vector3(-0.58f, 1.05f, 0.44f), new Vector3(0.16f, 1.65f, 0.14f), Quaternion.Euler(0f, 18f, -8f), accent);
+                    CreateAltarPiece(root.transform, "TruthRightShard", PrimitiveType.Cube, new Vector3(0.58f, 1.05f, 0.44f), new Vector3(0.16f, 1.65f, 0.14f), Quaternion.Euler(0f, -18f, 8f), accent);
+                    CreateAltarPiece(root.transform, "TruthOpenDisc", PrimitiveType.Cylinder, new Vector3(0f, 1.68f, 0.36f), new Vector3(0.55f, 0.06f, 0.55f), Quaternion.Euler(90f, 0f, 0f), glass);
+                    break;
+                case EndingType.Lie:
+                    CreateAltarPiece(root.transform, "LieClosedGate", PrimitiveType.Cube, new Vector3(0f, 1.1f, 0.54f), new Vector3(1.18f, 1.75f, 0.16f), Quaternion.identity, darkStone);
+                    CreateAltarPiece(root.transform, "LieMirrorFace", PrimitiveType.Cube, new Vector3(0f, 1.16f, 0.43f), new Vector3(0.86f, 1.25f, 0.04f), Quaternion.identity, glass);
+                    CreateAltarPiece(root.transform, "LieLeftChain", PrimitiveType.Cube, new Vector3(-0.36f, 1.16f, 0.32f), new Vector3(0.07f, 1.35f, 0.06f), Quaternion.Euler(0f, 0f, 16f), accent);
+                    CreateAltarPiece(root.transform, "LieRightChain", PrimitiveType.Cube, new Vector3(0.36f, 1.16f, 0.32f), new Vector3(0.07f, 1.35f, 0.06f), Quaternion.Euler(0f, 0f, -16f), accent);
+                    break;
+                case EndingType.Sacrifice:
+                    CreateAltarPiece(root.transform, "SacrificeSplitPillarA", PrimitiveType.Cube, new Vector3(-0.3f, 1.08f, 0.5f), new Vector3(0.22f, 1.85f, 0.18f), Quaternion.Euler(0f, 0f, 12f), darkStone);
+                    CreateAltarPiece(root.transform, "SacrificeSplitPillarB", PrimitiveType.Cube, new Vector3(0.32f, 1.06f, 0.5f), new Vector3(0.22f, 1.75f, 0.18f), Quaternion.Euler(0f, 0f, -15f), darkStone);
+                    CreateAltarPiece(root.transform, "SacrificeCrackedShardA", PrimitiveType.Cube, new Vector3(-0.56f, 0.72f, 0.22f), new Vector3(0.12f, 1.0f, 0.1f), Quaternion.Euler(0f, -18f, 24f), accent);
+                    CreateAltarPiece(root.transform, "SacrificeCrackedShardB", PrimitiveType.Cube, new Vector3(0.58f, 0.76f, 0.22f), new Vector3(0.12f, 1.1f, 0.1f), Quaternion.Euler(0f, 18f, -26f), accent);
+                    CreateAltarPiece(root.transform, "SacrificeBrokenCore", PrimitiveType.Sphere, new Vector3(0f, 1.35f, 0.25f), new Vector3(0.42f, 0.42f, 0.42f), Quaternion.identity, glass);
+                    break;
+            }
+        }
+
+        private static void CreateAltarPiece(Transform parent, string name, PrimitiveType primitiveType, Vector3 localPosition, Vector3 localScale, Quaternion localRotation, Material material)
+        {
+            var piece = GameObject.CreatePrimitive(primitiveType);
+            piece.name = name;
+            piece.transform.SetParent(parent, false);
+            piece.transform.localPosition = localPosition;
+            piece.transform.localScale = localScale;
+            piece.transform.localRotation = localRotation;
+            piece.GetComponent<Renderer>().sharedMaterial = material;
+            Object.DestroyImmediate(piece.GetComponent<Collider>());
         }
 
         private static void CreateWorldBoundary(Transform parent)

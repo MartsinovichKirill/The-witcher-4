@@ -183,6 +183,9 @@ namespace WitcherRightVersion.Editor
             RequireObject<EndingAltarInteractable>("WorldFinalTruthAltar", failures);
             RequireObject<EndingAltarInteractable>("WorldFinalLieAltar", failures);
             RequireObject<EndingAltarInteractable>("WorldFinalSacrificeAltar", failures);
+            RequireObject("WorldFinalTruthSilhouette", failures);
+            RequireObject("WorldFinalLieSilhouette", failures);
+            RequireObject("WorldFinalSacrificeSilhouette", failures);
 
             var drowner = RequireObject("WorldDrowner_Prototype", failures);
             if (drowner != null)
