@@ -71,7 +71,7 @@ namespace WitcherRightVersion.Editor
 
             RequireObject<MainMenuController>("MainMenuController", failures);
             RequireObject("NewGameButton", failures);
-            RequireObject("VelemarWorldButton", failures);
+            RequireObject("ClassicSliceButton", failures);
             RequireObject("ContinueButton", failures);
             RequireObject("SettingsButton", failures);
             RequireObject("LanguageDropdown", failures);
@@ -142,6 +142,7 @@ namespace WitcherRightVersion.Editor
             ValidateRuntimeServices("RuntimeServices", failures);
             RequireObject("VelemarWorldRoot", failures);
             RequireObject("VelemarWorldTerrain", failures);
+            RequireObject("VelemarAtmosphereLights", failures);
             RequireObject("VelemarRoadNetwork", failures);
             RequireObject("VillageDistrict_VereskovyBrod", failures);
             RequireObject("ForestDistrict_OldForest", failures);

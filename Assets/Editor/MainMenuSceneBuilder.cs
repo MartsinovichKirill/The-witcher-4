@@ -54,7 +54,7 @@ namespace WitcherRightVersion.Editor
             status.alignment = TextAnchor.MiddleLeft;
 
             var newGameButton = CreateButton("NewGameButton", mainPanel.transform, font, "New Game");
-            var worldGameButton = CreateButton("VelemarWorldButton", mainPanel.transform, font, "Velemar World");
+            var worldGameButton = CreateButton("ClassicSliceButton", mainPanel.transform, font, "Classic Slice");
             var continueButton = CreateButton("ContinueButton", mainPanel.transform, font, "Continue");
             var settingsButton = CreateButton("SettingsButton", mainPanel.transform, font, "Settings");
             var exitButton = CreateButton("ExitButton", mainPanel.transform, font, "Exit");
@@ -66,7 +66,7 @@ namespace WitcherRightVersion.Editor
             SetStackedButtonRect(exitButton.gameObject, 4);
 
             UnityEventTools.AddPersistentListener(newGameButton.onClick, controller.StartNewGame);
-            UnityEventTools.AddPersistentListener(worldGameButton.onClick, controller.StartVelemarWorld);
+            UnityEventTools.AddPersistentListener(worldGameButton.onClick, controller.StartClassicSlice);
             UnityEventTools.AddPersistentListener(continueButton.onClick, controller.ContinueGame);
             UnityEventTools.AddPersistentListener(settingsButton.onClick, controller.ShowSettingsPanel);
             UnityEventTools.AddPersistentListener(exitButton.onClick, controller.ExitGame);

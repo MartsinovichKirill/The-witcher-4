@@ -37,6 +37,8 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("RuntimeServices");
             RemoveIfExists("Reynard_Player");
             RemoveIfExists("ThirdPersonCamera");
+            RemoveIfExists("VelemarWorldSun");
+            RemoveIfExists("VelemarAtmosphereLights");
             RemoveIfExists("VelemarWorldRoot");
             RemoveIfExists("InteractionCanvas");
             RemoveIfExists("DialogueCanvas");
@@ -83,13 +85,36 @@ namespace WitcherRightVersion.Editor
             var lightObject = new GameObject("VelemarWorldSun");
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.intensity = 0.95f;
-            light.transform.rotation = Quaternion.Euler(48f, -28f, 0f);
+            light.color = new Color(0.92f, 0.78f, 0.58f, 1f);
+            light.intensity = 0.82f;
+            light.shadows = LightShadows.Soft;
+            light.transform.rotation = Quaternion.Euler(44f, -34f, 0f);
 
-            RenderSettings.ambientLight = new Color(0.24f, 0.27f, 0.23f, 1f);
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(0.16f, 0.18f, 0.17f, 1f);
             RenderSettings.fog = true;
-            RenderSettings.fogColor = new Color(0.34f, 0.39f, 0.35f, 1f);
-            RenderSettings.fogDensity = 0.0065f;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogColor = new Color(0.21f, 0.27f, 0.24f, 1f);
+            RenderSettings.fogDensity = 0.0105f;
+
+            var lightsRoot = new GameObject("VelemarAtmosphereLights");
+            CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.58f, 0.28f, 1f), 1.15f, 10f);
+            CreatePointLight(lightsRoot.transform, "SwampColdMiasmaLight", new Vector3(5.4f, 2.2f, -25.8f), new Color(0.16f, 0.48f, 0.36f, 1f), 0.85f, 12f);
+            CreatePointLight(lightsRoot.transform, "TowerMirrorVioletLight", new Vector3(0f, 3.6f, 28.6f), new Color(0.48f, 0.28f, 0.86f, 1f), 1.35f, 13f);
+            CreatePointLight(lightsRoot.transform, "AshRoadEmberLight", new Vector3(24f, 2.5f, 5.5f), new Color(0.9f, 0.25f, 0.12f, 1f), 0.95f, 11f);
+        }
+
+        private static void CreatePointLight(Transform parent, string name, Vector3 position, Color color, float intensity, float range)
+        {
+            var lightObject = new GameObject(name);
+            lightObject.transform.SetParent(parent, false);
+            lightObject.transform.position = position;
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+            light.shadows = LightShadows.None;
         }
 
         private static void CreateWorldRoot()
