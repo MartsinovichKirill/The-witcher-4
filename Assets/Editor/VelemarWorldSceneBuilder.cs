@@ -396,6 +396,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateElderDialogue(Transform parent)
         {
             var elder = CreateRpgCharacterAnchor(parent, "ElderVoytsekh_World", "Monk.fbx", new Vector3(-4.1f, 1f, -3.4f), Quaternion.Euler(0f, 145f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.22f, 0.18f, 0.13f, 1f));
+            CreateCharacterGroundRing(elder, "ElderRoleRing", new Color(0.62f, 0.42f, 0.12f, 1f), 0.82f);
             var dialogue = elder.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Elder Voytsekh",
@@ -480,6 +481,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateMartaDialogue(Transform parent)
         {
             var marta = CreateRpgCharacterAnchor(parent, "MartaLozovaya_World", "Cleric.fbx", new Vector3(4.2f, 1f, -3.6f), Quaternion.Euler(0f, -145f, 0f), new Vector3(0.86f, 0.86f, 0.86f), new Color(0.16f, 0.24f, 0.17f, 1f));
+            CreateCharacterGroundRing(marta, "MartaRoleRing", new Color(0.22f, 0.56f, 0.24f, 1f), 0.78f);
             var dialogue = marta.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Marta Lozovaya",
@@ -521,6 +523,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateBorisDialogue(Transform parent)
         {
             var boris = CreateRpgCharacterAnchor(parent, "BorisSmith_World", "Warrior.fbx", new Vector3(-3.1f, 1f, 0.7f), Quaternion.Euler(0f, 55f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.18f, 0.14f, 0.1f, 1f));
+            CreateCharacterGroundRing(boris, "BorisRoleRing", new Color(0.62f, 0.31f, 0.12f, 1f), 0.78f);
             var dialogue = boris.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Boris the Smith",
@@ -560,6 +563,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateRadekMerchant(Transform parent)
         {
             var radek = CreateRpgCharacterAnchor(parent, "RadekTrader_World", "Rogue.fbx", new Vector3(2.4f, 1f, -0.1f), Quaternion.Euler(0f, -120f, 0f), new Vector3(0.82f, 0.82f, 0.82f), new Color(0.2f, 0.16f, 0.09f, 1f));
+            CreateCharacterGroundRing(radek, "RadekRoleRing", new Color(0.66f, 0.5f, 0.18f, 1f), 0.76f);
             var merchant = radek.AddComponent<MerchantInteractable>();
             merchant.Configure(
                 "Radek the Trader",
@@ -575,6 +579,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateElsaDialogue(Transform parent)
         {
             var elsa = CreateRpgCharacterAnchor(parent, "ElsaCherntravka_World", "Wizard.fbx", new Vector3(12.6f, 1f, -25.6f), Quaternion.Euler(0f, -35f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            CreateCharacterGroundRing(elsa, "ElsaRoleRing", new Color(0.16f, 0.48f, 0.4f, 1f), 0.82f);
             var dialogue = elsa.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Elsa Cherntravka",
@@ -624,6 +629,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateOrtenDialogue(Transform parent)
         {
             var orten = CreateRpgCharacterAnchor(parent, "OrtenMirrorMage_World", "Wizard.fbx", new Vector3(0f, 1f, 30.2f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.24f, 0.18f, 0.32f, 1f));
+            CreateCharacterGroundRing(orten, "OrtenRoleRing", new Color(0.42f, 0.22f, 0.72f, 1f), 0.86f);
             var dialogue = orten.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Orten",
@@ -672,6 +678,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateIvarDialogue(Transform parent)
         {
             var ivar = CreateRpgCharacterAnchor(parent, "IvarSedoy_World", "Ranger.fbx", new Vector3(-21.7f, 1f, 3.2f), Quaternion.Euler(0f, 60f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
+            CreateCharacterGroundRing(ivar, "IvarRoleRing", new Color(0.28f, 0.48f, 0.2f, 1f), 0.78f);
             var dialogue = ivar.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Ivar Sedoy",
@@ -703,6 +710,7 @@ namespace WitcherRightVersion.Editor
         {
             var ghost = CreateRpgCharacterAnchor(parent, "GhostGirl_World", "Wizard.fbx", new Vector3(-2.7f, 1f, 27.0f), Quaternion.Euler(0f, 165f, 0f), new Vector3(0.62f, 0.62f, 0.62f), new Color(0.44f, 0.42f, 0.72f, 1f));
             ApplyMaterialToChildRenderers(ghost, CreateMaterial("Assets/Materials/GhostGirl_World_Spectral.mat", new Color(0.48f, 0.58f, 0.9f, 0.82f)));
+            CreateCharacterGroundRing(ghost, "GhostGirlReadabilityRing", new Color(0.32f, 0.42f, 0.88f, 1f), 0.95f);
             CreatePointLight(parent, "GhostGirlColdLight", new Vector3(-2.7f, 2.0f, 27.0f), new Color(0.34f, 0.48f, 0.88f, 1f), 1.05f, 6.5f);
             CreateMarker(parent, "GhostGirlMemoryRing", new Vector3(-2.7f, 0.08f, 27.0f), new Vector3(1.05f, 0.035f, 1.05f), new Color(0.22f, 0.28f, 0.52f, 1f));
 
@@ -765,9 +773,16 @@ namespace WitcherRightVersion.Editor
             {
                 renderer.enabled = true;
             }
+            else
+            {
+                ApplyMaterialToChildRenderers(drowner, CreateMaterial("Assets/Materials/DrownerMonsterVisual.mat", new Color(0.04f, 0.24f, 0.17f, 1f)));
+            }
+
+            CreateCharacterGroundRing(drowner, "WorldDrownerThreatRing", new Color(0.66f, 0.08f, 0.04f, 1f), 1.02f);
 
             var health = drowner.AddComponent<Health>();
             health.Configure("World drowner", 72f);
+            AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
             var ai = drowner.AddComponent<EnemyAI>();
             ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
         }
@@ -818,9 +833,16 @@ namespace WitcherRightVersion.Editor
             {
                 renderer.enabled = true;
             }
+            else
+            {
+                ApplyMaterialToChildRenderers(drowner, CreateMaterial("Assets/Materials/DrownerNestMonsterVisual.mat", new Color(0.05f, 0.2f, 0.14f, 1f)));
+            }
+
+            CreateCharacterGroundRing(drowner, $"{objectName}_ThreatRing", new Color(0.54f, 0.07f, 0.035f, 1f), 0.88f);
 
             var health = drowner.AddComponent<Health>();
             health.Configure("Nest drowner", 38f);
+            AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
             var ai = drowner.AddComponent<EnemyAI>();
             ai.Configure("Nest drowner", false, deathFlag, QuestService.ActionDrownerNestEnemyKilled, "drownerNestStarted", "Nest drowner is dead. Keep clearing the den.");
         }
@@ -846,9 +868,16 @@ namespace WitcherRightVersion.Editor
             {
                 renderer.enabled = true;
             }
+            else
+            {
+                ApplyMaterialToChildRenderers(guard, CreateMaterial("Assets/Materials/SkeletonGuardVisual.mat", new Color(0.32f, 0.31f, 0.28f, 1f)));
+            }
+
+            CreateCharacterGroundRing(guard, $"{objectName}_ThreatRing", new Color(0.58f, 0.08f, 0.06f, 1f), 0.9f);
 
             var health = guard.AddComponent<Health>();
             health.Configure("Tower skeleton guard", 62f);
+            AddCombatVisual(guard, new Color(1f, 0.2f, 0.1f, 1f), new Color(0.12f, 0.1f, 0.08f, 1f));
             var ai = guard.AddComponent<EnemyAI>();
             ai.Configure("Skeleton guard", false, objectName + "_Defeated", "");
         }
@@ -1007,6 +1036,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateWorldFinalConsequences(Transform parent)
         {
             var elsa = CreateRpgCharacterAnchor(parent, "FinalElsaAlly_World", "Wizard.fbx", new Vector3(21.0f, 1f, 6.9f), Quaternion.Euler(0f, 45f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            CreateCharacterGroundRing(elsa, "FinalElsaRoleRing", new Color(0.16f, 0.48f, 0.4f, 1f), 0.82f);
             elsa.AddComponent<FlagConditionalObject>().Configure("ElsaProtected");
             elsa.AddComponent<DialogueInteractable>().Configure(
                 "Elsa Cherntravka",
@@ -1026,6 +1056,7 @@ namespace WitcherRightVersion.Editor
             CreateConditionalMarker(parent, "FinalElsaWardCircle", "Elsa's ward", "Inspect", "ElsaProtected", new Vector3(21.0f, 0.08f, 6.9f), new Vector3(1.1f, 0.04f, 1.1f), new Color(0.12f, 0.38f, 0.25f, 1f), "Elsa has marked a safer path through the ash.");
 
             var ivar = CreateRpgCharacterAnchor(parent, "FinalIvarAlly_World", "Ranger.fbx", new Vector3(26.1f, 1f, 6.5f), Quaternion.Euler(0f, -62f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
+            CreateCharacterGroundRing(ivar, "FinalIvarRoleRing", new Color(0.28f, 0.48f, 0.2f, 1f), 0.78f);
             ivar.AddComponent<FlagConditionalObject>().Configure("IvarSaved");
             ivar.AddComponent<DialogueInteractable>().Configure(
                 "Ivar Sedoy",
@@ -1054,8 +1085,10 @@ namespace WitcherRightVersion.Editor
         private static void CreateFinalEnforcer(Transform parent, string objectName, Vector3 position, Quaternion rotation, string deathFlag)
         {
             var enforcer = CreateRpgCharacterAnchor(parent, objectName, "Warrior.fbx", position, rotation, new Vector3(0.86f, 0.86f, 0.86f), new Color(0.24f, 0.12f, 0.08f, 1f));
+            CreateCharacterGroundRing(enforcer, $"{objectName}_ThreatRing", new Color(0.62f, 0.08f, 0.04f, 1f), 0.88f);
             var health = enforcer.AddComponent<Health>();
             health.Configure("Voytsekh's enforcer", 55f);
+            AddCombatVisual(enforcer, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.1f, 0.055f, 0.04f, 1f));
             var ai = enforcer.AddComponent<EnemyAI>();
             ai.Configure(
                 "Voytsekh's enforcer",
@@ -1212,8 +1245,11 @@ namespace WitcherRightVersion.Editor
             player.AddComponent<InteractionController>();
             var health = player.AddComponent<Health>();
             health.Configure("Reynard", 120f);
+            AddCombatVisual(player, new Color(0.85f, 0.14f, 0.08f, 1f), new Color(0.16f, 0.12f, 0.1f, 1f));
             player.AddComponent<CombatController>();
             CreatePlayerVisual(player.transform);
+            CreateCharacterGroundRing(player, "ReynardCombatReadabilityRing", new Color(0.78f, 0.58f, 0.24f, 1f), 0.95f);
+            CreateCharacterGroundRing(player, "ReynardAardFocusRing", new Color(0.22f, 0.42f, 0.82f, 1f), 0.62f);
             return player;
         }
 
@@ -1485,6 +1521,28 @@ namespace WitcherRightVersion.Editor
                     renderers[i].sharedMaterial = material;
                 }
             }
+        }
+
+        private static void AddCombatVisual(GameObject target, Color hitFlashColor, Color deathColor)
+        {
+            var feedback = target.AddComponent<CombatVisualFeedback>();
+            feedback.Configure(hitFlashColor, deathColor);
+        }
+
+        private static void CreateCharacterGroundRing(GameObject anchor, string ringName, Color color, float radius)
+        {
+            if (anchor == null)
+            {
+                return;
+            }
+
+            var ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            ring.name = ringName;
+            ring.transform.SetParent(anchor.transform, false);
+            ring.transform.localPosition = new Vector3(0f, anchor.GetComponent<CharacterController>() != null ? 0.025f : -0.94f, 0f);
+            ring.transform.localScale = new Vector3(radius, 0.015f, radius);
+            ring.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{ringName}.mat", color);
+            Object.DestroyImmediate(ring.GetComponent<Collider>());
         }
 
         private static void CreateQuestMarker(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color, bool canRepeat = false)

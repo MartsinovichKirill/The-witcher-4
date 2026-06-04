@@ -157,6 +157,9 @@ namespace WitcherRightVersion.Editor
             RequireObject("SwampBossForeshadow_Model", failures);
             RequireObject("TowerRitualCircle_World", failures);
             RequireObject("AshRoadSurvivorCamp_World", failures);
+            RequireObject<CombatVisualFeedback>("Reynard_Player", failures);
+            RequireObject("ReynardCombatReadabilityRing", failures);
+            RequireObject("ReynardAardFocusRing", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
             RequireObject<DialogueService>("DialogueCanvas", failures);
             RequireObject<QuestHudUI>("QuestCanvas", failures);
@@ -171,12 +174,14 @@ namespace WitcherRightVersion.Editor
             RequireObject("SwampKayKitRoofedBridge_World", failures);
             RequireObject("TowerKayKitCastleCore_World", failures);
             RequireObject<DialogueInteractable>("ElderVoytsekh_World", failures);
+            RequireObject("ElderRoleRing", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_World", failures);
             RequireObject<DialogueInteractable>("BorisSmith_World", failures);
             RequireObject<MerchantInteractable>("RadekTrader_World", failures);
             RequireObject<DialogueInteractable>("ElsaCherntravka_World", failures);
             RequireObject<DialogueInteractable>("IvarSedoy_World", failures);
             RequireObject<DialogueInteractable>("GhostGirl_World", failures);
+            RequireObject("GhostGirlReadabilityRing", failures);
             RequireObject("GhostGirlColdLight", failures);
             RequireObject("GhostGirlMemoryRing", failures);
             RequireObject<DialogueInteractable>("OrtenMirrorMage_World", failures);
@@ -214,7 +219,9 @@ namespace WitcherRightVersion.Editor
             {
                 RequireComponent<Health>(drowner, failures, "WorldDrowner_Prototype");
                 RequireComponent<EnemyAI>(drowner, failures, "WorldDrowner_Prototype");
+                RequireComponent<CombatVisualFeedback>(drowner, failures, "WorldDrowner_Prototype");
             }
+            RequireObject("WorldDrownerThreatRing", failures);
 
             ValidateEnemy("TowerSkeletonGuard_Left", failures);
             ValidateEnemy("TowerSkeletonGuard_Right", failures);
@@ -235,6 +242,7 @@ namespace WitcherRightVersion.Editor
 
             RequireComponent<Health>(enemy, failures, objectName);
             RequireComponent<EnemyAI>(enemy, failures, objectName);
+            RequireComponent<CombatVisualFeedback>(enemy, failures, objectName);
         }
 
         private static void ValidateEditorBuildPipeline(List<string> failures)

@@ -12,6 +12,7 @@ namespace WitcherRightVersion.Combat
         private float currentHealth;
         private bool isDead;
 
+        public event Action<Health, float, GameObject> Damaged;
         public event Action<Health, GameObject> Died;
 
         public string DisplayName => displayName;
@@ -42,6 +43,7 @@ namespace WitcherRightVersion.Combat
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             Debug.Log($"{displayName} took {amount:0} damage. HP: {currentHealth:0}/{maxHealth:0}", this);
             AudioFeedbackService.Instance?.PlayHit();
+            Damaged?.Invoke(this, amount, source);
 
             if (currentHealth <= 0f)
             {
