@@ -300,6 +300,7 @@ namespace WitcherRightVersion.Editor
             CreateWorldForestQuestObjects(root.transform);
             CreateWorldStoryEvidenceObjects(root.transform);
             CreateWorldFinalAltars(root.transform);
+            CreateWorldFinalConsequences(root.transform);
         }
 
         private static void CreateElderDialogue(Transform parent)
@@ -911,6 +912,89 @@ namespace WitcherRightVersion.Editor
                 new Vector3(24.4f, 0f, 9.7f),
                 new Color(0.72f, 0.12f, 0.08f, 1f),
                 EndingType.Sacrifice);
+        }
+
+        private static void CreateWorldFinalConsequences(Transform parent)
+        {
+            var elsa = CreateRpgCharacterAnchor(parent, "FinalElsaAlly_World", "Wizard.fbx", new Vector3(21.0f, 1f, 6.9f), Quaternion.Euler(0f, 45f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            elsa.AddComponent<FlagConditionalObject>().Configure("ElsaProtected");
+            elsa.AddComponent<DialogueInteractable>().Configure(
+                "Elsa Cherntravka",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Elsa Cherntravka",
+                        "You chose a witness over comfort, witcher. The old road remembers that. I can steady the rite, but I cannot choose for you.",
+                        new[]
+                        {
+                            new DialogueChoice("Stay near the altar.", "", "", true)
+                        })
+                });
+            CreateConditionalMarker(parent, "FinalElsaWardCircle", "Elsa's ward", "Inspect", "ElsaProtected", new Vector3(21.0f, 0.08f, 6.9f), new Vector3(1.1f, 0.04f, 1.1f), new Color(0.12f, 0.38f, 0.25f, 1f), "Elsa has marked a safer path through the ash.");
+
+            var ivar = CreateRpgCharacterAnchor(parent, "FinalIvarAlly_World", "Ranger.fbx", new Vector3(26.1f, 1f, 6.5f), Quaternion.Euler(0f, -62f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
+            ivar.AddComponent<FlagConditionalObject>().Configure("IvarSaved");
+            ivar.AddComponent<DialogueInteractable>().Configure(
+                "Ivar Sedoy",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Ivar Sedoy",
+                        "You pulled me out when the forest wanted payment. I owe you one clean shot if Voytsekh's men try to make this ugly.",
+                        new[]
+                        {
+                            new DialogueChoice("Watch the road.", "", "", true)
+                        })
+                });
+
+            CreateFinalEnforcer(parent, "FinalMayorEnforcer_01", new Vector3(26.9f, 1f, 8.6f), Quaternion.Euler(0f, -112f, 0f), "FinalMayorEnforcer01Defeated");
+            CreateFinalEnforcer(parent, "FinalMayorEnforcer_02", new Vector3(27.5f, 1f, 10.2f), Quaternion.Euler(0f, -138f, 0f), "FinalMayorEnforcer02Defeated");
+
+            CreateConditionalMarker(parent, "FinalMayorControlPost", "Voytsekh's control post", "Inspect", "ElsaBetrayed", new Vector3(25.6f, 0.25f, 4.9f), new Vector3(0.9f, 0.35f, 0.9f), new Color(0.36f, 0.18f, 0.08f, 1f), "The elder's people stand bolder after Elsa is handed over.");
+            CreateConditionalMarker(parent, "FinalTruthEvidenceShrine", "Medallion proof", "Inspect", "MedallionFound", new Vector3(22.2f, 0.22f, 10.2f), new Vector3(0.52f, 0.16f, 0.52f), new Color(0.7f, 0.55f, 0.23f, 1f), "The girl's medallion answers the Truth altar.");
+            CreateConditionalMarker(parent, "FinalSacrificeDiaryShrine", "Orten's diary proof", "Inspect", "OrtenDiaryFound", new Vector3(25.5f, 0.22f, 10.8f), new Vector3(0.52f, 0.16f, 0.52f), new Color(0.46f, 0.08f, 0.08f, 1f), "Orten's notes explain how to break the Mirror without asking it for another lie.");
+        }
+
+        private static void CreateFinalEnforcer(Transform parent, string objectName, Vector3 position, Quaternion rotation, string deathFlag)
+        {
+            var enforcer = CreateRpgCharacterAnchor(parent, objectName, "Warrior.fbx", position, rotation, new Vector3(0.86f, 0.86f, 0.86f), new Color(0.24f, 0.12f, 0.08f, 1f));
+            var health = enforcer.AddComponent<Health>();
+            health.Configure("Voytsekh's enforcer", 55f);
+            var ai = enforcer.AddComponent<EnemyAI>();
+            ai.Configure(
+                "Voytsekh's enforcer",
+                false,
+                deathFlag,
+                "",
+                "questionedElderVersion",
+                "Voytsekh's enforcer falls back from the ash road.");
+        }
+
+        private static void CreateConditionalMarker(
+            Transform parent,
+            string objectName,
+            string displayName,
+            string prompt,
+            string requiredFlag,
+            Vector3 position,
+            Vector3 scale,
+            Color color,
+            string message)
+        {
+            var marker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            marker.name = objectName;
+            marker.transform.SetParent(parent, false);
+            marker.transform.localPosition = position;
+            marker.transform.localScale = scale;
+            marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+            marker.AddComponent<FlagConditionalObject>().Configure(requiredFlag);
+            marker.AddComponent<SimpleInteractable>().Configure(displayName, prompt, message);
         }
 
         private static void CreateDecisionFlagMarker(

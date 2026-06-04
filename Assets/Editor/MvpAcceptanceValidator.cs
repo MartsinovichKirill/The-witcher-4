@@ -195,6 +195,12 @@ namespace WitcherRightVersion.Editor
             RequireObject("WorldFinalTruthSilhouette", failures);
             RequireObject("WorldFinalLieSilhouette", failures);
             RequireObject("WorldFinalSacrificeSilhouette", failures);
+            RequireObject<DialogueInteractable>("FinalElsaAlly_World", failures);
+            RequireObject<FlagConditionalObject>("FinalElsaWardCircle", failures);
+            RequireObject<DialogueInteractable>("FinalIvarAlly_World", failures);
+            RequireObject<FlagConditionalObject>("FinalMayorControlPost", failures);
+            RequireObject<FlagConditionalObject>("FinalTruthEvidenceShrine", failures);
+            RequireObject<FlagConditionalObject>("FinalSacrificeDiaryShrine", failures);
 
             var drowner = RequireObject("WorldDrowner_Prototype", failures);
             if (drowner != null)
@@ -208,6 +214,8 @@ namespace WitcherRightVersion.Editor
             ValidateEnemy("WorldDrownerNestEnemy_01", failures);
             ValidateEnemy("WorldDrownerNestEnemy_02", failures);
             ValidateEnemy("WorldDrownerNestEnemy_03", failures);
+            ValidateEnemy("FinalMayorEnforcer_01", failures);
+            ValidateEnemy("FinalMayorEnforcer_02", failures);
         }
 
         private static void ValidateEnemy(string objectName, List<string> failures)
