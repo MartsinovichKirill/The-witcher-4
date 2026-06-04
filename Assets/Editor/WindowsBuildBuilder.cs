@@ -13,7 +13,7 @@ namespace WitcherRightVersion.Editor
         [MenuItem("Tools/Witcher Right Version/Build Windows Player")]
         public static void Build()
         {
-            VerticalSliceValidator.Validate();
+            MvpAcceptanceValidator.Validate();
 
             Directory.CreateDirectory(Path.GetDirectoryName(OutputPath));
 
