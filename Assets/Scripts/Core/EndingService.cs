@@ -1,4 +1,5 @@
 using UnityEngine;
+using WitcherRightVersion.Quest;
 using WitcherRightVersion.Save;
 using WitcherRightVersion.UI;
 
@@ -36,7 +37,20 @@ namespace WitcherRightVersion.Core
 
         public bool CanCompleteTruthEnding()
         {
-            return PlayerPrefs.GetInt(PendingTruthRouteKey, 0) == 1 || DecisionFlagService.Instance != null && DecisionFlagService.Instance.HasFlag(TruthEndingFlag);
+            return PlayerPrefs.GetInt(PendingTruthRouteKey, 0) == 1
+                || DecisionFlagService.Instance != null && DecisionFlagService.Instance.HasFlag(TruthEndingFlag)
+                || HasWorldTruthRouteRequirements();
+        }
+
+        private static bool HasWorldTruthRouteRequirements()
+        {
+            var quest = QuestService.Instance;
+            var flags = DecisionFlagService.Instance;
+
+            return quest != null
+                && flags != null
+                && quest.SwampContractState == QuestState.Completed
+                && flags.HasFlag("questionedElderVersion");
         }
 
         public bool CompleteTruthEnding()

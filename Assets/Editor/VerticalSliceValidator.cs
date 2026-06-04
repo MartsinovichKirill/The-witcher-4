@@ -313,6 +313,13 @@ namespace WitcherRightVersion.Editor
                 InvokeAwake(quest);
                 InvokeAwake(save);
 
+                Require(!endings.CanCompleteTruthEnding(), failures, "Truth ending must be locked before route requirements are met.");
+                EndingService.UnlockTruthRoute();
+                Require(endings.CanCompleteTruthEnding(), failures, "Truth ending must unlock after entering Ash Road route.");
+                PlayerPrefs.DeleteKey(EndingService.PendingTruthRouteKey);
+                PlayerPrefs.Save();
+                Require(!endings.CanCompleteTruthEnding(), failures, "Truth ending must lock again after clearing temporary route unlock.");
+
                 Require(crafting.Recipes.Count == 3, failures, "Crafting must expose three MVP recipes.");
 
                 flags.SetFlag("acceptedSwampContract");
@@ -420,9 +427,7 @@ namespace WitcherRightVersion.Editor
                 SetSingleton(quest);
                 SetSingleton(save);
 
-                Require(!endings.CanCompleteTruthEnding(), failures, "Truth ending must be locked before the final route opens.");
-                EndingService.UnlockTruthRoute();
-                Require(endings.CanCompleteTruthEnding(), failures, "Truth ending must unlock after entering Ash Road route.");
+                Require(endings.CanCompleteTruthEnding(), failures, "World truth ending must unlock from completed contract and questioned elder flag.");
                 Require(endings.CompleteTruthEnding(), failures, "Truth ending must complete from final altar.");
                 Require(endings.CompletedEnding == EndingService.TruthEndingType, failures, "Truth ending type must be stored.");
                 Require(flags.HasFlag(EndingService.TruthEndingFlag), failures, "Truth ending must set MVP ending flag.");
