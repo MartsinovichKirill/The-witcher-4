@@ -23,6 +23,7 @@ namespace WitcherRightVersion.Editor
         private const string VillageScenePath = "Assets/Scenes/VillageScene.unity";
         private const string ForestScenePath = "Assets/Scenes/ForestScene.unity";
         private const string AshRoadScenePath = "Assets/Scenes/AshRoadScene.unity";
+        private const string VelemarWorldScenePath = "Assets/Scenes/VelemarWorldScene.unity";
 
         [MenuItem("Tools/Witcher Right Version/Validate MVP Acceptance")]
         public static void Validate()
@@ -35,6 +36,7 @@ namespace WitcherRightVersion.Editor
             ValidateVillageAcceptance(failures);
             ValidateForestAcceptance(failures);
             ValidateAshRoadAcceptance(failures);
+            ValidateVelemarWorldAcceptance(failures);
             ValidateEditorBuildPipeline(failures);
 
             if (failures.Count > 0)
@@ -54,11 +56,13 @@ namespace WitcherRightVersion.Editor
             Require(File.Exists(VillageScenePath), failures, "VillageScene asset must exist.");
             Require(File.Exists(ForestScenePath), failures, "ForestScene asset must exist.");
             Require(File.Exists(AshRoadScenePath), failures, "AshRoadScene asset must exist.");
+            Require(File.Exists(VelemarWorldScenePath), failures, "VelemarWorldScene asset must exist.");
 
             RequireBuildScene(MainMenuScenePath, failures);
             RequireBuildScene(VillageScenePath, failures);
             RequireBuildScene(ForestScenePath, failures);
             RequireBuildScene(AshRoadScenePath, failures);
+            RequireBuildScene(VelemarWorldScenePath, failures);
         }
 
         private static void ValidateMainMenuAcceptance(List<string> failures)
@@ -127,6 +131,24 @@ namespace WitcherRightVersion.Editor
             RequireObject<EndingAltarInteractable>("FinalTruthAltar", failures);
             RequireObject<EndingHudUI>("EndingCanvas", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
+        }
+
+        private static void ValidateVelemarWorldAcceptance(List<string> failures)
+        {
+            EditorSceneManager.OpenScene(VelemarWorldScenePath, OpenSceneMode.Single);
+
+            ValidatePlayer("Reynard_Player", failures);
+            ValidateRuntimeServices("RuntimeServices", failures);
+            RequireObject("VelemarWorldRoot", failures);
+            RequireObject("VelemarWorldTerrain", failures);
+            RequireObject("VelemarRoadNetwork", failures);
+            RequireObject("VillageDistrict_VereskovyBrod", failures);
+            RequireObject("ForestDistrict_OldForest", failures);
+            RequireObject("SwampDistrict_BlackSwamp", failures);
+            RequireObject("AshRoadDistrict_PepelnyTrakt", failures);
+            RequireObject("TowerVistaDistrict_Ruins", failures);
+            RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
+            RequireObject("WorldDirectionCanvas", failures);
         }
 
         private static void ValidateEditorBuildPipeline(List<string> failures)

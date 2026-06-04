@@ -43,13 +43,15 @@ namespace WitcherRightVersion.Editor
             CreateSceneIfMissing("VillageScene");
             CreateSceneIfMissing("ForestScene");
             CreateSceneIfMissing("AshRoadScene");
+            CreateSceneIfMissing("VelemarWorldScene");
 
             EditorBuildSettings.scenes = new[]
             {
                 new EditorBuildSettingsScene("Assets/Scenes/MainMenuScene.unity", true),
                 new EditorBuildSettingsScene("Assets/Scenes/VillageScene.unity", true),
                 new EditorBuildSettingsScene("Assets/Scenes/ForestScene.unity", true),
-                new EditorBuildSettingsScene("Assets/Scenes/AshRoadScene.unity", true)
+                new EditorBuildSettingsScene("Assets/Scenes/AshRoadScene.unity", true),
+                new EditorBuildSettingsScene("Assets/Scenes/VelemarWorldScene.unity", true)
             };
 
             PlayerSettings.companyName = "StudentProject";
@@ -72,12 +74,12 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject($"{sceneName}Root");
             root.transform.position = Vector3.zero;
 
-            if (sceneName == "VillageScene" || sceneName == "ForestScene" || sceneName == "AshRoadScene")
+            if (sceneName == "VillageScene" || sceneName == "ForestScene" || sceneName == "AshRoadScene" || sceneName == "VelemarWorldScene")
             {
                 var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
                 ground.name = sceneName == "VillageScene"
                     ? "VillageBlockoutGround"
-                    : sceneName == "ForestScene" ? "ForestBlockoutGround" : "AshRoadBlockoutGround";
+                    : sceneName == "ForestScene" ? "ForestBlockoutGround" : sceneName == "AshRoadScene" ? "AshRoadBlockoutGround" : "VelemarWorldTerrain";
                 ground.transform.position = Vector3.zero;
                 ground.transform.localScale = new Vector3(10f, 1f, 10f);
             }
