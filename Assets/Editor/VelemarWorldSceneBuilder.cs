@@ -21,6 +21,8 @@ namespace WitcherRightVersion.Editor
         private const string ScenePath = "Assets/Scenes/VelemarWorldScene.unity";
         private const string KenneyPath = "Assets/Art/External/Kenney_FantasyTownKit/Models/FBX format";
         private const string KnightPath = "Assets/Art/External/Quaternius_Knight/Knight Character by @Quaternius/FBX";
+        private const string RpgCharacterPath = "Assets/Art/External/OpenGameArt_RPGCharacters/FBX";
+        private const string MonsterPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX";
 
         [MenuItem("Tools/Witcher Right Version/Build Velemar World Scene")]
         public static void Create()
@@ -235,6 +237,7 @@ namespace WitcherRightVersion.Editor
             CreateElderDialogue(root.transform);
             CreateMartaDialogue(root.transform);
             CreateElsaDialogue(root.transform);
+            CreateIvarDialogue(root.transform);
             CreateOrtenDialogue(root.transform);
             CreateWorldTraceObjects(root.transform);
             CreateWorldDrowner(root.transform);
@@ -246,7 +249,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateElderDialogue(Transform parent)
         {
-            var elder = CreateCapsule(parent, "ElderVoytsekh_World", new Vector3(-4.1f, 1f, -3.4f), new Vector3(0.72f, 1f, 0.72f), new Color(0.22f, 0.18f, 0.13f, 1f));
+            var elder = CreateRpgCharacterAnchor(parent, "ElderVoytsekh_World", "Monk.fbx", new Vector3(-4.1f, 1f, -3.4f), Quaternion.Euler(0f, 145f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.22f, 0.18f, 0.13f, 1f));
             var dialogue = elder.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Elder Voytsekh",
@@ -330,7 +333,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateMartaDialogue(Transform parent)
         {
-            var marta = CreateCapsule(parent, "MartaLozovaya_World", new Vector3(4.2f, 1f, -3.6f), new Vector3(0.72f, 1f, 0.72f), new Color(0.16f, 0.24f, 0.17f, 1f));
+            var marta = CreateRpgCharacterAnchor(parent, "MartaLozovaya_World", "Cleric.fbx", new Vector3(4.2f, 1f, -3.6f), Quaternion.Euler(0f, -145f, 0f), new Vector3(0.86f, 0.86f, 0.86f), new Color(0.16f, 0.24f, 0.17f, 1f));
             var dialogue = marta.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Marta Lozovaya",
@@ -371,7 +374,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateElsaDialogue(Transform parent)
         {
-            var elsa = CreateCapsule(parent, "ElsaCherntravka_World", new Vector3(12.6f, 1f, -25.6f), new Vector3(0.66f, 0.95f, 0.66f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            var elsa = CreateRpgCharacterAnchor(parent, "ElsaCherntravka_World", "Wizard.fbx", new Vector3(12.6f, 1f, -25.6f), Quaternion.Euler(0f, -35f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
             var dialogue = elsa.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Elsa Cherntravka",
@@ -420,7 +423,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateOrtenDialogue(Transform parent)
         {
-            var orten = CreateCapsule(parent, "OrtenMirrorMage_World", new Vector3(0f, 1f, 30.2f), new Vector3(0.72f, 1.05f, 0.72f), new Color(0.24f, 0.18f, 0.32f, 1f));
+            var orten = CreateRpgCharacterAnchor(parent, "OrtenMirrorMage_World", "Wizard.fbx", new Vector3(0f, 1f, 30.2f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.24f, 0.18f, 0.32f, 1f));
             var dialogue = orten.AddComponent<DialogueInteractable>();
             dialogue.Configure(
                 "Orten",
@@ -466,6 +469,37 @@ namespace WitcherRightVersion.Editor
                 });
         }
 
+        private static void CreateIvarDialogue(Transform parent)
+        {
+            var ivar = CreateRpgCharacterAnchor(parent, "IvarSedoy_World", "Ranger.fbx", new Vector3(-21.7f, 1f, 3.2f), Quaternion.Euler(0f, 60f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
+            var dialogue = ivar.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Ivar Sedoy",
+                "Talk",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Ivar Sedoy",
+                        "If you came for the hunter, you found what is left of him: a man who learned the forest is quieter than the village.",
+                        new[]
+                        {
+                            new DialogueChoice("I can still use your eyes on the Ash Road.", "ally", "IvarSaved"),
+                            new DialogueChoice("Stay hidden then.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "ally",
+                        "Ivar Sedoy",
+                        "Then I owe you one shot when the elder's people raise their bows.",
+                        new[]
+                        {
+                            new DialogueChoice("I will remember that.", "", "", true)
+                        })
+                });
+        }
+
+
         private static void CreateWorldTraceObjects(Transform parent)
         {
             CreateQuestMarker(parent, "WorldTrace_ClawMarks", "Claw marks", "Inspect", QuestService.ActionSwampTracesFound, "Deep claw cuts in the mud point toward the south pool.", "Marta should explain what to look for first.", new Vector3(1.4f, 0.08f, -23.2f), new Vector3(0.9f, 0.04f, 0.55f), new Color(0.18f, 0.12f, 0.08f, 1f));
@@ -477,6 +511,18 @@ namespace WitcherRightVersion.Editor
         {
             var drowner = CreateCapsule(parent, "WorldDrowner_Prototype", new Vector3(8.5f, 1f, -28.4f), new Vector3(0.9f, 0.85f, 0.9f), new Color(0.08f, 0.18f, 0.14f, 1f));
             drowner.transform.rotation = Quaternion.Euler(0f, -140f, 0f);
+            var renderer = drowner.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
+
+            var slime = InstantiateModel($"{MonsterPath}/Slime.fbx", "WorldDrowner_SlimeModel", drowner.transform, new Vector3(0f, -0.92f, 0f), Quaternion.identity, new Vector3(1.18f, 1.18f, 1.18f));
+            if (slime == null && renderer != null)
+            {
+                renderer.enabled = true;
+            }
+
             var health = drowner.AddComponent<Health>();
             health.Configure("World drowner", 72f);
             var ai = drowner.AddComponent<EnemyAI>();
@@ -903,6 +949,34 @@ namespace WitcherRightVersion.Editor
             capsule.transform.localScale = scale;
             capsule.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", color);
             return capsule;
+        }
+
+        private static GameObject CreateRpgCharacterAnchor(Transform parent, string name, string modelName, Vector3 position, Quaternion rotation, Vector3 visualScale, Color fallbackColor)
+        {
+            var anchor = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            anchor.name = name;
+            anchor.transform.SetParent(parent, false);
+            anchor.transform.localPosition = position;
+            anchor.transform.localRotation = rotation;
+            anchor.transform.localScale = new Vector3(0.7f, 1f, 0.7f);
+
+            var renderer = anchor.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
+
+            var visual = InstantiateModel($"{RpgCharacterPath}/{modelName}", $"{name}_Model", anchor.transform, new Vector3(0f, -1f, 0f), Quaternion.identity, visualScale);
+            if (visual == null)
+            {
+                if (renderer != null)
+                {
+                    renderer.enabled = true;
+                    renderer.sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", fallbackColor);
+                }
+            }
+
+            return anchor;
         }
 
         private static void CreateQuestMarker(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color, bool canRepeat = false)

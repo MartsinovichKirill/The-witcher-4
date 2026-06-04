@@ -159,6 +159,7 @@ namespace WitcherRightVersion.Editor
             RequireObject<DialogueInteractable>("ElderVoytsekh_World", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_World", failures);
             RequireObject<DialogueInteractable>("ElsaCherntravka_World", failures);
+            RequireObject<DialogueInteractable>("IvarSedoy_World", failures);
             RequireObject<DialogueInteractable>("OrtenMirrorMage_World", failures);
             RequireObject<QuestProgressInteractable>("WorldTrace_ClawMarks", failures);
             RequireObject<QuestProgressInteractable>("WorldTrace_SlimeTrail", failures);
