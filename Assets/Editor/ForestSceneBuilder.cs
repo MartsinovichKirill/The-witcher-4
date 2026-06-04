@@ -31,6 +31,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("ForestMoodRoot");
             RemoveIfExists("ForestInteractionRoot");
             RemoveIfExists("InteractionCanvas");
+            RemoveIfExists("InventoryCanvas");
             RemoveIfExists("RuntimeServices");
 
             CreateRuntimeServices();
@@ -41,6 +42,7 @@ namespace WitcherRightVersion.Editor
             CreateForestMood();
             CreateInteractionObjects();
             CreateInteractionCanvas();
+            CreateInventoryCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -289,6 +291,47 @@ namespace WitcherRightVersion.Editor
             SetSerializedObjectReference(prompt, "actionText", action);
             SetSerializedObjectReference(prompt, "messageRoot", messageRoot);
             SetSerializedObjectReference(prompt, "messageText", message);
+        }
+
+        private static void CreateInventoryCanvas()
+        {
+            var canvasObject = new GameObject("InventoryCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 60;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var panel = CreatePanel(
+                canvasObject.transform,
+                "InventoryPanel",
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f),
+                new Vector2(720f, 600f),
+                new Vector2(44f, -44f),
+                new Color(0.045f, 0.04f, 0.033f, 0.93f));
+
+            var content = CreateText(
+                panel.transform,
+                "InventoryContent",
+                new Vector2(0f, 0f),
+                new Vector2(1f, 1f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-56f, -48f),
+                Vector2.zero,
+                18,
+                TextAnchor.UpperLeft,
+                new Color(0.93f, 0.9f, 0.82f, 1f));
+
+            var hud = canvasObject.AddComponent<InventoryHudUI>();
+            SetSerializedObjectReference(hud, "panelRoot", panel);
+            SetSerializedObjectReference(hud, "contentText", content);
         }
 
         private static Material CreateMaterial(string path, Color color)

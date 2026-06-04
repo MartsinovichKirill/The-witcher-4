@@ -184,6 +184,7 @@ namespace WitcherRightVersion.Editor
             ValidateForestQuestObject("HunterCamp_RewardPouch", failures);
             ValidateForestQuestObject("OldCampBlade", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
+            RequireObject<InventoryHudUI>("InventoryCanvas", failures);
             RequireObject("ThirdPersonCamera", failures);
         }
 
@@ -257,6 +258,8 @@ namespace WitcherRightVersion.Editor
                 InvokeAwake(inventory);
                 InvokeAwake(crafting);
                 InvokeAwake(quest);
+
+                Require(crafting.Recipes.Count == 3, failures, "Crafting must expose three MVP recipes.");
 
                 flags.SetFlag("acceptedSwampContract");
                 Require(quest.RunAction(QuestService.ActionStartSwampContract), failures, "Quest flow must start swamp contract.");

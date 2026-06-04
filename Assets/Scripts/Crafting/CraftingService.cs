@@ -10,8 +10,10 @@ namespace WitcherRightVersion.Crafting
     public sealed class CraftingService : MonoBehaviour
     {
         private readonly Dictionary<string, CraftingRecipe> recipes = new Dictionary<string, CraftingRecipe>();
+        private readonly List<CraftingRecipe> recipeOrder = new List<CraftingRecipe>();
 
         public static CraftingService Instance { get; private set; }
+        public IReadOnlyList<CraftingRecipe> Recipes => recipeOrder;
 
         private void Awake()
         {
@@ -108,6 +110,7 @@ namespace WitcherRightVersion.Crafting
         private void RegisterDefaultRecipes()
         {
             recipes.Clear();
+            recipeOrder.Clear();
             Register(new CraftingRecipe(
                 "swallow",
                 "Swallow",
@@ -134,6 +137,7 @@ namespace WitcherRightVersion.Crafting
         private void Register(CraftingRecipe recipe)
         {
             recipes[recipe.Id] = recipe;
+            recipeOrder.Add(recipe);
         }
     }
 

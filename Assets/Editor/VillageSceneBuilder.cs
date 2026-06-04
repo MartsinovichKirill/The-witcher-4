@@ -985,7 +985,7 @@ namespace WitcherRightVersion.Editor
                 new Vector2(0f, 1f),
                 new Vector2(0f, 1f),
                 new Vector2(0f, 1f),
-                new Vector2(500f, 440f),
+                new Vector2(720f, 600f),
                 new Vector2(44f, -44f),
                 new Color(0.045f, 0.04f, 0.033f, 0.93f));
 
@@ -995,9 +995,9 @@ namespace WitcherRightVersion.Editor
                 new Vector2(0f, 0f),
                 new Vector2(1f, 1f),
                 new Vector2(0.5f, 0.5f),
-                new Vector2(-48f, -42f),
+                new Vector2(-56f, -48f),
                 Vector2.zero,
-                19,
+                18,
                 TextAnchor.UpperLeft,
                 new Color(0.93f, 0.9f, 0.82f, 1f));
 
