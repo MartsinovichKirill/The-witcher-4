@@ -290,6 +290,7 @@ namespace WitcherRightVersion.Editor
             CreateRadekMerchant(root.transform);
             CreateElsaDialogue(root.transform);
             CreateIvarDialogue(root.transform);
+            CreateGhostGirlDialogue(root.transform);
             CreateOrtenDialogue(root.transform);
             CreateWorldTraceObjects(root.transform);
             CreateWorldDrowner(root.transform);
@@ -603,6 +604,49 @@ namespace WitcherRightVersion.Editor
                         new[]
                         {
                             new DialogueChoice("I will remember that.", "", "", true)
+                        })
+                });
+        }
+
+        private static void CreateGhostGirlDialogue(Transform parent)
+        {
+            var ghost = CreateRpgCharacterAnchor(parent, "GhostGirl_World", "Wizard.fbx", new Vector3(-2.7f, 1f, 27.0f), Quaternion.Euler(0f, 165f, 0f), new Vector3(0.62f, 0.62f, 0.62f), new Color(0.44f, 0.42f, 0.72f, 1f));
+            ApplyMaterialToChildRenderers(ghost, CreateMaterial("Assets/Materials/GhostGirl_World_Spectral.mat", new Color(0.48f, 0.58f, 0.9f, 0.82f)));
+            CreatePointLight(parent, "GhostGirlColdLight", new Vector3(-2.7f, 2.0f, 27.0f), new Color(0.34f, 0.48f, 0.88f, 1f), 1.05f, 6.5f);
+            CreateMarker(parent, "GhostGirlMemoryRing", new Vector3(-2.7f, 0.08f, 27.0f), new Vector3(1.05f, 0.035f, 1.05f), new Color(0.22f, 0.28f, 0.52f, 1f));
+
+            var dialogue = ghost.AddComponent<DialogueInteractable>();
+            dialogue.Configure(
+                "Ghost of the Girl",
+                "Listen",
+                "start",
+                new[]
+                {
+                    new DialogueNode(
+                        "start",
+                        "Ghost of the Girl",
+                        "They gave me a witch's name after they killed me. The mirror learned it. The village learned it. Only the well kept the first sound.",
+                        new[]
+                        {
+                            new DialogueChoice("I found your medallion.", "medallion", "", false, QuestService.ActionGhostMemoryHeard),
+                            new DialogueChoice("Who killed you?", "truth"),
+                            new DialogueChoice("Fade back.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "truth",
+                        "Ghost of the Girl",
+                        "Not a monster. Not Elsa. Men with clean doorways and dirty hands. The elder sealed the order; Orten made mercy from forgetting.",
+                        new[]
+                        {
+                            new DialogueChoice("Then I need the seal and the diary.", "", "", true)
+                        }),
+                    new DialogueNode(
+                        "medallion",
+                        "Ghost of the Girl",
+                        "It remembers my pulse. Carry it to the final road, and the mirror will have to answer to the first version.",
+                        new[]
+                        {
+                            new DialogueChoice("I will carry the truth.", "", "", true)
                         })
                 });
         }
@@ -1250,6 +1294,23 @@ namespace WitcherRightVersion.Editor
             }
 
             return anchor;
+        }
+
+        private static void ApplyMaterialToChildRenderers(GameObject root, Material material)
+        {
+            if (root == null || material == null)
+            {
+                return;
+            }
+
+            var renderers = root.GetComponentsInChildren<Renderer>(true);
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null)
+                {
+                    renderers[i].sharedMaterial = material;
+                }
+            }
         }
 
         private static void CreateQuestMarker(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color, bool canRepeat = false)
