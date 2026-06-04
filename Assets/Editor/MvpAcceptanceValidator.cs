@@ -156,6 +156,11 @@ namespace WitcherRightVersion.Editor
             RequireObject<EndingHudUI>("EndingCanvas", failures);
             RequireObject("WorldDirectionCanvas", failures);
             RequireObject("WorldGameplayRoot", failures);
+            RequireObject("VillageKayKitMarket_World", failures);
+            RequireObject("VillageKayKitWell_World", failures);
+            RequireObject("VillageGate_World", failures);
+            RequireObject("SwampKayKitRoofedBridge_World", failures);
+            RequireObject("TowerKayKitCastleCore_World", failures);
             RequireObject<DialogueInteractable>("ElderVoytsekh_World", failures);
             RequireObject<DialogueInteractable>("MartaLozovaya_World", failures);
             RequireObject<DialogueInteractable>("ElsaCherntravka_World", failures);
@@ -184,6 +189,21 @@ namespace WitcherRightVersion.Editor
                 RequireComponent<Health>(drowner, failures, "WorldDrowner_Prototype");
                 RequireComponent<EnemyAI>(drowner, failures, "WorldDrowner_Prototype");
             }
+
+            ValidateEnemy("TowerSkeletonGuard_Left", failures);
+            ValidateEnemy("TowerSkeletonGuard_Right", failures);
+        }
+
+        private static void ValidateEnemy(string objectName, List<string> failures)
+        {
+            var enemy = RequireObject(objectName, failures);
+            if (enemy == null)
+            {
+                return;
+            }
+
+            RequireComponent<Health>(enemy, failures, objectName);
+            RequireComponent<EnemyAI>(enemy, failures, objectName);
         }
 
         private static void ValidateEditorBuildPipeline(List<string> failures)

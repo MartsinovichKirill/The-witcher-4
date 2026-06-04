@@ -23,6 +23,7 @@ namespace WitcherRightVersion.Editor
         private const string KnightPath = "Assets/Art/External/Quaternius_Knight/Knight Character by @Quaternius/FBX";
         private const string RpgCharacterPath = "Assets/Art/External/OpenGameArt_RPGCharacters/FBX";
         private const string MonsterPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX";
+        private const string KayKitMedievalPath = "Assets/Art/External/KayKit_MedievalBuilder/FBX";
 
         [MenuItem("Tools/Witcher Right Version/Build Velemar World Scene")]
         public static void Create()
@@ -149,6 +150,11 @@ namespace WitcherRightVersion.Editor
             CreateHouse(root.transform, "ElderHouse_World", new Vector3(-3.8f, 0f, -0.2f), Quaternion.Euler(0f, 18f, 0f), 1.15f);
             CreateHouse(root.transform, "MartaHouse_World", new Vector3(3.8f, 0f, -0.4f), Quaternion.Euler(0f, -18f, 0f), 1.05f);
             CreateHouse(root.transform, "Smithy_World", new Vector3(-2.2f, 0f, 3.4f), Quaternion.Euler(0f, -25f, 0f), 0.95f);
+            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-6.4f, 0f, 1.9f), Quaternion.Euler(0f, 58f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
+            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(2.2f, 0f, 2.0f), Quaternion.Euler(0f, -22f, 0f), new Vector3(1.2f, 1.2f, 1.2f));
+            PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, -1.35f), Quaternion.identity, new Vector3(0.95f, 0.95f, 0.95f));
+            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(6.6f, 0f, 2.7f), Quaternion.Euler(0f, -50f, 0f), new Vector3(1.05f, 1.05f, 1.05f));
+            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(-6.8f, 0f, -2.8f), Quaternion.Euler(0f, 28f, 0f), new Vector3(0.95f, 0.95f, 0.95f));
             PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(1.8f, 0f, 2.8f), Quaternion.Euler(0f, 35f, 0f), Vector3.one);
             PlaceKenney(root.transform, "VillageLantern_World", "lantern.fbx", new Vector3(-0.9f, 0f, 1.7f), Quaternion.identity, Vector3.one);
 
@@ -156,6 +162,13 @@ namespace WitcherRightVersion.Editor
             {
                 PlaceKenney(root.transform, $"VillageFence_World_{i + 1}", i % 3 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(-6f + i * 2f, 0f, -4.2f), Quaternion.Euler(0f, 90f, 0f), Vector3.one);
             }
+
+            for (var i = 0; i < 5; i++)
+            {
+                PlaceKayKit(root.transform, $"VillageWallSegment_World_{i + 1}", "wall_straight.fbx", new Vector3(-5.6f + i * 2.8f, 0f, -5.5f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.1f);
+            }
+
+            PlaceKayKit(root.transform, "VillageGate_World", "wall_gate.fbx", new Vector3(0f, 0f, -5.55f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.2f);
         }
 
         private static void CreateForestDistrict(Transform parent)
@@ -176,6 +189,9 @@ namespace WitcherRightVersion.Editor
 
             PlaceKenney(root.transform, "HunterCampCart_World", "cart-high.fbx", new Vector3(2.6f, 0f, -2.4f), Quaternion.Euler(0f, -42f, 0f), Vector3.one);
             PlaceKenney(root.transform, "HunterCampRock_World", "rock-large.fbx", new Vector3(4.5f, 0f, -1f), Quaternion.Euler(0f, 16f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "OldForestKayKitForestPatch_A", "forest.fbx", new Vector3(-4.5f, 0f, 5.5f), Quaternion.Euler(0f, 25f, 0f), Vector3.one * 1.15f);
+            PlaceKayKit(root.transform, "OldForestKayKitRocks_A", "detail_rocks.fbx", new Vector3(5.9f, 0f, 3.1f), Quaternion.Euler(0f, -18f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "OldForestKayKitHill_A", "detail_hill.fbx", new Vector3(-7.2f, 0f, -4.6f), Quaternion.Euler(0f, 42f, 0f), Vector3.one);
             CreateMarker(root.transform, "HunterCampFire_World", new Vector3(1.2f, 0.12f, -1.2f), new Vector3(0.9f, 0.18f, 0.9f), new Color(0.42f, 0.18f, 0.08f, 1f));
         }
 
@@ -190,6 +206,9 @@ namespace WitcherRightVersion.Editor
             CreateRegionDisc(root.transform, "SwampWaterPool_02", new Vector3(2.8f, 0.035f, 2.1f), new Vector3(3.1f, 0.022f, 1.45f), new Color(0.02f, 0.05f, 0.045f, 1f));
 
             PlaceKenney(root.transform, "ElsaHutPlaceholder_World", "stall.fbx", new Vector3(5.6f, 0f, -1.6f), Quaternion.Euler(0f, -22f, 0f), new Vector3(1.2f, 1.2f, 1.2f));
+            PlaceKayKit(root.transform, "SwampKayKitRoofedBridge_World", "bridge_roofed.fbx", new Vector3(-0.4f, 0f, 5.6f), Quaternion.Euler(0f, 8f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
+            PlaceKayKit(root.transform, "SwampKayKitMine_World", "mine.fbx", new Vector3(7.4f, 0f, 3.0f), Quaternion.Euler(0f, -60f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "SwampKayKitRocks_A", "detail_rocks_small.fbx", new Vector3(-6.6f, 0f, -0.4f), Quaternion.Euler(0f, 15f, 0f), Vector3.one * 1.25f);
             PlaceKenney(root.transform, "DeadSwampTree_World", "tree-crooked.fbx", new Vector3(-5.2f, 0f, 2.8f), Quaternion.Euler(0f, 36f, 0f), new Vector3(1.3f, 1.1f, 1.3f));
 
             for (var i = 0; i < 12; i++)
@@ -213,6 +232,9 @@ namespace WitcherRightVersion.Editor
             }
 
             PlaceKenney(root.transform, "AshRoadBrokenWall_World", "wall-broken.fbx", new Vector3(3.6f, 0f, -1.8f), Quaternion.Euler(0f, 24f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "AshRoadKayKitWatchtower_Burned", "watchtower.fbx", new Vector3(-5.4f, 0f, -1.4f), Quaternion.Euler(0f, 34f, 0f), Vector3.one * 0.95f);
+            PlaceKayKit(root.transform, "AshRoadKayKitGateRuins", "wall_gate_closed.fbx", new Vector3(3.1f, 0f, 2.6f), Quaternion.Euler(0f, -35f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "AshRoadKayKitMountain_Backdrop", "mountain.fbx", new Vector3(7.8f, 0f, 0.4f), Quaternion.Euler(0f, 74f, 0f), new Vector3(1.6f, 1.0f, 1.6f));
         }
 
         private static void CreateTowerVistaDistrict(Transform parent)
@@ -222,6 +244,9 @@ namespace WitcherRightVersion.Editor
             root.transform.position = new Vector3(0f, 0f, 26f);
 
             CreateRegionDisc(root.transform, "TowerVistaGround", Vector3.zero, new Vector3(9f, 0.035f, 7f), new Color(0.12f, 0.12f, 0.13f, 1f));
+            PlaceKayKit(root.transform, "TowerKayKitCastleCore_World", "castle.fbx", new Vector3(0f, 0f, 1.2f), Quaternion.Euler(0f, 180f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
+            PlaceKayKit(root.transform, "TowerKayKitWatchtowerLeft_World", "watchtower.fbx", new Vector3(-5.2f, 0f, 1.3f), Quaternion.Euler(0f, -30f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "TowerKayKitWatchtowerRight_World", "watchtower.fbx", new Vector3(5.2f, 0f, 1.3f), Quaternion.Euler(0f, 30f, 0f), Vector3.one);
             PlaceKenney(root.transform, "TowerVistaStairs_World", "stairs-stone.fbx", new Vector3(0f, 0f, -2.5f), Quaternion.identity, new Vector3(1.3f, 1.3f, 1.3f));
             PlaceKenney(root.transform, "TowerVistaPillarLeft_World", "pillar-stone.fbx", new Vector3(-2.8f, 0f, 0.3f), Quaternion.identity, new Vector3(1.4f, 1.4f, 1.4f));
             PlaceKenney(root.transform, "TowerVistaPillarRight_World", "pillar-stone.fbx", new Vector3(2.8f, 0f, 0.3f), Quaternion.identity, new Vector3(1.4f, 1.4f, 1.4f));
@@ -241,6 +266,7 @@ namespace WitcherRightVersion.Editor
             CreateOrtenDialogue(root.transform);
             CreateWorldTraceObjects(root.transform);
             CreateWorldDrowner(root.transform);
+            CreateTowerSkeletonGuards(root.transform);
             CreateWorldCraftingObjects(root.transform);
             CreateWorldForestQuestObjects(root.transform);
             CreateWorldStoryEvidenceObjects(root.transform);
@@ -527,6 +553,34 @@ namespace WitcherRightVersion.Editor
             health.Configure("World drowner", 72f);
             var ai = drowner.AddComponent<EnemyAI>();
             ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
+        }
+
+        private static void CreateTowerSkeletonGuards(Transform parent)
+        {
+            CreateSkeletonGuard(parent, "TowerSkeletonGuard_Left", new Vector3(-4.5f, 1f, 27.5f), Quaternion.Euler(0f, 35f, 0f));
+            CreateSkeletonGuard(parent, "TowerSkeletonGuard_Right", new Vector3(4.5f, 1f, 27.5f), Quaternion.Euler(0f, -35f, 0f));
+        }
+
+        private static void CreateSkeletonGuard(Transform parent, string objectName, Vector3 position, Quaternion rotation)
+        {
+            var guard = CreateCapsule(parent, objectName, position, new Vector3(0.78f, 0.95f, 0.78f), new Color(0.24f, 0.24f, 0.22f, 1f));
+            guard.transform.localRotation = rotation;
+            var renderer = guard.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
+
+            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", $"{objectName}_Model", guard.transform, new Vector3(0f, -0.92f, 0f), Quaternion.identity, new Vector3(0.92f, 0.92f, 0.92f));
+            if (skeleton == null && renderer != null)
+            {
+                renderer.enabled = true;
+            }
+
+            var health = guard.AddComponent<Health>();
+            health.Configure("Tower skeleton guard", 62f);
+            var ai = guard.AddComponent<EnemyAI>();
+            ai.Configure("Skeleton guard", false, objectName + "_Defeated", "");
         }
 
         private static void CreateWorldCraftingObjects(Transform parent)
@@ -1027,6 +1081,17 @@ namespace WitcherRightVersion.Editor
             }
 
             CreateMarker(parent, objectName + "_Fallback", position + Vector3.up * 0.35f, new Vector3(0.8f, 0.7f, 0.8f), new Color(0.28f, 0.22f, 0.14f, 1f));
+        }
+
+        private static void PlaceKayKit(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            var instance = InstantiateModel($"{KayKitMedievalPath}/{modelName}", objectName, parent, position, rotation, scale);
+            if (instance != null)
+            {
+                return;
+            }
+
+            CreateMarker(parent, objectName + "_Fallback", position + Vector3.up * 0.4f, new Vector3(0.9f, 0.8f, 0.9f), new Color(0.22f, 0.2f, 0.16f, 1f));
         }
 
         private static GameObject InstantiateModel(string assetPath, string objectName, Transform parent, Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
