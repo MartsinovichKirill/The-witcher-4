@@ -19,6 +19,7 @@ namespace WitcherRightVersion.Editor
     public static class VillageSceneBuilder
     {
         private const string ScenePath = "Assets/Scenes/VillageScene.unity";
+        private const float PlayerVisualScale = 0.34f;
 
         [MenuItem("Tools/Witcher Right Version/Build Village Scene")]
         public static void Create()
@@ -107,7 +108,7 @@ namespace WitcherRightVersion.Editor
                 player,
                 new Vector3(0f, -0.02f, 0f),
                 Quaternion.Euler(0f, 180f, 0f),
-                Vector3.one);
+                Vector3.one * PlayerVisualScale);
 
             if (knight == null)
             {
@@ -119,17 +120,17 @@ namespace WitcherRightVersion.Editor
                 "Assets/Art/External/Quaternius_Knight/Knight Character by @Quaternius/FBX/Sword.fbx",
                 "ReynardSteelSword_Visual",
                 player,
-                new Vector3(-0.32f, 1.2f, -0.18f),
+                new Vector3(-0.22f, 1.05f, -0.14f),
                 Quaternion.Euler(65f, 0f, 25f),
-                new Vector3(0.9f, 0.9f, 0.9f));
+                Vector3.one * 0.3f);
 
             InstantiateModel(
                 "Assets/Art/External/Quaternius_Knight/Knight Character by @Quaternius/FBX/ShortSword.fbx",
                 "ReynardSilverSword_Visual",
                 player,
-                new Vector3(0.32f, 1.12f, -0.18f),
+                new Vector3(0.22f, 1.0f, -0.14f),
                 Quaternion.Euler(65f, 0f, -25f),
-                new Vector3(0.9f, 0.9f, 0.9f));
+                Vector3.one * 0.3f);
         }
 
         private static void CreateFallbackPlayerVisual(Transform player)

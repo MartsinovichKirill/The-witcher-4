@@ -25,6 +25,11 @@ namespace WitcherRightVersion.Editor
         private const string MonsterPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX";
         private const string KayKitMedievalPath = "Assets/Art/External/KayKit_MedievalBuilder/FBX";
         private const string WolfPath = "Assets/Art/External/OpenGameArt_CC0_Wolf";
+        private const float PlayerVisualScale = 0.34f;
+        private const float HumanModelScaleMultiplier = 0.66f;
+        private const float KenneyBuildingScaleMultiplier = 1.2f;
+        private const float KayKitBuildingScaleMultiplier = 1.55f;
+        private const float PropScaleMultiplier = 1.08f;
 
         [MenuItem("Tools/Witcher Right Version/Build Velemar World Scene")]
         public static void Create()
@@ -915,7 +920,7 @@ namespace WitcherRightVersion.Editor
                 renderer.enabled = false;
             }
 
-            var visual = InstantiateModel($"{WolfPath}/dog2.FBX", $"{objectName}_Model", wolf.transform, new Vector3(0f, -1f, 0f), Quaternion.Euler(0f, 180f, 0f), new Vector3(1.15f, 1.15f, 1.15f));
+            var visual = InstantiateModel($"{WolfPath}/dog2.FBX", $"{objectName}_Model", wolf.transform, new Vector3(0f, -0.95f, 0f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.35f, 0.35f, 0.35f));
             if (visual == null && renderer != null)
             {
                 renderer.enabled = true;
@@ -1367,7 +1372,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreatePlayerVisual(Transform player)
         {
-            var knight = InstantiateModel($"{KnightPath}/KnightCharacter.fbx", "ReynardKnightModel", player, new Vector3(0f, -0.02f, 0f), Quaternion.Euler(0f, 180f, 0f), Vector3.one);
+            var knight = InstantiateModel($"{KnightPath}/KnightCharacter.fbx", "ReynardKnightModel", player, new Vector3(0f, -0.02f, 0f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * PlayerVisualScale);
             if (knight == null)
             {
                 var fallback = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -1379,8 +1384,8 @@ namespace WitcherRightVersion.Editor
                 return;
             }
 
-            InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.32f, 1.2f, -0.18f), Quaternion.Euler(65f, 0f, 25f), Vector3.one * 0.9f);
-            InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.32f, 1.12f, -0.18f), Quaternion.Euler(65f, 0f, -25f), Vector3.one * 0.9f);
+            InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.22f, 1.05f, -0.14f), Quaternion.Euler(65f, 0f, 25f), Vector3.one * 0.3f);
+            InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.22f, 1.0f, -0.14f), Quaternion.Euler(65f, 0f, -25f), Vector3.one * 0.3f);
         }
 
         private static void CreateCamera(Transform target)
@@ -1605,7 +1610,7 @@ namespace WitcherRightVersion.Editor
                 renderer.enabled = false;
             }
 
-            var visual = InstantiateModel($"{RpgCharacterPath}/{modelName}", $"{name}_Model", anchor.transform, new Vector3(0f, -1f, 0f), Quaternion.identity, visualScale);
+            var visual = InstantiateModel($"{RpgCharacterPath}/{modelName}", $"{name}_Model", anchor.transform, new Vector3(0f, -1f, 0f), Quaternion.identity, visualScale * HumanModelScaleMultiplier);
             if (visual == null)
             {
                 if (renderer != null)
@@ -1698,7 +1703,8 @@ namespace WitcherRightVersion.Editor
 
         private static void PlaceKenney(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
         {
-            var instance = InstantiateModel($"{KenneyPath}/{modelName}", objectName, parent, position, rotation, scale);
+            var adjustedScale = IsKenneyBuildingModel(modelName) ? scale * KenneyBuildingScaleMultiplier : scale * PropScaleMultiplier;
+            var instance = InstantiateModel($"{KenneyPath}/{modelName}", objectName, parent, position, rotation, adjustedScale);
             if (instance != null)
             {
                 return;
@@ -1709,13 +1715,24 @@ namespace WitcherRightVersion.Editor
 
         private static void PlaceKayKit(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
         {
-            var instance = InstantiateModel($"{KayKitMedievalPath}/{modelName}", objectName, parent, position, rotation, scale);
+            var adjustedScale = IsKayKitBuildingModel(modelName) ? scale * KayKitBuildingScaleMultiplier : scale * PropScaleMultiplier;
+            var instance = InstantiateModel($"{KayKitMedievalPath}/{modelName}", objectName, parent, position, rotation, adjustedScale);
             if (instance != null)
             {
                 return;
             }
 
             CreateMarker(parent, objectName + "_Fallback", position + Vector3.up * 0.4f, new Vector3(0.9f, 0.8f, 0.9f), new Color(0.22f, 0.2f, 0.16f, 1f));
+        }
+
+        private static bool IsKenneyBuildingModel(string modelName)
+        {
+            return modelName.StartsWith("wall") || modelName.StartsWith("roof") || modelName.Contains("gate") || modelName.Contains("stairs") || modelName.Contains("pillar");
+        }
+
+        private static bool IsKayKitBuildingModel(string modelName)
+        {
+            return modelName.Contains("house") || modelName.Contains("market") || modelName.Contains("watermill") || modelName.Contains("barracks") || modelName.Contains("watchtower") || modelName.Contains("castle") || modelName.Contains("bridge") || modelName.Contains("mine") || modelName.StartsWith("wall");
         }
 
         private static GameObject InstantiateModel(string assetPath, string objectName, Transform parent, Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
