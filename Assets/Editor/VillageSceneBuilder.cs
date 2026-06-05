@@ -977,7 +977,7 @@ namespace WitcherRightVersion.Editor
                 TextAnchor.MiddleLeft,
                 new Color(0.93f, 0.9f, 0.82f, 1f));
 
-            hintText.text = "Mouse look | Wheel zoom | E interact | Mouse0 light | F heavy | LeftCtrl block | Space dodge | Q Aard\nI inventory | Esc cursor | F5-F7 save | F8 autosave load | H help";
+            hintText.text = "Mouse look | Wheel zoom | Tab lock target | E interact | Mouse0 light | F heavy | LeftCtrl block | Space dodge | Q Aard\nI inventory | Esc cursor | F5-F7 save | F8 autosave load | H help";
 
             var hint = canvasObject.AddComponent<ControlsHintUI>();
             SetSerializedObjectReference(hint, "hintRoot", hintRoot);

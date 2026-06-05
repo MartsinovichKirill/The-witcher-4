@@ -1,4 +1,5 @@
 using UnityEngine;
+using WitcherRightVersion.Combat;
 using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.UI;
 
@@ -29,10 +30,22 @@ namespace WitcherRightVersion.Player
         [Header("Feel")]
         [SerializeField] private float baseFieldOfView = 62f;
         [SerializeField] private float runFieldOfView = 67f;
+        [SerializeField] private float combatFieldOfView = 59f;
         [SerializeField] private float fieldOfViewSmooth = 7.5f;
 
+        [Header("Combat Framing")]
+        [SerializeField] private KeyCode lockTargetKey = KeyCode.Tab;
+        [SerializeField] private float combatAwarenessRange = 9f;
+        [SerializeField] private float lockOnRange = 14f;
+        [SerializeField] private float softCombatRecenterSpeed = 1.25f;
+        [SerializeField] private float lockOnRecenterSpeed = 5.2f;
+        [SerializeField] private LayerMask combatTargetMask = ~0;
+
         private Vector3 smoothVelocity;
+        private readonly Collider[] combatTargets = new Collider[18];
         private PlayerController playerController;
+        private Health ownHealth;
+        private Health cameraCombatTarget;
         private float yaw;
         private float pitch = 15f;
         private float yawVelocity;
@@ -41,6 +54,7 @@ namespace WitcherRightVersion.Player
         private float targetPitch = 15f;
         private float lastManualLookTime;
         private bool cursorLocked = true;
+        private bool isTargetLocked;
         private Camera attachedCamera;
 
         public Transform Target
@@ -65,6 +79,7 @@ namespace WitcherRightVersion.Player
                 yaw = target.eulerAngles.y;
                 targetYaw = yaw;
                 playerController = target.GetComponent<PlayerController>();
+                ownHealth = target.GetComponent<Health>();
             }
 
             attachedCamera = GetComponent<Camera>();
@@ -104,6 +119,7 @@ namespace WitcherRightVersion.Player
                 distance = Mathf.Clamp(distance - scroll * zoomSensitivity, minDistance, maxDistance);
             }
 
+            UpdateCombatTargeting();
             RecenterBehindMovingPlayer();
             yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref yawVelocity, rotationSmoothTime);
             pitch = Mathf.SmoothDampAngle(pitch, targetPitch, ref pitchVelocity, rotationSmoothTime);
@@ -149,18 +165,119 @@ namespace WitcherRightVersion.Player
                 return;
             }
 
-            var desiredFov = playerController != null && playerController.IsRunning ? runFieldOfView : baseFieldOfView;
+            var desiredFov = cameraCombatTarget != null ? combatFieldOfView : playerController != null && playerController.IsRunning ? runFieldOfView : baseFieldOfView;
             attachedCamera.fieldOfView = Mathf.Lerp(attachedCamera.fieldOfView, desiredFov, fieldOfViewSmooth * Time.deltaTime);
         }
 
         private void RecenterBehindMovingPlayer()
         {
-            if (playerController == null || !playerController.IsMoving || Time.time - lastManualLookTime < recenterDelay)
+            if (cameraCombatTarget != null || playerController == null || !playerController.IsMoving || Time.time - lastManualLookTime < recenterDelay)
             {
                 return;
             }
 
             targetYaw = Mathf.LerpAngle(targetYaw, target.eulerAngles.y, recenterSpeed * Time.deltaTime);
+        }
+
+        private void UpdateCombatTargeting()
+        {
+            if (IsCameraInputBlocked())
+            {
+                cameraCombatTarget = null;
+                isTargetLocked = false;
+                return;
+            }
+
+            if (Input.GetKeyDown(lockTargetKey))
+            {
+                if (isTargetLocked)
+                {
+                    isTargetLocked = false;
+                    cameraCombatTarget = null;
+                    InteractionPromptUI.Instance?.ShowMessage("Target lock released.");
+                }
+                else
+                {
+                    cameraCombatTarget = FindBestCombatTarget(lockOnRange);
+                    isTargetLocked = cameraCombatTarget != null;
+                    if (isTargetLocked)
+                    {
+                        InteractionPromptUI.Instance?.ShowMessage($"Locked: {cameraCombatTarget.DisplayName}.");
+                    }
+                    else
+                    {
+                        InteractionPromptUI.Instance?.ShowMessage("No target in range.");
+                    }
+                }
+            }
+
+            if (cameraCombatTarget == null || cameraCombatTarget.IsDead || Vector3.Distance(target.position, cameraCombatTarget.transform.position) > lockOnRange + 2f)
+            {
+                isTargetLocked = false;
+                cameraCombatTarget = FindBestCombatTarget(combatAwarenessRange);
+            }
+
+            if (cameraCombatTarget == null)
+            {
+                return;
+            }
+
+            var toEnemy = cameraCombatTarget.transform.position - target.position;
+            toEnemy.y = 0f;
+            if (toEnemy.sqrMagnitude <= 0.01f)
+            {
+                return;
+            }
+
+            var desiredYaw = Mathf.Atan2(toEnemy.x, toEnemy.z) * Mathf.Rad2Deg;
+            var strength = isTargetLocked ? lockOnRecenterSpeed : softCombatRecenterSpeed;
+            if (isTargetLocked || Time.time - lastManualLookTime >= recenterDelay * 0.6f)
+            {
+                targetYaw = Mathf.LerpAngle(targetYaw, desiredYaw, strength * Time.deltaTime);
+                targetPitch = Mathf.Lerp(targetPitch, 11f, strength * 0.5f * Time.deltaTime);
+            }
+        }
+
+        private Health FindBestCombatTarget(float range)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var hitCount = Physics.OverlapSphereNonAlloc(target.position + Vector3.up, range, combatTargets, combatTargetMask, QueryTriggerInteraction.Ignore);
+            Health best = null;
+            var bestScore = float.MaxValue;
+            var cameraForward = transform.forward;
+            cameraForward.y = 0f;
+            cameraForward.Normalize();
+
+            for (var i = 0; i < hitCount; i++)
+            {
+                var candidate = combatTargets[i] == null ? null : combatTargets[i].GetComponentInParent<Health>();
+                if (candidate == null || candidate == ownHealth || candidate.IsDead)
+                {
+                    continue;
+                }
+
+                var toTarget = candidate.transform.position - target.position;
+                toTarget.y = 0f;
+                var distance = toTarget.magnitude;
+                if (distance <= 0.01f)
+                {
+                    continue;
+                }
+
+                var viewBonus = Mathf.Clamp01(Vector3.Dot(cameraForward, toTarget.normalized));
+                var score = distance - viewBonus * 3.5f;
+                if (score < bestScore)
+                {
+                    best = candidate;
+                    bestScore = score;
+                }
+            }
+
+            return best;
         }
 
         private float GetCollisionAdjustedDistance(Vector3 targetPosition, Quaternion rotation)

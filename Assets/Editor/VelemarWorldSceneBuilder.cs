@@ -117,6 +117,10 @@ namespace WitcherRightVersion.Editor
             CreatePointLight(lightsRoot.transform, "NorthRouteMirrorGlimmer_A", new Vector3(5.8f, 1.1f, 33.5f), new Color(0.42f, 0.34f, 0.84f, 1f), 0.42f, 6.5f);
             CreatePointLight(lightsRoot.transform, "SouthRouteBogGlow_A", new Vector3(-6.8f, 0.9f, -46f), new Color(0.08f, 0.48f, 0.28f, 1f), 0.5f, 8f);
             CreatePointLight(lightsRoot.transform, "EastRouteAshGlow_A", new Vector3(46f, 0.8f, 6.7f), new Color(0.9f, 0.22f, 0.09f, 1f), 0.48f, 7f);
+            CreatePointLight(lightsRoot.transform, "WestRouteShrineLanternLight", new Vector3(-43.8f, 2.2f, 6.5f), new Color(0.9f, 0.62f, 0.32f, 1f), 0.62f, 9f);
+            CreatePointLight(lightsRoot.transform, "EastRouteAmbushCoalLight", new Vector3(36.8f, 0.9f, -4.2f), new Color(0.95f, 0.18f, 0.06f, 1f), 0.52f, 8f);
+            CreatePointLight(lightsRoot.transform, "NorthRouteObeliskVioletLight", new Vector3(-2.6f, 1.7f, 51.4f), new Color(0.5f, 0.34f, 1f, 1f), 0.7f, 9.5f);
+            CreatePointLight(lightsRoot.transform, "SouthRouteWillOWispLight", new Vector3(5.8f, 1.1f, -55.5f), new Color(0.08f, 0.68f, 0.46f, 1f), 0.58f, 8.5f);
             CreateSpotLight(lightsRoot.transform, "VillageGateWarmCone", new Vector3(0f, 4.6f, -11f), Quaternion.Euler(58f, 0f, 0f), new Color(1f, 0.58f, 0.32f, 1f), 1.2f, 15f, 42f);
             CreateSpotLight(lightsRoot.transform, "ForestPathMoonShaft", new Vector3(-66f, 8f, 12f), Quaternion.Euler(66f, -38f, 0f), new Color(0.46f, 0.62f, 0.78f, 1f), 0.75f, 20f, 34f);
             CreateSpotLight(lightsRoot.transform, "SwampBridgeColdCone", new Vector3(7.5f, 5.2f, -69.5f), Quaternion.Euler(62f, -18f, 0f), new Color(0.14f, 0.7f, 0.44f, 1f), 0.8f, 18f, 46f);
@@ -381,6 +385,35 @@ namespace WitcherRightVersion.Editor
                     CreateMarker(root.transform, "SouthRouteCartShadowPool", new Vector3(4.6f, 0.05f, z - 1.6f), new Vector3(1.8f, 0.03f, 1.1f), new Color(0.018f, 0.06f, 0.045f, 1f));
                 }
             }
+
+            CreateRoutePointOfInterestDressing(root.transform);
+        }
+
+        private static void CreateRoutePointOfInterestDressing(Transform parent)
+        {
+            var root = new GameObject("RoutePointOfInterestDressing");
+            root.transform.SetParent(parent, false);
+
+            PlaceKenney(root.transform, "WestRouteHunterShrine_Post", "pillar-wood.fbx", new Vector3(-44.6f, 0f, 6.4f), Quaternion.Euler(0f, 8f, 0f), new Vector3(0.62f, 1.18f, 0.62f));
+            PlaceKenney(root.transform, "WestRouteHunterShrine_Banner", "banner-red.fbx", new Vector3(-44.1f, 0f, 6.7f), Quaternion.Euler(0f, 92f, 0f), Vector3.one * 0.72f);
+            PlaceKenney(root.transform, "WestRouteHunterShrine_RockSeat", "rock-small.fbx", new Vector3(-43.0f, 0f, 5.8f), Quaternion.Euler(0f, 22f, 0f), Vector3.one * 0.88f);
+            CreateMarker(root.transform, "WestRouteHunterShrine_BloodOffering", new Vector3(-44.2f, 0.07f, 5.35f), new Vector3(0.56f, 0.035f, 0.38f), new Color(0.22f, 0.025f, 0.018f, 1f));
+
+            PlaceKenney(root.transform, "EastRouteAmbushBarricade_A", "fence-broken.fbx", new Vector3(36.2f, 0f, -3.4f), Quaternion.Euler(0f, 68f, 0f), Vector3.one * 1.1f);
+            PlaceKenney(root.transform, "EastRouteAmbushBarricade_B", "cart.fbx", new Vector3(38.0f, 0f, -4.8f), Quaternion.Euler(0f, -38f, 0f), Vector3.one * 0.92f);
+            PlaceKenney(root.transform, "EastRouteAmbushRuinWall", "wall-broken.fbx", new Vector3(34.9f, 0f, -5.2f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 0.95f);
+            CreateMarker(root.transform, "EastRouteAmbushBurnMark", new Vector3(36.9f, 0.055f, -4.15f), new Vector3(1.75f, 0.032f, 1.15f), new Color(0.12f, 0.075f, 0.045f, 1f));
+
+            PlaceKenney(root.transform, "NorthRouteBrokenObelisk_Base", "pillar-stone.fbx", new Vector3(-2.7f, 0f, 51.3f), Quaternion.Euler(0f, -14f, 0f), new Vector3(0.85f, 1.15f, 0.85f));
+            PlaceKenney(root.transform, "NorthRouteBrokenObelisk_FallenShard", "wall-arch-top.fbx", new Vector3(-1.6f, 0f, 50.0f), Quaternion.Euler(0f, 58f, 0f), Vector3.one * 0.72f);
+            CreateMarker(root.transform, "NorthRouteBrokenObelisk_GlowCrack", new Vector3(-2.55f, 0.82f, 51.0f), new Vector3(0.18f, 0.55f, 0.055f), new Color(0.36f, 0.24f, 0.82f, 1f));
+            CreateMarker(root.transform, "NorthRouteBrokenObelisk_DustRing", new Vector3(-2.3f, 0.065f, 51.35f), new Vector3(1.15f, 0.035f, 1.15f), new Color(0.18f, 0.14f, 0.34f, 1f));
+
+            PlaceKenney(root.transform, "SouthRouteWispRottenFence", "fence-curved.fbx", new Vector3(4.6f, 0f, -55.0f), Quaternion.Euler(0f, -52f, 0f), Vector3.one * 0.95f);
+            PlaceKenney(root.transform, "SouthRouteWispSunkenPlanks", "planks-opening.fbx", new Vector3(6.0f, 0.02f, -56.4f), Quaternion.Euler(0f, 34f, 0f), Vector3.one * 0.86f);
+            CreateMarker(root.transform, "SouthRouteWillOWisp_A", new Vector3(5.6f, 0.95f, -55.6f), new Vector3(0.22f, 0.22f, 0.22f), new Color(0.06f, 0.62f, 0.44f, 1f));
+            CreateMarker(root.transform, "SouthRouteWillOWisp_B", new Vector3(6.4f, 1.25f, -54.9f), new Vector3(0.16f, 0.16f, 0.16f), new Color(0.12f, 0.78f, 0.56f, 1f));
+            CreateMarker(root.transform, "SouthRouteWispBogCircle", new Vector3(5.8f, 0.055f, -55.5f), new Vector3(1.45f, 0.03f, 1.1f), new Color(0.018f, 0.075f, 0.055f, 1f));
         }
 
         private static void CreateVillageDressing(Transform parent)

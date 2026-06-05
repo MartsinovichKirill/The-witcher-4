@@ -169,6 +169,14 @@ namespace WitcherRightVersion.Editor
             RequireObject("NorthRouteMirrorGlimmer_A", failures);
             RequireObject("SouthRouteBogGlow_A", failures);
             RequireObject("EastRouteAshGlow_A", failures);
+            RequireObject("RoutePointOfInterestDressing", failures);
+            RequireObject("WestRouteHunterShrine_Post", failures);
+            RequireObject("EastRouteAmbushBarricade_A", failures);
+            RequireObject("NorthRouteBrokenObelisk_Base", failures);
+            RequireObject("SouthRouteWillOWisp_A", failures);
+            RequireObject("WestRouteShrineLanternLight", failures);
+            RequireObject("NorthRouteObeliskVioletLight", failures);
+            RequireObject("SouthRouteWillOWispLight", failures);
             RequireObject("VillageDressingNoticeBanner", failures);
             RequireObject("ForestWolfDen_World", failures);
             RequireObject("SwampPlankPath_01", failures);
