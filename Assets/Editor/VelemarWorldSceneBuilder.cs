@@ -172,6 +172,7 @@ namespace WitcherRightVersion.Editor
             CreateInternetAssetMapExtensions(root.transform);
             CreateMapDensityAndScalePass(root.transform);
             CreateGameplayCompositionPass(root.transform);
+            CreateLandmarkAndTraversalPass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -779,6 +780,106 @@ namespace WitcherRightVersion.Editor
                 var z = southRoadStops[i];
                 PlaceKenney(root.transform, $"OuterSouthRoadPlanks_{i + 1:00}", i % 2 == 0 ? "planks-opening.fbx" : "planks-half.fbx", new Vector3(3.4f + i * 1.2f, 0.035f, z), Quaternion.Euler(0f, 72f + i * 11f, 0f), Vector3.one);
                 CreateReedCluster(root.transform, $"OuterSouthRoadReeds_{i + 1:00}", new Vector3(-5.2f - i * 1.1f, 0f, z + 1.8f), 1.15f + i * 0.08f);
+            }
+        }
+
+        private static void CreateLandmarkAndTraversalPass(Transform parent)
+        {
+            var root = new GameObject("LandmarkAndTraversalPass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageCrossroadsLandmarks(root.transform);
+            CreateForestTraversalGate(root.transform);
+            CreateSwampTraversalGate(root.transform);
+            CreateAshRoadTraversalGate(root.transform);
+            CreateTowerTraversalGate(root.transform);
+            CreateOuterHorizonAnchors(root.transform);
+        }
+
+        private static void CreateVillageCrossroadsLandmarks(Transform parent)
+        {
+            var root = new GameObject("VillageCrossroadsLandmarks");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "VillageCrossroadsStoneRing", new Vector3(0f, 0.135f, 0f), new Vector3(8.8f, 0.012f, 8.8f), new Color(0.105f, 0.088f, 0.06f, 1f));
+            PlaceKayKit(root.transform, "VillageCrossroadsWellAnchor", "well.fbx", new Vector3(0f, 0f, -2.3f), Quaternion.identity, Vector3.one * 0.82f);
+            PlaceKenney(root.transform, "VillageCrossroadsNoticePole", "pillar-wood.fbx", new Vector3(-2.2f, 0f, -1.1f), Quaternion.Euler(0f, 8f, 0f), new Vector3(0.68f, 1.18f, 0.68f));
+            PlaceKenney(root.transform, "VillageCrossroadsNoticeBanner", "banner-red.fbx", new Vector3(-2.05f, 0f, -1.2f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 0.78f);
+            PlaceKenney(root.transform, "VillageCrossroadsLanternNorth", "lantern.fbx", new Vector3(2.7f, 0f, 2.8f), Quaternion.identity, Vector3.one);
+            PlaceKenney(root.transform, "VillageCrossroadsLanternSouth", "lantern.fbx", new Vector3(-2.8f, 0f, -5.2f), Quaternion.Euler(0f, 25f, 0f), Vector3.one);
+        }
+
+        private static void CreateForestTraversalGate(Transform parent)
+        {
+            var root = new GameObject("ForestTraversalGate");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ForestGateThresholdMud", new Vector3(-28f, 0.12f, 0f), new Vector3(12f, 0.012f, 7.6f), new Color(0.078f, 0.08f, 0.045f, 1f));
+            PlaceKayKit(root.transform, "ForestGateLeftTreeMass", "detail_forestA.fbx", new Vector3(-31.6f, 0f, 7.8f), Quaternion.Euler(0f, 25f, 0f), Vector3.one * 1.35f);
+            PlaceKayKit(root.transform, "ForestGateRightTreeMass", "detail_forestB.fbx", new Vector3(-31.2f, 0f, -7.2f), Quaternion.Euler(0f, -38f, 0f), Vector3.one * 1.28f);
+            PlaceKenney(root.transform, "ForestGateBrokenFenceLeft", "fence-broken.fbx", new Vector3(-24.4f, 0f, 3.7f), Quaternion.Euler(0f, -26f, 0f), Vector3.one * 1.05f);
+            PlaceKenney(root.transform, "ForestGateBrokenFenceRight", "fence-broken.fbx", new Vector3(-24.0f, 0f, -3.8f), Quaternion.Euler(0f, 28f, 0f), Vector3.one * 1.05f);
+            PlaceKenney(root.transform, "ForestGateWarningLantern", "lantern.fbx", new Vector3(-25.6f, 0f, -1.7f), Quaternion.identity, Vector3.one * 0.9f);
+            CreateZoneLabel(root.transform, "ForestGateSign", "Старый Лес", new Vector3(-25.5f, 1.35f, 1.8f), Quaternion.Euler(0f, 86f, 0f));
+        }
+
+        private static void CreateSwampTraversalGate(Transform parent)
+        {
+            var root = new GameObject("SwampTraversalGate");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "SwampGateWetThreshold", new Vector3(4.5f, 0.12f, -31f), new Vector3(10f, 0.012f, 12f), new Color(0.035f, 0.066f, 0.048f, 1f));
+            PlaceKayKit(root.transform, "SwampGateRoofedBridgeAnchor", "bridge_roofed.fbx", new Vector3(4.4f, 0f, -31.4f), Quaternion.Euler(0f, 92f, 0f), Vector3.one * 1.05f);
+            PlaceKenney(root.transform, "SwampGateReedFenceLeft", "fence-curved.fbx", new Vector3(-1.8f, 0f, -30.2f), Quaternion.Euler(0f, 72f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "SwampGateReedFenceRight", "fence-curved.fbx", new Vector3(10.8f, 0f, -32.3f), Quaternion.Euler(0f, -76f, 0f), Vector3.one);
+            CreateReedCluster(root.transform, "SwampGateTallReedsLeft", new Vector3(0.7f, 0f, -36.4f), 1.45f);
+            CreateReedCluster(root.transform, "SwampGateTallReedsRight", new Vector3(9.6f, 0f, -36.0f), 1.4f);
+            CreateZoneLabel(root.transform, "SwampGateSign", "Чёрное Болото", new Vector3(7.8f, 1.35f, -26.4f), Quaternion.Euler(0f, -28f, 0f));
+        }
+
+        private static void CreateAshRoadTraversalGate(Transform parent)
+        {
+            var root = new GameObject("AshRoadTraversalGate");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "AshRoadGateThreshold", new Vector3(31f, 0.122f, 0f), new Vector3(13f, 0.012f, 9f), new Color(0.105f, 0.087f, 0.068f, 1f));
+            PlaceKayKit(root.transform, "AshRoadGateCollapsedGate", "wall_gate_closed.fbx", new Vector3(31.4f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 0.96f);
+            PlaceKayKit(root.transform, "AshRoadGateWatchtowerA", "watchtower.fbx", new Vector3(28.4f, 0f, 7.0f), Quaternion.Euler(0f, 34f, 0f), Vector3.one * 0.75f);
+            PlaceKayKit(root.transform, "AshRoadGateWatchtowerB", "watchtower.fbx", new Vector3(34.0f, 0f, -7.0f), Quaternion.Euler(0f, -38f, 0f), Vector3.one * 0.72f);
+            CreateMarker(root.transform, "AshRoadGateCinderPatchA", new Vector3(27.5f, 0.16f, -2.8f), new Vector3(1.9f, 0.04f, 1.0f), new Color(0.065f, 0.052f, 0.043f, 1f));
+            CreateMarker(root.transform, "AshRoadGateCinderPatchB", new Vector3(35.2f, 0.16f, 3.1f), new Vector3(1.6f, 0.04f, 1.1f), new Color(0.08f, 0.055f, 0.042f, 1f));
+            CreateZoneLabel(root.transform, "AshRoadGateSign", "Пепельный тракт", new Vector3(29.7f, 1.4f, -4.6f), Quaternion.Euler(0f, -72f, 0f));
+        }
+
+        private static void CreateTowerTraversalGate(Transform parent)
+        {
+            var root = new GameObject("TowerTraversalGate");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "TowerGateThresholdStone", new Vector3(0f, 0.123f, 43f), new Vector3(12f, 0.012f, 11f), new Color(0.072f, 0.072f, 0.078f, 1f));
+            PlaceKayKit(root.transform, "TowerGateStoneArch", "wall_gate.fbx", new Vector3(0f, 0f, 43.8f), Quaternion.Euler(0f, 0f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "TowerGateBrokenPillarLeft", "pillar-stone.fbx", new Vector3(-5.8f, 0f, 40.0f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 1.15f);
+            PlaceKenney(root.transform, "TowerGateBrokenPillarRight", "pillar-stone.fbx", new Vector3(5.8f, 0f, 40.0f), Quaternion.Euler(0f, 22f, 0f), Vector3.one * 1.15f);
+            PlaceKenney(root.transform, "TowerGateFallenArchShard", "wall-arch-top.fbx", new Vector3(4.2f, 0f, 46.6f), Quaternion.Euler(0f, 54f, 0f), Vector3.one * 0.8f);
+            CreateMarker(root.transform, "TowerGateMirrorDustPool", new Vector3(0f, 0.16f, 46.1f), new Vector3(1.8f, 0.04f, 1.2f), new Color(0.24f, 0.18f, 0.42f, 1f));
+            CreateZoneLabel(root.transform, "TowerGateSign", "Руины Башни", new Vector3(-3.9f, 1.45f, 39.1f), Quaternion.Euler(0f, 12f, 0f));
+        }
+
+        private static void CreateOuterHorizonAnchors(Transform parent)
+        {
+            var root = new GameObject("OuterHorizonAnchors");
+            root.transform.SetParent(parent, false);
+
+            PlaceKayKit(root.transform, "HorizonWestMountainCluster", "mountain.fbx", new Vector3(-154f, 0f, 26f), Quaternion.Euler(0f, 25f, 0f), new Vector3(2.25f, 0.72f, 2.25f));
+            PlaceKayKit(root.transform, "HorizonNorthCastleSilhouette", "castle.fbx", new Vector3(0f, 0f, 154f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * 1.45f);
+            PlaceKayKit(root.transform, "HorizonEastBurnedFort", "wall_gate_closed.fbx", new Vector3(154f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.35f);
+            PlaceKayKit(root.transform, "HorizonSouthBogBridge", "bridge.fbx", new Vector3(12f, 0f, -154f), Quaternion.Euler(0f, 84f, 0f), Vector3.one * 1.15f);
+
+            for (var i = 0; i < 8; i++)
+            {
+                var angle = i * Mathf.PI * 2f / 8f;
+                var position = new Vector3(Mathf.Cos(angle) * 145f, 0f, Mathf.Sin(angle) * 145f);
+                PlaceKayKit(root.transform, $"HorizonRockMass_{i + 1:00}", "detail_rocks.fbx", position, Quaternion.Euler(0f, i * 37f, 0f), Vector3.one * (1.35f + (i % 2) * 0.22f));
             }
         }
 
