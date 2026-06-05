@@ -124,8 +124,10 @@ namespace WitcherRightVersion.Editor
 
             var camera = cameraObject.AddComponent<Camera>();
             camera.clearFlags = CameraClearFlags.Skybox;
+            camera.fieldOfView = 62f;
             camera.nearClipPlane = 0.1f;
             camera.farClipPlane = 500f;
+            camera.allowHDR = true;
 
             cameraObject.AddComponent<AudioListener>();
             var follow = cameraObject.AddComponent<ThirdPersonCamera>();

@@ -158,8 +158,10 @@ namespace WitcherRightVersion.Editor
 
             var camera = cameraObject.AddComponent<Camera>();
             camera.clearFlags = CameraClearFlags.Skybox;
+            camera.fieldOfView = 62f;
             camera.nearClipPlane = 0.1f;
             camera.farClipPlane = 500f;
+            camera.allowHDR = true;
 
             cameraObject.AddComponent<AudioListener>();
             var follow = cameraObject.AddComponent<ThirdPersonCamera>();
@@ -975,7 +977,7 @@ namespace WitcherRightVersion.Editor
                 TextAnchor.MiddleLeft,
                 new Color(0.93f, 0.9f, 0.82f, 1f));
 
-            hintText.text = "E interact | Mouse0 light | F heavy | LeftCtrl block | Space dodge | Q Aard\nI inventory | F5-F7 save | F8 autosave load | F9-F11 slot load | H help";
+            hintText.text = "Mouse look | Wheel zoom | E interact | Mouse0 light | F heavy | LeftCtrl block | Space dodge | Q Aard\nI inventory | Esc cursor | F5-F7 save | F8 autosave load | H help";
 
             var hint = canvasObject.AddComponent<ControlsHintUI>();
             SetSerializedObjectReference(hint, "hintRoot", hintRoot);

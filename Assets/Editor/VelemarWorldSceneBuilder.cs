@@ -91,23 +91,32 @@ namespace WitcherRightVersion.Editor
             var lightObject = new GameObject("VelemarWorldSun");
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.color = new Color(0.92f, 0.78f, 0.58f, 1f);
-            light.intensity = 0.82f;
+            light.color = new Color(0.82f, 0.72f, 0.58f, 1f);
+            light.intensity = 0.62f;
             light.shadows = LightShadows.Soft;
-            light.transform.rotation = Quaternion.Euler(44f, -34f, 0f);
+            light.transform.rotation = Quaternion.Euler(32f, -38f, 0f);
 
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.16f, 0.18f, 0.17f, 1f);
+            RenderSettings.ambientLight = new Color(0.11f, 0.13f, 0.12f, 1f);
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogColor = new Color(0.21f, 0.27f, 0.24f, 1f);
-            RenderSettings.fogDensity = 0.0105f;
+            RenderSettings.fogColor = new Color(0.16f, 0.21f, 0.19f, 1f);
+            RenderSettings.fogDensity = 0.0135f;
 
             var lightsRoot = new GameObject("VelemarAtmosphereLights");
-            CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.58f, 0.28f, 1f), 1.15f, 10f);
-            CreatePointLight(lightsRoot.transform, "SwampColdMiasmaLight", new Vector3(9.4f, 2.2f, -72.8f), new Color(0.16f, 0.48f, 0.36f, 1f), 0.85f, 18f);
-            CreatePointLight(lightsRoot.transform, "TowerMirrorVioletLight", new Vector3(0f, 3.6f, 76.6f), new Color(0.48f, 0.28f, 0.86f, 1f), 1.35f, 19f);
-            CreatePointLight(lightsRoot.transform, "AshRoadEmberLight", new Vector3(72f, 2.5f, 9.5f), new Color(0.9f, 0.25f, 0.12f, 1f), 0.95f, 17f);
+            CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.54f, 0.24f, 1f), 1.45f, 12f);
+            CreatePointLight(lightsRoot.transform, "VillageMarketLanternLight", new Vector3(3.1f, 2.4f, -0.2f), new Color(1f, 0.62f, 0.32f, 1f), 0.85f, 8f);
+            CreatePointLight(lightsRoot.transform, "VillageSmithForgeLight", new Vector3(-4.2f, 1.8f, 1.1f), new Color(1f, 0.28f, 0.12f, 1f), 1.1f, 7.5f);
+            CreatePointLight(lightsRoot.transform, "ForestMoonPoolLight", new Vector3(-73.5f, 4.3f, 13.5f), new Color(0.42f, 0.56f, 0.72f, 1f), 0.62f, 15f);
+            CreatePointLight(lightsRoot.transform, "SwampColdMiasmaLight", new Vector3(9.4f, 2.2f, -72.8f), new Color(0.12f, 0.54f, 0.36f, 1f), 1.05f, 20f);
+            CreatePointLight(lightsRoot.transform, "SwampHutCandleLight", new Vector3(14.2f, 1.75f, -73.4f), new Color(0.86f, 0.48f, 0.2f, 1f), 0.62f, 7.5f);
+            CreatePointLight(lightsRoot.transform, "TowerMirrorVioletLight", new Vector3(0f, 3.6f, 76.6f), new Color(0.48f, 0.28f, 0.86f, 1f), 1.65f, 21f);
+            CreatePointLight(lightsRoot.transform, "AshRoadEmberLight", new Vector3(72f, 2.5f, 9.5f), new Color(0.95f, 0.22f, 0.1f, 1f), 1.15f, 18f);
+            CreateSpotLight(lightsRoot.transform, "VillageGateWarmCone", new Vector3(0f, 4.6f, -11f), Quaternion.Euler(58f, 0f, 0f), new Color(1f, 0.58f, 0.32f, 1f), 1.2f, 15f, 42f);
+            CreateSpotLight(lightsRoot.transform, "ForestPathMoonShaft", new Vector3(-66f, 8f, 12f), Quaternion.Euler(66f, -38f, 0f), new Color(0.46f, 0.62f, 0.78f, 1f), 0.75f, 20f, 34f);
+            CreateSpotLight(lightsRoot.transform, "SwampBridgeColdCone", new Vector3(7.5f, 5.2f, -69.5f), Quaternion.Euler(62f, -18f, 0f), new Color(0.14f, 0.7f, 0.44f, 1f), 0.8f, 18f, 46f);
+            CreateSpotLight(lightsRoot.transform, "TowerRitualVioletCone", new Vector3(0f, 7.2f, 73.7f), Quaternion.Euler(70f, 0f, 0f), new Color(0.55f, 0.32f, 0.95f, 1f), 1.05f, 22f, 38f);
+            CreateSpotLight(lightsRoot.transform, "AshRoadFireCone", new Vector3(69f, 4.8f, 11.3f), Quaternion.Euler(62f, 24f, 0f), new Color(1f, 0.32f, 0.12f, 1f), 0.95f, 16f, 42f);
         }
 
         private static void CreatePointLight(Transform parent, string name, Vector3 position, Color color, float intensity, float range)
@@ -120,6 +129,21 @@ namespace WitcherRightVersion.Editor
             light.color = color;
             light.intensity = intensity;
             light.range = range;
+            light.shadows = LightShadows.None;
+        }
+
+        private static void CreateSpotLight(Transform parent, string name, Vector3 position, Quaternion rotation, Color color, float intensity, float range, float spotAngle)
+        {
+            var lightObject = new GameObject(name);
+            lightObject.transform.SetParent(parent, false);
+            lightObject.transform.position = position;
+            lightObject.transform.rotation = rotation;
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Spot;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+            light.spotAngle = spotAngle;
             light.shadows = LightShadows.None;
         }
 
@@ -1397,8 +1421,10 @@ namespace WitcherRightVersion.Editor
 
             var camera = cameraObject.AddComponent<Camera>();
             camera.clearFlags = CameraClearFlags.Skybox;
+            camera.fieldOfView = 62f;
             camera.nearClipPlane = 0.1f;
             camera.farClipPlane = 650f;
+            camera.allowHDR = true;
 
             cameraObject.AddComponent<AudioListener>();
             var follow = cameraObject.AddComponent<ThirdPersonCamera>();

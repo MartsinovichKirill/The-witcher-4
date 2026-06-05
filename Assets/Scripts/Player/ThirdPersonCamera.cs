@@ -1,4 +1,5 @@
 using UnityEngine;
+using WitcherRightVersion.Dialogue;
 
 namespace WitcherRightVersion.Player
 {
@@ -6,23 +7,34 @@ namespace WitcherRightVersion.Player
     {
         [Header("Target")]
         [SerializeField] private Transform target;
-        [SerializeField] private Vector3 targetOffset = new Vector3(0f, 1.55f, 0f);
+        [SerializeField] private Vector3 targetOffset = new Vector3(0f, 1.48f, 0f);
+        [SerializeField] private Vector3 shoulderOffset = new Vector3(0.58f, 0.03f, 0f);
 
         [Header("Orbit")]
-        [SerializeField] private float distance = 5.5f;
-        [SerializeField] private float minDistance = 3.2f;
-        [SerializeField] private float maxDistance = 7.4f;
-        [SerializeField] private float zoomSensitivity = 1.4f;
-        [SerializeField] private float minPitch = -25f;
-        [SerializeField] private float maxPitch = 65f;
-        [SerializeField] private float mouseSensitivity = 2.4f;
-        [SerializeField] private float followSmoothTime = 0.08f;
-        [SerializeField] private float collisionRadius = 0.22f;
+        [SerializeField] private float distance = 4.85f;
+        [SerializeField] private float minDistance = 2.85f;
+        [SerializeField] private float maxDistance = 6.4f;
+        [SerializeField] private float zoomSensitivity = 1.1f;
+        [SerializeField] private float minPitch = -18f;
+        [SerializeField] private float maxPitch = 54f;
+        [SerializeField] private float mouseSensitivity = 3.1f;
+        [SerializeField] private float followSmoothTime = 0.055f;
+        [SerializeField] private float rotationSmoothTime = 0.018f;
+        [SerializeField] private float collisionRadius = 0.28f;
+        [SerializeField] private float recenterDelay = 1.35f;
+        [SerializeField] private float recenterSpeed = 1.85f;
         [SerializeField] private LayerMask collisionMask = ~0;
 
         private Vector3 smoothVelocity;
+        private PlayerController playerController;
         private float yaw;
-        private float pitch = 18f;
+        private float pitch = 15f;
+        private float yawVelocity;
+        private float pitchVelocity;
+        private float targetYaw;
+        private float targetPitch = 15f;
+        private float lastManualLookTime;
+        private bool cursorLocked = true;
 
         public Transform Target
         {
@@ -44,7 +56,11 @@ namespace WitcherRightVersion.Player
             if (target != null)
             {
                 yaw = target.eulerAngles.y;
+                targetYaw = yaw;
+                playerController = target.GetComponent<PlayerController>();
             }
+
+            SetCursorLocked(true);
         }
 
         private void LateUpdate()
@@ -54,11 +70,19 @@ namespace WitcherRightVersion.Player
                 return;
             }
 
-            if (Input.GetMouseButton(1))
+            UpdateCursorLock();
+
+            if (cursorLocked && !IsCameraInputBlocked())
             {
-                yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
-                pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
-                pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+                var mouseX = Input.GetAxis("Mouse X");
+                var mouseY = Input.GetAxis("Mouse Y");
+                if (Mathf.Abs(mouseX) > 0.001f || Mathf.Abs(mouseY) > 0.001f)
+                {
+                    targetYaw += mouseX * mouseSensitivity;
+                    targetPitch -= mouseY * mouseSensitivity;
+                    targetPitch = Mathf.Clamp(targetPitch, minPitch, maxPitch);
+                    lastManualLookTime = Time.time;
+                }
             }
 
             var scroll = Input.GetAxis("Mouse ScrollWheel");
@@ -67,13 +91,51 @@ namespace WitcherRightVersion.Player
                 distance = Mathf.Clamp(distance - scroll * zoomSensitivity, minDistance, maxDistance);
             }
 
+            RecenterBehindMovingPlayer();
+            yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref yawVelocity, rotationSmoothTime);
+            pitch = Mathf.SmoothDampAngle(pitch, targetPitch, ref pitchVelocity, rotationSmoothTime);
+
             var rotation = Quaternion.Euler(pitch, yaw, 0f);
-            var targetPosition = target.position + targetOffset;
+            var targetPosition = target.position + targetOffset + rotation * shoulderOffset;
             var desiredDistance = GetCollisionAdjustedDistance(targetPosition, rotation);
             var desiredPosition = targetPosition - rotation * Vector3.forward * desiredDistance;
 
             transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref smoothVelocity, followSmoothTime);
             transform.rotation = rotation;
+        }
+
+        private void UpdateCursorLock()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SetCursorLocked(false);
+            }
+            else if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            {
+                SetCursorLocked(true);
+            }
+        }
+
+        private void SetCursorLocked(bool locked)
+        {
+            cursorLocked = locked;
+            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !locked;
+        }
+
+        private bool IsCameraInputBlocked()
+        {
+            return DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen;
+        }
+
+        private void RecenterBehindMovingPlayer()
+        {
+            if (playerController == null || !playerController.IsMoving || Time.time - lastManualLookTime < recenterDelay)
+            {
+                return;
+            }
+
+            targetYaw = Mathf.LerpAngle(targetYaw, target.eulerAngles.y, recenterSpeed * Time.deltaTime);
         }
 
         private float GetCollisionAdjustedDistance(Vector3 targetPosition, Quaternion rotation)

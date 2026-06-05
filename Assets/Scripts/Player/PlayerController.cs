@@ -11,6 +11,8 @@ namespace WitcherRightVersion.Player
         [SerializeField] private float walkSpeed = 3.5f;
         [SerializeField] private float runSpeed = 6.25f;
         [SerializeField] private float rotationSpeed = 12f;
+        [SerializeField] private float acceleration = 16f;
+        [SerializeField] private float deceleration = 20f;
         [SerializeField] private float gravity = -24f;
 
         [Header("References")]
@@ -19,10 +21,12 @@ namespace WitcherRightVersion.Player
         private CharacterController characterController;
         private Health health;
         private CombatController combat;
+        private Vector3 horizontalVelocity;
         private float verticalVelocity;
 
         public bool IsMoving { get; private set; }
         public bool IsRunning { get; private set; }
+        public Vector3 MoveDirection { get; private set; }
 
         private void Awake()
         {
@@ -40,22 +44,19 @@ namespace WitcherRightVersion.Player
         {
             if (health != null && health.IsDead)
             {
-                IsMoving = false;
-                IsRunning = false;
+                StopHorizontalMovement();
                 return;
             }
 
             if (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen)
             {
-                IsMoving = false;
-                IsRunning = false;
+                StopHorizontalMovement();
                 return;
             }
 
             if (combat != null && combat.IsDodging)
             {
-                IsMoving = false;
-                IsRunning = false;
+                StopHorizontalMovement();
                 return;
             }
 
@@ -74,10 +75,14 @@ namespace WitcherRightVersion.Player
 
             var moveDirection = GetCameraRelativeDirection(input);
             var speed = IsRunning ? runSpeed : walkSpeed;
+            var desiredHorizontalVelocity = moveDirection * speed;
+            var smoothRate = IsMoving ? acceleration : deceleration;
+            horizontalVelocity = Vector3.MoveTowards(horizontalVelocity, desiredHorizontalVelocity, smoothRate * Time.deltaTime);
+            MoveDirection = horizontalVelocity.sqrMagnitude > 0.01f ? horizontalVelocity.normalized : Vector3.zero;
 
-            if (IsMoving)
+            if (MoveDirection.sqrMagnitude > 0.01f)
             {
-                var targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+                var targetRotation = Quaternion.LookRotation(MoveDirection, Vector3.up);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             }
 
@@ -88,9 +93,17 @@ namespace WitcherRightVersion.Player
 
             verticalVelocity += gravity * Time.deltaTime;
 
-            var velocity = moveDirection * speed;
+            var velocity = horizontalVelocity;
             velocity.y = verticalVelocity;
             characterController.Move(velocity * Time.deltaTime);
+        }
+
+        private void StopHorizontalMovement()
+        {
+            IsMoving = false;
+            IsRunning = false;
+            MoveDirection = Vector3.zero;
+            horizontalVelocity = Vector3.zero;
         }
 
         private Vector3 GetCameraRelativeDirection(Vector3 input)
