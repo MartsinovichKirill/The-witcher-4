@@ -891,12 +891,12 @@ namespace WitcherRightVersion.Editor
             var hudRoot = CreatePanel(
                 canvasObject.transform,
                 "HealthHudPanel",
-                new Vector2(0f, 1f),
-                new Vector2(0f, 1f),
-                new Vector2(0f, 1f),
-                new Vector2(420f, 92f),
-                new Vector2(44f, -44f),
-                new Color(0.045f, 0.04f, 0.032f, 0.88f));
+                new Vector2(0f, 0f),
+                new Vector2(0f, 0f),
+                new Vector2(0f, 0f),
+                new Vector2(520f, 96f),
+                new Vector2(44f, 42f),
+                new Color(0.035f, 0.03f, 0.025f, 0.9f));
 
             var barBack = CreatePanel(
                 hudRoot.transform,
@@ -904,9 +904,9 @@ namespace WitcherRightVersion.Editor
                 new Vector2(0f, 0f),
                 new Vector2(1f, 0f),
                 new Vector2(0.5f, 0f),
-                new Vector2(-44f, 22f),
-                new Vector2(0f, 20f),
-                new Color(0.14f, 0.05f, 0.04f, 1f));
+                new Vector2(-52f, 24f),
+                new Vector2(0f, 22f),
+                new Color(0.12f, 0.035f, 0.03f, 1f));
 
             var barFillObject = CreatePanel(
                 barBack.transform,
@@ -930,7 +930,7 @@ namespace WitcherRightVersion.Editor
                 new Vector2(0f, 0.48f),
                 new Vector2(1f, 1f),
                 new Vector2(0.5f, 1f),
-                new Vector2(-44f, -14f),
+                new Vector2(-52f, -16f),
                 new Vector2(0f, -10f),
                 21,
                 TextAnchor.MiddleLeft,

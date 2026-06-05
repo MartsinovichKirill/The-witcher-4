@@ -54,19 +54,16 @@ namespace WitcherRightVersion.Editor
             status.alignment = TextAnchor.MiddleLeft;
 
             var newGameButton = CreateButton("NewGameButton", mainPanel.transform, font, "New Game");
-            var worldGameButton = CreateButton("ClassicSliceButton", mainPanel.transform, font, "Classic Slice");
             var continueButton = CreateButton("ContinueButton", mainPanel.transform, font, "Continue");
             var settingsButton = CreateButton("SettingsButton", mainPanel.transform, font, "Settings");
             var exitButton = CreateButton("ExitButton", mainPanel.transform, font, "Exit");
 
             SetStackedButtonRect(newGameButton.gameObject, 0);
-            SetStackedButtonRect(worldGameButton.gameObject, 1);
-            SetStackedButtonRect(continueButton.gameObject, 2);
-            SetStackedButtonRect(settingsButton.gameObject, 3);
-            SetStackedButtonRect(exitButton.gameObject, 4);
+            SetStackedButtonRect(continueButton.gameObject, 1);
+            SetStackedButtonRect(settingsButton.gameObject, 2);
+            SetStackedButtonRect(exitButton.gameObject, 3);
 
             UnityEventTools.AddPersistentListener(newGameButton.onClick, controller.StartNewGame);
-            UnityEventTools.AddPersistentListener(worldGameButton.onClick, controller.StartClassicSlice);
             UnityEventTools.AddPersistentListener(continueButton.onClick, controller.ContinueGame);
             UnityEventTools.AddPersistentListener(settingsButton.onClick, controller.ShowSettingsPanel);
             UnityEventTools.AddPersistentListener(exitButton.onClick, controller.ExitGame);
@@ -121,7 +118,6 @@ namespace WitcherRightVersion.Editor
             controller.subtitleText = subtitle;
             controller.statusText = status;
             controller.newGameButtonText = GetButtonLabel(newGameButton);
-            controller.worldGameButtonText = GetButtonLabel(worldGameButton);
             controller.continueButtonText = GetButtonLabel(continueButton);
             controller.settingsButtonText = GetButtonLabel(settingsButton);
             controller.exitButtonText = GetButtonLabel(exitButton);

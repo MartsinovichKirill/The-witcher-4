@@ -71,7 +71,6 @@ namespace WitcherRightVersion.Editor
 
             RequireObject<MainMenuController>("MainMenuController", failures);
             RequireObject("NewGameButton", failures);
-            RequireObject("ClassicSliceButton", failures);
             RequireObject("ContinueButton", failures);
             RequireObject("SettingsButton", failures);
             RequireObject("LanguageDropdown", failures);
@@ -143,8 +142,14 @@ namespace WitcherRightVersion.Editor
             Require(File.ReadAllText(VelemarWorldScenePath).Contains(QuestService.ActionStartExile), failures, "Elsa dialogue must start the Exile quest.");
             RequireObject("VelemarWorldRoot", failures);
             RequireObject("VelemarWorldTerrain", failures);
+            RequireObject("VelemarTerrainVisualLayers", failures);
             RequireObject("VelemarAtmosphereLights", failures);
             RequireObject("VelemarRoadNetwork", failures);
+            RequireObject("VelemarNorthSouthRoad_Main", failures);
+            RequireObject("VelemarEastWestRoad_Main", failures);
+            RequireObject("VelemarCrossroadsPackedMud", failures);
+            RequireObject("VillagePackedEarthBlend", failures);
+            RequireObject("VillageGateTrampledGround", failures);
             RequireObject("VillageDistrict_VereskovyBrod", failures);
             var forestDistrict = RequireObject("ForestDistrict_OldForest", failures);
             var swampDistrict = RequireObject("SwampDistrict_BlackSwamp", failures);

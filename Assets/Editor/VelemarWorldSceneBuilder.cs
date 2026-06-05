@@ -162,6 +162,7 @@ namespace WitcherRightVersion.Editor
             root.transform.position = Vector3.zero;
 
             CreateGround(root.transform);
+            CreateTerrainVisualLayers(root.transform);
             CreateRoadNetwork(root.transform);
             CreateVillageDistrict(root.transform);
             CreateForestDistrict(root.transform);
@@ -180,7 +181,35 @@ namespace WitcherRightVersion.Editor
             ground.transform.SetParent(parent, true);
             ground.transform.position = Vector3.zero;
             ground.transform.localScale = new Vector3(42f, 1f, 42f);
-            ground.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/VelemarWorldTerrain.mat", new Color(0.13f, 0.2f, 0.13f, 1f));
+            ground.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/VelemarWorldTerrain.mat", new Color(0.105f, 0.17f, 0.105f, 1f));
+        }
+
+        private static void CreateTerrainVisualLayers(Transform parent)
+        {
+            var root = new GameObject("VelemarTerrainVisualLayers");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "VillagePackedEarthBlend", new Vector3(0f, 0.045f, -3f), new Vector3(27f, 0.018f, 23f), new Color(0.16f, 0.135f, 0.085f, 1f));
+            CreateSurfacePatch(root.transform, "VillageGreenCourtyardBlend", new Vector3(3.5f, 0.049f, 0.2f), new Vector3(13f, 0.017f, 8.5f), new Color(0.13f, 0.19f, 0.105f, 1f));
+            CreateSurfacePatch(root.transform, "VillageGateTrampledGround", new Vector3(0f, 0.052f, -10.6f), new Vector3(11.5f, 0.018f, 4.8f), new Color(0.13f, 0.105f, 0.072f, 1f));
+            CreateSurfacePatch(root.transform, "ForestDarkGroundBlend", new Vector3(-70f, 0.044f, 8f), new Vector3(31f, 0.018f, 27f), new Color(0.045f, 0.105f, 0.055f, 1f));
+            CreateSurfacePatch(root.transform, "SwampBogGroundBlend", new Vector3(8f, 0.044f, -72f), new Vector3(31f, 0.018f, 26f), new Color(0.035f, 0.082f, 0.058f, 1f));
+            CreateSurfacePatch(root.transform, "AshRoadScorchedGroundBlend", new Vector3(72f, 0.044f, 8f), new Vector3(28f, 0.018f, 18f), new Color(0.12f, 0.105f, 0.092f, 1f));
+            CreateSurfacePatch(root.transform, "TowerColdStoneGroundBlend", new Vector3(0f, 0.044f, 74f), new Vector3(22f, 0.018f, 18f), new Color(0.085f, 0.085f, 0.095f, 1f));
+
+            for (var i = 0; i < 8; i++)
+            {
+                var x = -64f + i * 16f;
+                CreateSurfacePatch(root.transform, $"WestEastGrassMottle_{i + 1:00}", new Vector3(x, 0.041f + i * 0.001f, 8.2f + (i % 3) * 3.1f), new Vector3(8.5f + (i % 2) * 2.0f, 0.012f, 3.4f), new Color(0.07f, 0.13f + (i % 3) * 0.012f, 0.065f, 1f));
+                CreateSurfacePatch(root.transform, $"WestEastDirtMottle_{i + 1:00}", new Vector3(x + 6.4f, 0.042f + i * 0.001f, -7.6f - (i % 2) * 2.4f), new Vector3(6.2f, 0.012f, 2.8f), new Color(0.13f, 0.105f, 0.068f, 1f));
+            }
+
+            for (var i = 0; i < 7; i++)
+            {
+                var z = -66f + i * 22f;
+                CreateSurfacePatch(root.transform, $"NorthSouthGrassMottle_{i + 1:00}", new Vector3(-8.4f - (i % 2) * 2.2f, 0.043f + i * 0.001f, z), new Vector3(4.5f, 0.012f, 8.4f), new Color(0.06f, 0.118f, 0.062f, 1f));
+                CreateSurfacePatch(root.transform, $"NorthSouthMudMottle_{i + 1:00}", new Vector3(8.2f + (i % 3) * 1.4f, 0.044f + i * 0.001f, z + 8f), new Vector3(4.0f, 0.012f, 6.8f), new Color(0.105f, 0.088f, 0.057f, 1f));
+            }
         }
 
         private static void CreateRoadNetwork(Transform parent)
@@ -188,15 +217,20 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("VelemarRoadNetwork");
             root.transform.SetParent(parent, false);
 
-            for (var z = -84; z <= 84; z += 6)
-            {
-                PlaceKenney(root.transform, $"VelemarNorthSouthRoad_{z}", "road.fbx", new Vector3(0f, 0.035f, z), Quaternion.identity, new Vector3(1.25f, 1f, 1.25f));
-            }
+            var dirt = new Color(0.175f, 0.145f, 0.088f, 1f);
+            var darkDirt = new Color(0.105f, 0.085f, 0.055f, 1f);
+            var shoulder = new Color(0.09f, 0.13f, 0.078f, 1f);
 
-            for (var x = -84; x <= 84; x += 6)
-            {
-                PlaceKenney(root.transform, $"VelemarEastWestRoad_{x}", "road.fbx", new Vector3(x, 0.04f, 0f), Quaternion.Euler(0f, 90f, 0f), new Vector3(1.25f, 1f, 1.25f));
-            }
+            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_Main", new Vector3(0f, 0.075f, 0f), new Vector3(5.4f, 0.026f, 172f), dirt);
+            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_Main", new Vector3(0f, 0.081f, 0f), new Vector3(172f, 0.024f, 5.4f), dirt);
+            CreateSurfacePatch(root.transform, "VelemarCrossroadsPackedMud", new Vector3(0f, 0.088f, 0f), new Vector3(10.5f, 0.022f, 10.5f), darkDirt);
+            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_LeftShoulder", new Vector3(-3.4f, 0.066f, 0f), new Vector3(1.2f, 0.018f, 166f), shoulder);
+            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_RightShoulder", new Vector3(3.4f, 0.066f, 0f), new Vector3(1.2f, 0.018f, 166f), shoulder);
+            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_NorthShoulder", new Vector3(0f, 0.068f, 3.4f), new Vector3(166f, 0.018f, 1.2f), shoulder);
+            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_SouthShoulder", new Vector3(0f, 0.068f, -3.4f), new Vector3(166f, 0.018f, 1.2f), shoulder);
+            CreateSurfacePatch(root.transform, "VillageRoadWearPatch_A", new Vector3(-5.5f, 0.092f, -3.2f), new Vector3(7f, 0.018f, 2.2f), darkDirt);
+            CreateSurfacePatch(root.transform, "VillageRoadWearPatch_B", new Vector3(5.4f, 0.093f, -3.4f), new Vector3(7f, 0.018f, 2.2f), darkDirt);
+            CreateSurfacePatch(root.transform, "VillageRoadWearPatch_C", new Vector3(0f, 0.094f, 4.5f), new Vector3(8.5f, 0.018f, 2.4f), darkDirt);
 
             CreateZoneLabel(root.transform, "RoadSign_Village", "Вересковый Брод", new Vector3(-4.5f, 1.2f, -5.5f), Quaternion.Euler(0f, 28f, 0f));
             CreateZoneLabel(root.transform, "RoadSign_Forest", "Старый Лес", new Vector3(-38f, 1.2f, 5.5f), Quaternion.Euler(0f, 70f, 0f));
@@ -1593,15 +1627,15 @@ namespace WitcherRightVersion.Editor
             scaler.matchWidthOrHeight = 0.5f;
             canvasObject.AddComponent<GraphicRaycaster>();
 
-            var hudRoot = CreatePanel(canvasObject.transform, "HealthHudPanel", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(420f, 92f), new Vector2(44f, -44f), new Color(0.045f, 0.04f, 0.032f, 0.88f));
-            var barBack = CreatePanel(hudRoot.transform, "HealthBarBack", new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f), new Vector2(-44f, 22f), new Vector2(0f, 20f), new Color(0.14f, 0.05f, 0.04f, 1f));
+            var hudRoot = CreatePanel(canvasObject.transform, "HealthHudPanel", new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(520f, 96f), new Vector2(44f, 42f), new Color(0.035f, 0.03f, 0.025f, 0.9f));
+            var barBack = CreatePanel(hudRoot.transform, "HealthBarBack", new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f), new Vector2(-52f, 24f), new Vector2(0f, 22f), new Color(0.12f, 0.035f, 0.03f, 1f));
             var barFillObject = CreatePanel(barBack.transform, "HealthBarFill", new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(0f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.68f, 0.11f, 0.08f, 1f));
             var fillImage = barFillObject.GetComponent<Image>();
             fillImage.type = Image.Type.Filled;
             fillImage.fillMethod = Image.FillMethod.Horizontal;
             fillImage.fillOrigin = 0;
             fillImage.fillAmount = 1f;
-            var healthText = CreateText(hudRoot.transform, "HealthHudText", new Vector2(0f, 0.48f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-44f, -14f), new Vector2(0f, -10f), 21, TextAnchor.MiddleLeft, new Color(0.96f, 0.88f, 0.77f, 1f));
+            var healthText = CreateText(hudRoot.transform, "HealthHudText", new Vector2(0f, 0.48f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(-52f, -16f), new Vector2(0f, -10f), 21, TextAnchor.MiddleLeft, new Color(0.96f, 0.88f, 0.77f, 1f));
 
             var hud = canvasObject.AddComponent<HealthHudUI>();
             SetSerializedObjectReference(hud, "healthText", healthText);
@@ -1892,6 +1926,17 @@ namespace WitcherRightVersion.Editor
             marker.transform.localPosition = position;
             marker.transform.localScale = scale;
             marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", color);
+        }
+
+        private static void CreateSurfacePatch(Transform parent, string name, Vector3 position, Vector3 scale, Color color)
+        {
+            var patch = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            patch.name = name;
+            patch.transform.SetParent(parent, false);
+            patch.transform.localPosition = position;
+            patch.transform.localScale = scale;
+            patch.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", color);
+            Object.DestroyImmediate(patch.GetComponent<Collider>());
         }
 
         private static GameObject CreatePanel(Transform parent, string name, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 sizeDelta, Vector2 anchoredPosition, Color color)
