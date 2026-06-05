@@ -37,6 +37,13 @@ namespace WitcherRightVersion.Interaction
                 return;
             }
 
+            if (InventoryHudUI.IsOpen)
+            {
+                currentInteractable = null;
+                InteractionPromptUI.Instance?.HidePrompt();
+                return;
+            }
+
             currentInteractable = FindBestInteractable();
             UpdatePrompt();
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 using WitcherRightVersion.Dialogue;
+using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Player
 {
@@ -25,6 +26,11 @@ namespace WitcherRightVersion.Player
         [SerializeField] private float recenterSpeed = 1.85f;
         [SerializeField] private LayerMask collisionMask = ~0;
 
+        [Header("Feel")]
+        [SerializeField] private float baseFieldOfView = 62f;
+        [SerializeField] private float runFieldOfView = 67f;
+        [SerializeField] private float fieldOfViewSmooth = 7.5f;
+
         private Vector3 smoothVelocity;
         private PlayerController playerController;
         private float yaw;
@@ -35,6 +41,7 @@ namespace WitcherRightVersion.Player
         private float targetPitch = 15f;
         private float lastManualLookTime;
         private bool cursorLocked = true;
+        private Camera attachedCamera;
 
         public Transform Target
         {
@@ -58,6 +65,12 @@ namespace WitcherRightVersion.Player
                 yaw = target.eulerAngles.y;
                 targetYaw = yaw;
                 playerController = target.GetComponent<PlayerController>();
+            }
+
+            attachedCamera = GetComponent<Camera>();
+            if (attachedCamera != null)
+            {
+                attachedCamera.fieldOfView = baseFieldOfView;
             }
 
             SetCursorLocked(true);
@@ -102,6 +115,7 @@ namespace WitcherRightVersion.Player
 
             transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref smoothVelocity, followSmoothTime);
             transform.rotation = rotation;
+            UpdateFieldOfView();
         }
 
         private void UpdateCursorLock()
@@ -110,7 +124,7 @@ namespace WitcherRightVersion.Player
             {
                 SetCursorLocked(false);
             }
-            else if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            else if (!IsCameraInputBlocked() && (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)))
             {
                 SetCursorLocked(true);
             }
@@ -125,7 +139,18 @@ namespace WitcherRightVersion.Player
 
         private bool IsCameraInputBlocked()
         {
-            return DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen;
+            return (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen) || InventoryHudUI.IsOpen;
+        }
+
+        private void UpdateFieldOfView()
+        {
+            if (attachedCamera == null)
+            {
+                return;
+            }
+
+            var desiredFov = playerController != null && playerController.IsRunning ? runFieldOfView : baseFieldOfView;
+            attachedCamera.fieldOfView = Mathf.Lerp(attachedCamera.fieldOfView, desiredFov, fieldOfViewSmooth * Time.deltaTime);
         }
 
         private void RecenterBehindMovingPlayer()

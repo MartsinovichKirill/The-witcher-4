@@ -79,6 +79,12 @@ namespace WitcherRightVersion.Combat
                 return;
             }
 
+            if (InventoryHudUI.IsOpen)
+            {
+                IsBlocking = false;
+                return;
+            }
+
             if (IsDodging)
             {
                 ContinueDodge();

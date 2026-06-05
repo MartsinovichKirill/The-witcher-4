@@ -112,6 +112,11 @@ namespace WitcherRightVersion.Editor
             CreatePointLight(lightsRoot.transform, "SwampHutCandleLight", new Vector3(14.2f, 1.75f, -73.4f), new Color(0.86f, 0.48f, 0.2f, 1f), 0.62f, 7.5f);
             CreatePointLight(lightsRoot.transform, "TowerMirrorVioletLight", new Vector3(0f, 3.6f, 76.6f), new Color(0.48f, 0.28f, 0.86f, 1f), 1.65f, 21f);
             CreatePointLight(lightsRoot.transform, "AshRoadEmberLight", new Vector3(72f, 2.5f, 9.5f), new Color(0.95f, 0.22f, 0.1f, 1f), 1.15f, 18f);
+            CreatePointLight(lightsRoot.transform, "WestRouteLanternLight_A", new Vector3(-31.6f, 2.0f, -1.5f), new Color(0.92f, 0.58f, 0.28f, 1f), 0.45f, 7.5f);
+            CreatePointLight(lightsRoot.transform, "WestRouteLanternLight_B", new Vector3(-57.6f, 2.0f, -1.5f), new Color(0.78f, 0.48f, 0.24f, 1f), 0.38f, 7f);
+            CreatePointLight(lightsRoot.transform, "NorthRouteMirrorGlimmer_A", new Vector3(5.8f, 1.1f, 33.5f), new Color(0.42f, 0.34f, 0.84f, 1f), 0.42f, 6.5f);
+            CreatePointLight(lightsRoot.transform, "SouthRouteBogGlow_A", new Vector3(-6.8f, 0.9f, -46f), new Color(0.08f, 0.48f, 0.28f, 1f), 0.5f, 8f);
+            CreatePointLight(lightsRoot.transform, "EastRouteAshGlow_A", new Vector3(46f, 0.8f, 6.7f), new Color(0.9f, 0.22f, 0.09f, 1f), 0.48f, 7f);
             CreateSpotLight(lightsRoot.transform, "VillageGateWarmCone", new Vector3(0f, 4.6f, -11f), Quaternion.Euler(58f, 0f, 0f), new Color(1f, 0.58f, 0.32f, 1f), 1.2f, 15f, 42f);
             CreateSpotLight(lightsRoot.transform, "ForestPathMoonShaft", new Vector3(-66f, 8f, 12f), Quaternion.Euler(66f, -38f, 0f), new Color(0.46f, 0.62f, 0.78f, 1f), 0.75f, 20f, 34f);
             CreateSpotLight(lightsRoot.transform, "SwampBridgeColdCone", new Vector3(7.5f, 5.2f, -69.5f), Quaternion.Euler(62f, -18f, 0f), new Color(0.14f, 0.7f, 0.44f, 1f), 0.8f, 18f, 46f);
@@ -334,6 +339,11 @@ namespace WitcherRightVersion.Editor
                 var x = westStops[i];
                 PlaceKenney(root.transform, $"WestRouteLandmark_{i + 1:00}", i % 2 == 0 ? "tree-high.fbx" : "rock-large.fbx", new Vector3(x, 0f, 4.8f + (i % 2) * 2.2f), Quaternion.Euler(0f, 25f * i, 0f), Vector3.one * (1.05f + i * 0.08f));
                 PlaceKenney(root.transform, $"WestRouteLantern_{i + 1:00}", "lantern.fbx", new Vector3(x + 2.4f, 0f, -1.5f), Quaternion.identity, Vector3.one * 0.9f);
+                CreateMarker(root.transform, $"WestRouteMudTrack_{i + 1:00}", new Vector3(x - 1.1f, 0.052f, 0.65f + (i % 2) * 0.4f), new Vector3(1.6f, 0.025f, 0.32f), new Color(0.085f, 0.07f, 0.045f, 1f));
+                if (i % 2 == 1)
+                {
+                    PlaceKenney(root.transform, $"WestRouteBrokenFence_{i + 1:00}", "fence-broken.fbx", new Vector3(x - 2.6f, 0f, 2.1f), Quaternion.Euler(0f, -28f, 0f), Vector3.one * 0.95f);
+                }
             }
 
             var eastStops = new[] { 18f, 32f, 46f, 58f };
@@ -341,6 +351,12 @@ namespace WitcherRightVersion.Editor
             {
                 var x = eastStops[i];
                 PlaceKenney(root.transform, $"EastRouteLandmark_{i + 1:00}", i % 2 == 0 ? "wall-broken.fbx" : "cart.fbx", new Vector3(x, 0f, 4.5f + (i % 2) * 2.4f), Quaternion.Euler(0f, -18f * i, 0f), Vector3.one * (1.0f + i * 0.07f));
+                PlaceKenney(root.transform, $"EastRouteCharredPost_{i + 1:00}", "pillar-wood.fbx", new Vector3(x - 2.1f, 0f, -2.2f), Quaternion.Euler(0f, 18f * i, 0f), new Vector3(0.72f, 1.1f, 0.72f));
+                CreateMarker(root.transform, $"EastRouteAshScorch_{i + 1:00}", new Vector3(x + 1.2f, 0.055f, -0.85f), new Vector3(1.35f + i * 0.12f, 0.026f, 0.78f), new Color(0.16f, 0.14f, 0.12f, 1f));
+                if (i == 2)
+                {
+                    CreateMarker(root.transform, "EastRouteLowEmbers", new Vector3(x, 0.09f, 6.7f), new Vector3(0.56f, 0.06f, 0.56f), new Color(0.72f, 0.12f, 0.035f, 1f));
+                }
             }
 
             var northStops = new[] { 18f, 32f, 46f, 59f };
@@ -348,6 +364,8 @@ namespace WitcherRightVersion.Editor
             {
                 var z = northStops[i];
                 PlaceKenney(root.transform, $"NorthRouteLandmark_{i + 1:00}", i % 2 == 0 ? "pillar-stone.fbx" : "tree-crooked.fbx", new Vector3(4.8f + (i % 2) * 1.8f, 0f, z), Quaternion.Euler(0f, 30f * i, 0f), Vector3.one * (1.05f + i * 0.08f));
+                PlaceKenney(root.transform, $"NorthRouteStoneRib_{i + 1:00}", "wall-broken.fbx", new Vector3(-4.6f - (i % 2) * 1.2f, 0f, z + 1.8f), Quaternion.Euler(0f, -35f + i * 11f, 0f), Vector3.one * (0.85f + i * 0.04f));
+                CreateMarker(root.transform, $"NorthRouteMirrorDust_{i + 1:00}", new Vector3(1.1f + (i % 2) * 0.55f, 0.08f, z - 1.2f), new Vector3(0.38f, 0.035f, 0.38f), new Color(0.28f, 0.22f, 0.52f, 1f));
             }
 
             var southStops = new[] { -18f, -32f, -46f, -59f };
@@ -355,9 +373,12 @@ namespace WitcherRightVersion.Editor
             {
                 var z = southStops[i];
                 PlaceKenney(root.transform, $"SouthRouteLandmark_{i + 1:00}", i % 2 == 0 ? "tree-high-crooked.fbx" : "rock-wide.fbx", new Vector3(-5.2f - (i % 2) * 1.6f, 0f, z), Quaternion.Euler(0f, -24f * i, 0f), Vector3.one * (1.08f + i * 0.08f));
+                PlaceKenney(root.transform, $"SouthRouteWetPlanks_{i + 1:00}", i % 2 == 0 ? "planks.fbx" : "planks-half.fbx", new Vector3(2.4f + (i % 2) * 1.2f, 0.035f, z + 1.6f), Quaternion.Euler(0f, 70f + i * 9f, 0f), Vector3.one * 0.9f);
+                CreateMarker(root.transform, $"SouthRouteBogPatch_{i + 1:00}", new Vector3(-0.9f - (i % 2) * 1.1f, 0.052f, z - 0.8f), new Vector3(1.55f, 0.03f, 0.9f), new Color(0.025f, 0.085f, 0.06f, 1f));
                 if (i == 2)
                 {
                     PlaceKenney(root.transform, "SouthRouteAbandonedCart", "cart-high.fbx", new Vector3(3.8f, 0f, z - 2.4f), Quaternion.Euler(0f, 52f, 0f), Vector3.one);
+                    CreateMarker(root.transform, "SouthRouteCartShadowPool", new Vector3(4.6f, 0.05f, z - 1.6f), new Vector3(1.8f, 0.03f, 1.1f), new Color(0.018f, 0.06f, 0.045f, 1f));
                 }
             }
         }

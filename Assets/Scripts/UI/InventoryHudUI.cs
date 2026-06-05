@@ -54,9 +54,16 @@ namespace WitcherRightVersion.UI
         private readonly StringBuilder builder = new StringBuilder(1024);
         private InventoryPage currentPage;
 
+        public static bool IsOpen { get; private set; }
+
         private void Awake()
         {
             Hide();
+        }
+
+        private void OnDisable()
+        {
+            IsOpen = false;
         }
 
         private void Update()
@@ -88,8 +95,10 @@ namespace WitcherRightVersion.UI
                 return;
             }
 
-            panelRoot.SetActive(!panelRoot.activeSelf);
-            if (panelRoot.activeSelf)
+            var nextState = !panelRoot.activeSelf;
+            panelRoot.SetActive(nextState);
+            IsOpen = nextState;
+            if (nextState)
             {
                 Refresh();
             }
@@ -318,6 +327,8 @@ namespace WitcherRightVersion.UI
             {
                 panelRoot.SetActive(false);
             }
+
+            IsOpen = false;
         }
 
         private enum InventoryPage

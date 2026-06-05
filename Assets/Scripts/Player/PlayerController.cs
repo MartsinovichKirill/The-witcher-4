@@ -1,6 +1,7 @@
 using UnityEngine;
 using WitcherRightVersion.Combat;
 using WitcherRightVersion.Dialogue;
+using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Player
 {
@@ -49,6 +50,12 @@ namespace WitcherRightVersion.Player
             }
 
             if (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen)
+            {
+                StopHorizontalMovement();
+                return;
+            }
+
+            if (InventoryHudUI.IsOpen)
             {
                 StopHorizontalMovement();
                 return;
