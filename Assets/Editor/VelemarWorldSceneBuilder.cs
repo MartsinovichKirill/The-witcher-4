@@ -28,7 +28,7 @@ namespace WitcherRightVersion.Editor
         private const float PlayerVisualScale = 0.34f;
         private const float HumanModelScaleMultiplier = 0.66f;
         private const float KenneyBuildingScaleMultiplier = 1.2f;
-        private const float KayKitBuildingScaleMultiplier = 1.55f;
+        private const float KayKitBuildingScaleMultiplier = 1.68f;
         private const float PropScaleMultiplier = 1.08f;
 
         [MenuItem("Tools/Witcher Right Version/Build Velemar World Scene")]
@@ -170,6 +170,7 @@ namespace WitcherRightVersion.Editor
             CreateAshRoadDistrict(root.transform);
             CreateTowerVistaDistrict(root.transform);
             CreateInternetAssetMapExtensions(root.transform);
+            CreateMapDensityAndScalePass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -305,7 +306,8 @@ namespace WitcherRightVersion.Editor
             CreateRegionDisc(root.transform, "SwampWaterPool_01", new Vector3(-3.5f, 0.035f, -1.4f), new Vector3(3.6f, 0.022f, 1.7f), new Color(0.025f, 0.055f, 0.05f, 1f));
             CreateRegionDisc(root.transform, "SwampWaterPool_02", new Vector3(2.8f, 0.035f, 2.1f), new Vector3(3.1f, 0.022f, 1.45f), new Color(0.02f, 0.05f, 0.045f, 1f));
 
-            PlaceKenney(root.transform, "ElsaHutPlaceholder_World", "stall.fbx", new Vector3(5.6f, 0f, -1.6f), Quaternion.Euler(0f, -22f, 0f), new Vector3(1.2f, 1.2f, 1.2f));
+            PlaceKayKit(root.transform, "ElsaHut_World", "house.fbx", new Vector3(5.6f, 0f, -1.6f), Quaternion.Euler(0f, -22f, 0f), Vector3.one * 0.9f);
+            PlaceKenney(root.transform, "ElsaHutLeanTo_World", "stall.fbx", new Vector3(7.2f, 0f, -2.7f), Quaternion.Euler(0f, -38f, 0f), Vector3.one * 0.82f);
             PlaceKayKit(root.transform, "SwampKayKitRoofedBridge_World", "bridge_roofed.fbx", new Vector3(-0.4f, 0f, 5.6f), Quaternion.Euler(0f, 8f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
             PlaceKayKit(root.transform, "SwampKayKitMine_World", "mine.fbx", new Vector3(7.4f, 0f, 3.0f), Quaternion.Euler(0f, -60f, 0f), Vector3.one);
             PlaceKayKit(root.transform, "SwampKayKitRocks_A", "detail_rocks_small.fbx", new Vector3(-6.6f, 0f, -0.4f), Quaternion.Euler(0f, 15f, 0f), Vector3.one * 1.25f);
@@ -367,6 +369,144 @@ namespace WitcherRightVersion.Editor
             CreateOuterRoadSetPieces(root.transform);
         }
 
+        private static void CreateMapDensityAndScalePass(Transform parent)
+        {
+            var root = new GameObject("MapDensityAndScalePass");
+            root.transform.SetParent(parent, false);
+
+            CreateStructuredVillageBlocks(root.transform);
+            CreateForestApproachDensity(root.transform);
+            CreateSwampApproachDensity(root.transform);
+            CreateAshRoadRuinedSettlement(root.transform);
+            CreateTowerApproachDensity(root.transform);
+        }
+
+        private static void CreateStructuredVillageBlocks(Transform parent)
+        {
+            var root = new GameObject("StructuredVillageBlocks");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "VillageMainSquarePackedMud", new Vector3(0f, 0.105f, -2.2f), new Vector3(18f, 0.014f, 12f), new Color(0.125f, 0.095f, 0.058f, 1f));
+            CreateSurfacePatch(root.transform, "VillageNorthResidentialLane", new Vector3(0f, 0.108f, 9.7f), new Vector3(25f, 0.014f, 4.2f), new Color(0.142f, 0.112f, 0.07f, 1f));
+            CreateSurfacePatch(root.transform, "VillageSouthGateLane", new Vector3(0f, 0.11f, -14.5f), new Vector3(24f, 0.014f, 4.5f), new Color(0.12f, 0.09f, 0.055f, 1f));
+
+            var housePositions = new[]
+            {
+                new Vector3(-15.5f, 0f, 7.8f),
+                new Vector3(-10.0f, 0f, 11.4f),
+                new Vector3(-3.8f, 0f, 10.8f),
+                new Vector3(5.0f, 0f, 10.9f),
+                new Vector3(12.0f, 0f, 7.8f),
+                new Vector3(-14.4f, 0f, -15.0f),
+                new Vector3(14.0f, 0f, -15.4f),
+            };
+
+            for (var i = 0; i < housePositions.Length; i++)
+            {
+                var rotation = Quaternion.Euler(0f, i < 5 ? 170f + (i % 3) * 12f : (i % 2 == 0 ? 28f : -34f), 0f);
+                PlaceKayKit(root.transform, $"StructuredVillageHouse_{i + 1:00}", "house.fbx", housePositions[i], rotation, Vector3.one * (1.08f + (i % 2) * 0.08f));
+                CreateMarker(root.transform, $"StructuredVillageHouseShadow_{i + 1:00}", housePositions[i] + new Vector3(0f, 0.065f, 0.2f), new Vector3(3.4f, 0.035f, 2.4f), new Color(0.055f, 0.045f, 0.035f, 1f));
+            }
+
+            PlaceKayKit(root.transform, "StructuredVillageBlacksmithShop", "barracks.fbx", new Vector3(-13.0f, 0f, 1.2f), Quaternion.Euler(0f, 72f, 0f), Vector3.one * 1.05f);
+            PlaceKayKit(root.transform, "StructuredVillageStableBarn", "lumbermill.fbx", new Vector3(14.6f, 0f, 1.2f), Quaternion.Euler(0f, -74f, 0f), Vector3.one * 0.94f);
+            PlaceKayKit(root.transform, "StructuredVillageMarketCenter", "market.fbx", new Vector3(0.8f, 0f, 5.7f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.95f);
+
+            for (var i = 0; i < 16; i++)
+            {
+                var x = -19.5f + i * 2.6f;
+                var z = i % 2 == 0 ? -18.1f : 13.6f;
+                var rot = i % 2 == 0 ? 90f : 88f;
+                PlaceKenney(root.transform, $"StructuredVillagePerimeterFence_{i + 1:00}", i % 5 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, rot, 0f), Vector3.one * 1.02f);
+            }
+
+            for (var i = 0; i < 10; i++)
+            {
+                PlaceKenney(root.transform, $"StructuredVillageStreetLantern_{i + 1:00}", "lantern.fbx", new Vector3(-10f + i * 2.2f, 0f, -7.8f + (i % 2) * 11.8f), Quaternion.Euler(0f, i * 18f, 0f), Vector3.one * 0.92f);
+            }
+        }
+
+        private static void CreateForestApproachDensity(Transform parent)
+        {
+            var root = new GameObject("ForestApproachDensity");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ForestApproachDarkUnderbrush", new Vector3(-48f, 0.047f, 12f), new Vector3(36f, 0.014f, 20f), new Color(0.038f, 0.09f, 0.04f, 1f));
+            for (var i = 0; i < 34; i++)
+            {
+                var x = -32f - (i % 9) * 5.1f + (i % 3) * 0.65f;
+                var z = -2f + (i / 9) * 5.7f + (i % 2) * 1.3f;
+                PlaceKenney(root.transform, $"ForestApproachTree_{i + 1:00}", i % 3 == 0 ? "tree-high-crooked.fbx" : i % 3 == 1 ? "tree-high.fbx" : "tree.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, i * 27f, 0f), Vector3.one * (1.08f + (i % 4) * 0.14f));
+                if (i % 4 == 0)
+                {
+                    PlaceKayKit(root.transform, $"ForestApproachRockPatch_{i + 1:00}", "detail_rocks_small.fbx", new Vector3(x + 1.8f, 0f, z - 1.1f), Quaternion.Euler(0f, i * 13f, 0f), Vector3.one * 0.9f);
+                }
+            }
+
+            PlaceKayKit(root.transform, "ForestApproachFallenWatchPost", "watchtower.fbx", new Vector3(-55.5f, 0f, -8.6f), Quaternion.Euler(0f, 62f, 0f), Vector3.one * 0.72f);
+            PlaceKenney(root.transform, "ForestApproachBrokenCart", "cart-high.fbx", new Vector3(-43.2f, 0f, -6.9f), Quaternion.Euler(0f, -36f, 0f), Vector3.one * 1.0f);
+        }
+
+        private static void CreateSwampApproachDensity(Transform parent)
+        {
+            var root = new GameObject("SwampApproachDensity");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "SwampApproachSoftMud", new Vector3(13f, 0.047f, -47f), new Vector3(28f, 0.014f, 40f), new Color(0.035f, 0.078f, 0.055f, 1f));
+            CreateSurfacePatch(root.transform, "SwampApproachWaterPocket_A", new Vector3(18f, 0.06f, -52f), new Vector3(8f, 0.012f, 5f), new Color(0.012f, 0.046f, 0.04f, 1f));
+            CreateSurfacePatch(root.transform, "SwampApproachWaterPocket_B", new Vector3(4f, 0.061f, -42f), new Vector3(7f, 0.012f, 4.6f), new Color(0.014f, 0.05f, 0.042f, 1f));
+
+            for (var i = 0; i < 24; i++)
+            {
+                var x = 0f + (i % 7) * 4.1f + (i % 2) * 0.7f;
+                var z = -62f + (i / 7) * 8f + (i % 3) * 1.1f;
+                CreateReedCluster(root.transform, $"SwampApproachReedWall_{i + 1:00}", new Vector3(x, 0f, z), 1.05f + (i % 4) * 0.13f);
+                if (i % 3 == 0)
+                {
+                    PlaceKenney(root.transform, $"SwampApproachCrookedTree_{i + 1:00}", "tree-crooked.fbx", new Vector3(x - 2.1f, 0f, z + 1.2f), Quaternion.Euler(0f, i * 25f, 0f), Vector3.one * (1.08f + (i % 3) * 0.18f));
+                }
+            }
+
+            PlaceKayKit(root.transform, "SwampApproachSinkingBridge", "bridge.fbx", new Vector3(7.8f, 0f, -52.8f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.85f);
+            PlaceKenney(root.transform, "SwampApproachDrownedWagon", "cart.fbx", new Vector3(20.8f, -0.04f, -44.8f), Quaternion.Euler(5f, -68f, 7f), Vector3.one * 1.0f);
+        }
+
+        private static void CreateAshRoadRuinedSettlement(Transform parent)
+        {
+            var root = new GameObject("AshRoadRuinedSettlement");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "AshRoadRuinedVillageGround", new Vector3(93f, 0.05f, 18f), new Vector3(35f, 0.014f, 22f), new Color(0.13f, 0.115f, 0.1f, 1f));
+            for (var i = 0; i < 10; i++)
+            {
+                var x = 79f + (i % 5) * 6.2f;
+                var z = 12f + (i / 5) * 10f + (i % 2) * 1.4f;
+                PlaceKenney(root.transform, $"AshRoadRuinedHouseWall_{i + 1:00}", i % 2 == 0 ? "wall-broken.fbx" : "wall-wood-broken.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, i * 31f, 0f), Vector3.one * (1.18f + (i % 3) * 0.14f));
+                CreateMarker(root.transform, $"AshRoadRuinSootPatch_{i + 1:00}", new Vector3(x + 0.7f, 0.068f, z - 0.4f), new Vector3(2.0f, 0.035f, 1.1f), new Color(0.055f, 0.048f, 0.043f, 1f));
+            }
+
+            PlaceKayKit(root.transform, "AshRoadRuinedWatchtowerBack", "watchtower.fbx", new Vector3(96f, 0f, 29f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.92f);
+            PlaceKayKit(root.transform, "AshRoadRuinedBarracksShell", "barracks.fbx", new Vector3(83f, 0f, 25.5f), Quaternion.Euler(0f, 37f, 0f), Vector3.one * 0.88f);
+        }
+
+        private static void CreateTowerApproachDensity(Transform parent)
+        {
+            var root = new GameObject("TowerApproachDensity");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "TowerApproachBrokenRoad", new Vector3(0f, 0.063f, 94f), new Vector3(9f, 0.014f, 31f), new Color(0.088f, 0.084f, 0.088f, 1f));
+            for (var i = 0; i < 18; i++)
+            {
+                var side = i % 2 == 0 ? -1f : 1f;
+                var z = 84f + i * 2.4f;
+                var x = side * (5.2f + (i % 4) * 1.7f);
+                PlaceKenney(root.transform, $"TowerApproachBrokenMasonry_{i + 1:00}", i % 3 == 0 ? "wall-arch-top.fbx" : i % 3 == 1 ? "pillar-stone.fbx" : "wall-broken.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, side * (28f + i * 9f), 0f), Vector3.one * (1.0f + (i % 4) * 0.1f));
+                CreateMarker(root.transform, $"TowerApproachVioletDust_{i + 1:00}", new Vector3(x * 0.55f, 0.078f, z + 0.7f), new Vector3(0.48f, 0.04f, 0.48f), new Color(0.28f, 0.19f, 0.46f, 1f));
+            }
+
+            PlaceKayKit(root.transform, "TowerApproachGateFrame", "wall_gate.fbx", new Vector3(0f, 0f, 101f), Quaternion.Euler(0f, 0f, 0f), Vector3.one * 1.15f);
+        }
+
         private static void CreateOuterVillageRing(Transform parent)
         {
             var root = new GameObject("OuterVillageRing_KayKit");
@@ -375,6 +515,9 @@ namespace WitcherRightVersion.Editor
             CreateSurfacePatch(root.transform, "OuterVillageNorthPackedYard", new Vector3(0f, 0.047f, 15.5f), new Vector3(31f, 0.016f, 16f), new Color(0.12f, 0.145f, 0.09f, 1f));
             CreateSurfacePatch(root.transform, "OuterVillageSouthMudApproach", new Vector3(0f, 0.049f, -19.5f), new Vector3(32f, 0.016f, 13f), new Color(0.12f, 0.095f, 0.062f, 1f));
             CreateSurfacePatch(root.transform, "OuterVillageFarmSoil", new Vector3(17f, 0.047f, 8.5f), new Vector3(16f, 0.016f, 13f), new Color(0.145f, 0.112f, 0.07f, 1f));
+            CreateSurfacePatch(root.transform, "OuterVillageNorthStreetSpine", new Vector3(0f, 0.064f, 10.8f), new Vector3(34f, 0.014f, 2.8f), new Color(0.135f, 0.103f, 0.064f, 1f));
+            CreateSurfacePatch(root.transform, "OuterVillageSouthGateSpine", new Vector3(0f, 0.066f, -17.6f), new Vector3(34f, 0.014f, 2.8f), new Color(0.125f, 0.092f, 0.056f, 1f));
+            CreateSurfacePatch(root.transform, "OuterVillageFarmLane", new Vector3(16.9f, 0.068f, 2.2f), new Vector3(3.0f, 0.014f, 22f), new Color(0.128f, 0.098f, 0.06f, 1f));
 
             PlaceKayKit(root.transform, "OuterVillageLumbermill", "lumbermill.fbx", new Vector3(-18f, 0f, 9.6f), Quaternion.Euler(0f, 38f, 0f), Vector3.one * 1.12f);
             PlaceKayKit(root.transform, "OuterVillageWindmill", "mill.fbx", new Vector3(19.4f, 0f, -7.4f), Quaternion.Euler(0f, -34f, 0f), Vector3.one * 1.05f);
@@ -403,6 +546,8 @@ namespace WitcherRightVersion.Editor
 
             CreateSurfacePatch(root.transform, "DeepForestOuterFloor", new Vector3(-112f, 0.042f, 18f), new Vector3(62f, 0.016f, 48f), new Color(0.035f, 0.095f, 0.045f, 1f));
             CreateSurfacePatch(root.transform, "DeepForestHunterMudRoad", new Vector3(-105f, 0.058f, 5f), new Vector3(38f, 0.018f, 4.2f), new Color(0.095f, 0.075f, 0.045f, 1f));
+            CreateSurfacePatch(root.transform, "DeepForestOutpostClearing", new Vector3(-103f, 0.061f, 20.4f), new Vector3(14f, 0.014f, 10f), new Color(0.052f, 0.105f, 0.052f, 1f));
+            CreateSurfacePatch(root.transform, "DeepForestMineTrail", new Vector3(-117f, 0.063f, 9.0f), new Vector3(17f, 0.014f, 2.8f), new Color(0.082f, 0.064f, 0.04f, 1f));
 
             for (var i = 0; i < 58; i++)
             {
@@ -435,6 +580,8 @@ namespace WitcherRightVersion.Editor
             CreateSurfacePatch(root.transform, "DeepSwampOuterBog", new Vector3(18f, 0.041f, -119f), new Vector3(56f, 0.016f, 54f), new Color(0.024f, 0.075f, 0.052f, 1f));
             CreateSurfacePatch(root.transform, "DeepSwampOpenWater_A", new Vector3(8f, 0.052f, -122f), new Vector3(16f, 0.014f, 10f), new Color(0.012f, 0.046f, 0.044f, 1f));
             CreateSurfacePatch(root.transform, "DeepSwampOpenWater_B", new Vector3(31f, 0.054f, -110f), new Vector3(12f, 0.014f, 8f), new Color(0.014f, 0.052f, 0.045f, 1f));
+            CreateSurfacePatch(root.transform, "DeepSwampMainCauseway", new Vector3(18f, 0.067f, -118f), new Vector3(4.2f, 0.014f, 43f), new Color(0.072f, 0.062f, 0.04f, 1f));
+            CreateSurfacePatch(root.transform, "DeepSwampMineCauseway", new Vector3(31f, 0.069f, -113f), new Vector3(18f, 0.014f, 3.2f), new Color(0.066f, 0.058f, 0.038f, 1f));
             PlaceKayKit(root.transform, "DeepSwampCollapsedBridge", "bridge.fbx", new Vector3(15f, 0f, -101f), Quaternion.Euler(0f, 12f, 0f), Vector3.one * 1.15f);
             PlaceKayKit(root.transform, "DeepSwampRoofedBridge", "bridge_roofed.fbx", new Vector3(32f, 0f, -124f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 1.0f);
             PlaceKayKit(root.transform, "DeepSwampOldMineMouth", "mine.fbx", new Vector3(40f, 0f, -111f), Quaternion.Euler(0f, -75f, 0f), Vector3.one * 0.9f);
@@ -464,6 +611,8 @@ namespace WitcherRightVersion.Editor
 
             CreateSurfacePatch(root.transform, "FarAshRoadScorchedField", new Vector3(120f, 0.043f, 11f), new Vector3(62f, 0.016f, 42f), new Color(0.105f, 0.094f, 0.083f, 1f));
             CreateSurfacePatch(root.transform, "FarAshRoadBlackenedTrack", new Vector3(119f, 0.058f, 0f), new Vector3(46f, 0.016f, 5.8f), new Color(0.058f, 0.052f, 0.047f, 1f));
+            CreateSurfacePatch(root.transform, "FarAshRoadFortYard", new Vector3(118f, 0.066f, 1.2f), new Vector3(18f, 0.014f, 15f), new Color(0.094f, 0.082f, 0.072f, 1f));
+            CreateSurfacePatch(root.transform, "FarAshRoadWatchtowerLane", new Vector3(119f, 0.068f, 9.4f), new Vector3(18f, 0.014f, 3.1f), new Color(0.07f, 0.062f, 0.054f, 1f));
             PlaceKayKit(root.transform, "FarAshRoadGateFort", "wall_gate_closed.fbx", new Vector3(118f, 0f, 1.2f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.3f);
             PlaceKayKit(root.transform, "FarAshRoadLeftWatchtower", "watchtower.fbx", new Vector3(112f, 0f, 9.5f), Quaternion.Euler(0f, 24f, 0f), Vector3.one * 1.05f);
             PlaceKayKit(root.transform, "FarAshRoadRightWatchtower", "watchtower.fbx", new Vector3(126f, 0f, -8.5f), Quaternion.Euler(0f, -34f, 0f), Vector3.one * 1.05f);
@@ -484,6 +633,8 @@ namespace WitcherRightVersion.Editor
 
             CreateSurfacePatch(root.transform, "FarTowerStonePlateau", new Vector3(0f, 0.042f, 121f), new Vector3(46f, 0.016f, 36f), new Color(0.07f, 0.075f, 0.082f, 1f));
             CreateSurfacePatch(root.transform, "FarTowerRitualDust", new Vector3(0f, 0.058f, 113f), new Vector3(24f, 0.014f, 10f), new Color(0.13f, 0.105f, 0.16f, 1f));
+            CreateSurfacePatch(root.transform, "FarTowerProcessionalRoad", new Vector3(0f, 0.067f, 121f), new Vector3(6.6f, 0.014f, 34f), new Color(0.082f, 0.078f, 0.086f, 1f));
+            CreateSurfacePatch(root.transform, "FarTowerInnerCourt", new Vector3(0f, 0.069f, 128.2f), new Vector3(20f, 0.014f, 12f), new Color(0.065f, 0.067f, 0.074f, 1f));
             PlaceKayKit(root.transform, "FarTowerCastleBackdrop", "castle.fbx", new Vector3(0f, 0f, 127f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * 1.65f);
             PlaceKayKit(root.transform, "FarTowerLeftWall", "wall_straight.fbx", new Vector3(-15f, 0f, 118f), Quaternion.Euler(0f, 15f, 0f), Vector3.one * 1.55f);
             PlaceKayKit(root.transform, "FarTowerRightWall", "wall_straight.fbx", new Vector3(15f, 0f, 118f), Quaternion.Euler(0f, -15f, 0f), Vector3.one * 1.55f);

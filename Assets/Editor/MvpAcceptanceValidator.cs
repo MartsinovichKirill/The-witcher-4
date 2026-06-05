@@ -157,6 +157,18 @@ namespace WitcherRightVersion.Editor
             RequireObject("AshRoadMapExtension_KayKit", failures);
             RequireObject("TowerMapExtension_KayKit", failures);
             RequireObject("OuterRoadSetPieces_InternetAssets", failures);
+            RequireObject("MapDensityAndScalePass", failures);
+            RequireObject("StructuredVillageBlocks", failures);
+            RequireObject("ForestApproachDensity", failures);
+            RequireObject("SwampApproachDensity", failures);
+            RequireObject("AshRoadRuinedSettlement", failures);
+            RequireObject("TowerApproachDensity", failures);
+            RequireObject("VillageMainSquarePackedMud", failures);
+            RequireObject("OuterVillageNorthStreetSpine", failures);
+            RequireObject("DeepForestOutpostClearing", failures);
+            RequireObject("DeepSwampMainCauseway", failures);
+            RequireObject("FarAshRoadFortYard", failures);
+            RequireObject("FarTowerProcessionalRoad", failures);
             RequireObject("OuterVillageLumbermill", failures);
             RequireObject("OuterVillageWindmill", failures);
             RequireObject("DeepForestRangerOutpost", failures);
