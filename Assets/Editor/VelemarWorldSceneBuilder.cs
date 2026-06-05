@@ -171,6 +171,7 @@ namespace WitcherRightVersion.Editor
             CreateTowerVistaDistrict(root.transform);
             CreateInternetAssetMapExtensions(root.transform);
             CreateMapDensityAndScalePass(root.transform);
+            CreateGameplayCompositionPass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -505,6 +506,107 @@ namespace WitcherRightVersion.Editor
             }
 
             PlaceKayKit(root.transform, "TowerApproachGateFrame", "wall_gate.fbx", new Vector3(0f, 0f, 101f), Quaternion.Euler(0f, 0f, 0f), Vector3.one * 1.15f);
+        }
+
+        private static void CreateGameplayCompositionPass(Transform parent)
+        {
+            var root = new GameObject("GameplayCompositionPass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageGameplayCompositions(root.transform);
+            CreateForestGameplayCompositions(root.transform);
+            CreateSwampGameplayCompositions(root.transform);
+            CreateTowerGameplayCompositions(root.transform);
+            CreateFinalRoadGameplayCompositions(root.transform);
+        }
+
+        private static void CreateVillageGameplayCompositions(Transform parent)
+        {
+            var root = new GameObject("VillageGameplayCompositions");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ElderCourtyardCompositionGround", new Vector3(-4.7f, 0.122f, -2.65f), new Vector3(5.6f, 0.012f, 4.2f), new Color(0.118f, 0.088f, 0.052f, 1f));
+            PlaceKenney(root.transform, "ElderCourtyardSealTable", "stall-bench.fbx", new Vector3(-5.85f, 0f, -2.25f), Quaternion.Euler(0f, 22f, 0f), Vector3.one * 0.95f);
+            PlaceKenney(root.transform, "ElderCourtyardBannerLeft", "banner-red.fbx", new Vector3(-6.7f, 0f, -4.1f), Quaternion.Euler(0f, 90f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "ElderCourtyardBannerRight", "banner-green.fbx", new Vector3(-2.8f, 0f, -4.2f), Quaternion.Euler(0f, 82f, 0f), Vector3.one * 0.92f);
+
+            CreateSurfacePatch(root.transform, "MartaHerbGardenCompositionGround", new Vector3(5.3f, 0.123f, -4.9f), new Vector3(5.3f, 0.012f, 3.7f), new Color(0.07f, 0.13f, 0.066f, 1f));
+            for (var i = 0; i < 8; i++)
+            {
+                CreateReedCluster(root.transform, $"MartaHerbRow_{i + 1:00}", new Vector3(3.3f + (i % 4) * 1.1f, 0f, -5.85f + (i / 4) * 1.35f), 0.55f + (i % 3) * 0.08f);
+            }
+            PlaceKenney(root.transform, "MartaGardenWorkBench", "stall-bench.fbx", new Vector3(6.9f, 0f, -4.0f), Quaternion.Euler(0f, -35f, 0f), Vector3.one * 0.84f);
+
+            CreateSurfacePatch(root.transform, "BorisForgeCompositionGround", new Vector3(-4.9f, 0.124f, 0.5f), new Vector3(5.0f, 0.012f, 4.1f), new Color(0.13f, 0.09f, 0.055f, 1f));
+            PlaceKenney(root.transform, "BorisForgeWoodPile", "planks.fbx", new Vector3(-6.5f, 0.02f, 1.4f), Quaternion.Euler(0f, -20f, 0f), Vector3.one * 1.08f);
+            PlaceKenney(root.transform, "BorisForgeOreCart", "cart.fbx", new Vector3(-3.3f, 0f, 1.4f), Quaternion.Euler(0f, 38f, 0f), Vector3.one * 0.9f);
+            CreateMarker(root.transform, "BorisForgeCoalGlow", new Vector3(-5.15f, 0.18f, 0.15f), new Vector3(0.7f, 0.08f, 0.44f), new Color(0.58f, 0.12f, 0.04f, 1f));
+
+            CreateSurfacePatch(root.transform, "RadekMarketCompositionGround", new Vector3(3.2f, 0.125f, -0.8f), new Vector3(5.4f, 0.012f, 4.0f), new Color(0.13f, 0.105f, 0.062f, 1f));
+            PlaceKenney(root.transform, "RadekMarketStallRed", "stall-red.fbx", new Vector3(2.2f, 0f, 0.8f), Quaternion.Euler(0f, -25f, 0f), Vector3.one * 0.9f);
+            PlaceKenney(root.transform, "RadekMarketStallGreen", "stall-green.fbx", new Vector3(4.5f, 0f, 0.5f), Quaternion.Euler(0f, 22f, 0f), Vector3.one * 0.84f);
+            PlaceKenney(root.transform, "RadekMarketCart", "cart-high.fbx", new Vector3(5.3f, 0f, -1.8f), Quaternion.Euler(0f, -72f, 0f), Vector3.one * 0.8f);
+        }
+
+        private static void CreateForestGameplayCompositions(Transform parent)
+        {
+            var root = new GameObject("ForestGameplayCompositions");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "HunterCampCompositionClearing", new Vector3(-68.6f, 0.115f, 6.2f), new Vector3(8.6f, 0.012f, 6.4f), new Color(0.055f, 0.095f, 0.048f, 1f));
+            PlaceKenney(root.transform, "HunterCampLeanCart", "cart-high.fbx", new Vector3(-66.2f, 0f, 4.1f), Quaternion.Euler(0f, 58f, 0f), Vector3.one * 0.9f);
+            PlaceKenney(root.transform, "HunterCampBrokenFenceA", "fence-broken.fbx", new Vector3(-70.8f, 0f, 4.4f), Quaternion.Euler(0f, -18f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "HunterCampBrokenFenceB", "fence-broken.fbx", new Vector3(-65.7f, 0f, 8.5f), Quaternion.Euler(0f, 70f, 0f), Vector3.one * 0.95f);
+            CreateMarker(root.transform, "HunterCampFireAshRing", new Vector3(-67.7f, 0.13f, 5.8f), new Vector3(0.95f, 0.05f, 0.95f), new Color(0.08f, 0.065f, 0.048f, 1f));
+
+            CreateSurfacePatch(root.transform, "HunterClueTrailComposition", new Vector3(-72.7f, 0.118f, 10.3f), new Vector3(7.5f, 0.012f, 5.2f), new Color(0.045f, 0.078f, 0.04f, 1f));
+            PlaceKenney(root.transform, "HunterClueRockCover", "rock-wide.fbx", new Vector3(-74.3f, 0f, 12.9f), Quaternion.Euler(0f, 22f, 0f), Vector3.one * 0.9f);
+            PlaceKenney(root.transform, "HunterClueBladeProp", "blade.fbx", new Vector3(-73.8f, 0.08f, 12.1f), Quaternion.Euler(75f, 0f, 32f), Vector3.one * 0.72f);
+        }
+
+        private static void CreateSwampGameplayCompositions(Transform parent)
+        {
+            var root = new GameObject("SwampGameplayCompositions");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ElsaHutCompositionGround", new Vector3(16.2f, 0.116f, -72.8f), new Vector3(8.6f, 0.012f, 6.6f), new Color(0.032f, 0.074f, 0.052f, 1f));
+            PlaceKenney(root.transform, "ElsaHutPlankEntry", "planks.fbx", new Vector3(15.2f, 0.05f, -73.9f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 0.95f);
+            PlaceKenney(root.transform, "ElsaHutDryingRack", "poles-horizontal.fbx", new Vector3(18.7f, 0f, -72.6f), Quaternion.Euler(0f, -45f, 0f), Vector3.one * 0.9f);
+            CreateReedCluster(root.transform, "ElsaHutReedScreen_A", new Vector3(12.9f, 0f, -71.4f), 1.35f);
+            CreateReedCluster(root.transform, "ElsaHutReedScreen_B", new Vector3(19.7f, 0f, -75.2f), 1.2f);
+
+            CreateSurfacePatch(root.transform, "SwampTraceCompositionMud", new Vector3(9.4f, 0.117f, -72.5f), new Vector3(9.5f, 0.012f, 6.8f), new Color(0.025f, 0.062f, 0.046f, 1f));
+            for (var i = 0; i < 6; i++)
+            {
+                CreateMarker(root.transform, $"SwampTraceDraggedReed_{i + 1:00}", new Vector3(6.4f + i * 1.15f, 0.12f, -70.9f - (i % 2) * 1.7f), new Vector3(0.16f, 0.035f, 1.25f), new Color(0.13f, 0.17f, 0.09f, 1f));
+            }
+
+            CreateSurfacePatch(root.transform, "DrownerNestCompositionPool", new Vector3(14.2f, 0.118f, -75.8f), new Vector3(7.8f, 0.012f, 6.2f), new Color(0.014f, 0.048f, 0.04f, 1f));
+            PlaceKenney(root.transform, "DrownerNestDrownedCartProp", "cart.fbx", new Vector3(16.8f, -0.04f, -76.5f), Quaternion.Euler(6f, -38f, 9f), Vector3.one * 0.86f);
+        }
+
+        private static void CreateTowerGameplayCompositions(Transform parent)
+        {
+            var root = new GameObject("TowerGameplayCompositions");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "TowerEvidenceCompositionFloor", new Vector3(0f, 0.121f, 75.4f), new Vector3(10.5f, 0.012f, 6.2f), new Color(0.072f, 0.068f, 0.078f, 1f));
+            PlaceKenney(root.transform, "TowerDiaryReadingTable", "stall-bench.fbx", new Vector3(-1.4f, 0f, 76.1f), Quaternion.Euler(0f, 8f, 0f), Vector3.one * 0.82f);
+            PlaceKenney(root.transform, "TowerShardBrokenArch", "wall-arch-top.fbx", new Vector3(1.9f, 0f, 75.5f), Quaternion.Euler(0f, 54f, 0f), Vector3.one * 0.92f);
+            PlaceKenney(root.transform, "TowerReedCharmPillar", "pillar-stone.fbx", new Vector3(5.1f, 0f, 72.7f), Quaternion.Euler(0f, -14f, 0f), Vector3.one * 1.05f);
+            CreateMarker(root.transform, "TowerGhostMemoryLightPool", new Vector3(-2.9f, 0.13f, 74.8f), new Vector3(1.15f, 0.04f, 1.15f), new Color(0.18f, 0.18f, 0.34f, 1f));
+        }
+
+        private static void CreateFinalRoadGameplayCompositions(Transform parent)
+        {
+            var root = new GameObject("FinalRoadGameplayCompositions");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "FinalChoiceTriangleGround", new Vector3(71.7f, 0.126f, 12.55f), new Vector3(6.2f, 0.012f, 4.2f), new Color(0.105f, 0.086f, 0.07f, 1f));
+            PlaceKenney(root.transform, "FinalChoiceBrokenWallBack", "wall-broken.fbx", new Vector3(73.8f, 0f, 12.6f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.18f);
+            PlaceKenney(root.transform, "FinalChoiceLeftPillar", "pillar-stone.fbx", new Vector3(69.5f, 0f, 10.8f), Quaternion.Euler(0f, -20f, 0f), Vector3.one * 0.9f);
+            PlaceKenney(root.transform, "FinalChoiceRightPillar", "pillar-stone.fbx", new Vector3(69.5f, 0f, 14.5f), Quaternion.Euler(0f, 25f, 0f), Vector3.one * 0.9f);
+            CreateMarker(root.transform, "FinalChoiceAshCircle", new Vector3(71.7f, 0.15f, 12.55f), new Vector3(2.7f, 0.04f, 2.1f), new Color(0.07f, 0.056f, 0.048f, 1f));
         }
 
         private static void CreateOuterVillageRing(Transform parent)
