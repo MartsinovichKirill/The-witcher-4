@@ -1,0 +1,8 @@
+Asset: 3d wolf
+Author: NewDLC
+Source: https://opengameart.org/content/3d-wolf
+Downloaded: 2026-06-05
+License: CC0 1.0 Universal (public domain dedication)
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
+
+Original file names are preserved so Unity can resolve the FBX texture references automatically.

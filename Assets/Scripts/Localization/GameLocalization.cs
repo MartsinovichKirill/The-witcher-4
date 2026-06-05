@@ -143,6 +143,7 @@ namespace WitcherRightVersion.Localization
             { "Bogweed", "Болотник" },
             { "Iron Ore", "Железная руда" },
             { "Wolf Pelt", "Шкура волка" },
+            { "Wolf Fang", "Клык волка" },
             { "Drowner Slime", "Слизь утопца" },
             { "None", "Нет" },
             { "Inventory", "Инвентарь" },

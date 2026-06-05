@@ -237,6 +237,13 @@ namespace WitcherRightVersion.Editor
             ValidateEnemy("WorldDrownerNestEnemy_01", failures);
             ValidateEnemy("WorldDrownerNestEnemy_02", failures);
             ValidateEnemy("WorldDrownerNestEnemy_03", failures);
+            ValidateLootEnemy("ForestWolf_01", failures);
+            ValidateLootEnemy("ForestWolf_02", failures);
+            ValidateLootEnemy("ForestWolf_03", failures);
+            RequireObject("ForestWolf_01_Model", failures);
+            ValidateLootEnemy("AshRoadBandit_01", failures);
+            ValidateLootEnemy("AshRoadBandit_02", failures);
+            ValidateLootEnemy("AshRoadBandit_03", failures);
             ValidateEnemy("FinalMayorEnforcer_01", failures);
             ValidateEnemy("FinalMayorEnforcer_02", failures);
         }
@@ -252,6 +259,16 @@ namespace WitcherRightVersion.Editor
             RequireComponent<Health>(enemy, failures, objectName);
             RequireComponent<EnemyAI>(enemy, failures, objectName);
             RequireComponent<CombatVisualFeedback>(enemy, failures, objectName);
+        }
+
+        private static void ValidateLootEnemy(string objectName, List<string> failures)
+        {
+            ValidateEnemy(objectName, failures);
+            var enemy = FindSceneObject(objectName);
+            if (enemy != null)
+            {
+                RequireComponent<EnemyLootDrop>(enemy, failures, objectName);
+            }
         }
 
         private static void ValidateEditorBuildPipeline(List<string> failures)

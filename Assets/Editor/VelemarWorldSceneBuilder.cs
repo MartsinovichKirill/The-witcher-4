@@ -24,6 +24,7 @@ namespace WitcherRightVersion.Editor
         private const string RpgCharacterPath = "Assets/Art/External/OpenGameArt_RPGCharacters/FBX";
         private const string MonsterPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX";
         private const string KayKitMedievalPath = "Assets/Art/External/KayKit_MedievalBuilder/FBX";
+        private const string WolfPath = "Assets/Art/External/OpenGameArt_CC0_Wolf";
 
         [MenuItem("Tools/Witcher Right Version/Build Velemar World Scene")]
         public static void Create()
@@ -425,7 +426,9 @@ namespace WitcherRightVersion.Editor
             CreateWorldTraceObjects(root.transform);
             CreateWorldDrowner(root.transform);
             CreateWorldDrownerNestQuest(root.transform);
+            CreateForestWolfPack(root.transform);
             CreateTowerSkeletonGuards(root.transform);
+            CreateAshRoadBanditAmbush(root.transform);
             CreateWorldCraftingObjects(root.transform);
             CreateWorldForestQuestObjects(root.transform);
             CreateWorldStoryEvidenceObjects(root.transform);
@@ -893,6 +896,71 @@ namespace WitcherRightVersion.Editor
         {
             CreateSkeletonGuard(parent, "TowerSkeletonGuard_Left", new Vector3(-4.5f, 1f, 75.5f), Quaternion.Euler(0f, 35f, 0f));
             CreateSkeletonGuard(parent, "TowerSkeletonGuard_Right", new Vector3(4.5f, 1f, 75.5f), Quaternion.Euler(0f, -35f, 0f));
+        }
+
+        private static void CreateForestWolfPack(Transform parent)
+        {
+            CreateForestWolf(parent, "ForestWolf_01", new Vector3(-75.8f, 0.5f, 13.4f), Quaternion.Euler(0f, 38f, 0f), "ForestWolf01Defeated");
+            CreateForestWolf(parent, "ForestWolf_02", new Vector3(-72.9f, 0.5f, 15.2f), Quaternion.Euler(0f, -72f, 0f), "ForestWolf02Defeated");
+            CreateForestWolf(parent, "ForestWolf_03", new Vector3(-78.1f, 0.5f, 9.9f), Quaternion.Euler(0f, 118f, 0f), "ForestWolf03Defeated");
+        }
+
+        private static void CreateForestWolf(Transform parent, string objectName, Vector3 position, Quaternion rotation, string deathFlag)
+        {
+            var wolf = CreateCapsule(parent, objectName, position, new Vector3(0.72f, 0.5f, 0.9f), new Color(0.18f, 0.17f, 0.15f, 1f));
+            wolf.transform.localRotation = rotation;
+            var renderer = wolf.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
+
+            var visual = InstantiateModel($"{WolfPath}/dog2.FBX", $"{objectName}_Model", wolf.transform, new Vector3(0f, -1f, 0f), Quaternion.Euler(0f, 180f, 0f), new Vector3(1.15f, 1.15f, 1.15f));
+            if (visual == null && renderer != null)
+            {
+                renderer.enabled = true;
+            }
+
+            CreateCharacterGroundRing(wolf, $"{objectName}_ThreatRing", new Color(0.58f, 0.08f, 0.04f, 1f), 0.82f);
+            var health = wolf.AddComponent<Health>();
+            health.Configure("Forest wolf", 34f);
+            AddCombatVisual(wolf, new Color(1f, 0.2f, 0.08f, 1f), new Color(0.09f, 0.07f, 0.055f, 1f));
+            var ai = wolf.AddComponent<EnemyAI>();
+            ai.Configure("Forest wolf", false, deathFlag, "", "", "The forest wolf is dead.");
+            ai.ConfigureCombat(11f, 1.45f, 3.15f, 8f, 1.15f);
+            wolf.AddComponent<EnemyLootDrop>().Configure(
+                deathFlag + "_LootClaimed",
+                new[] { "Wolf Pelt", "Wolf Fang" },
+                0,
+                8,
+                "Loot: Wolf Pelt, Wolf Fang, 8 XP.",
+                "Добыча: шкура волка, клык волка, 8 опыта.");
+        }
+
+        private static void CreateAshRoadBanditAmbush(Transform parent)
+        {
+            CreateAshRoadBandit(parent, "AshRoadBandit_01", "Rogue.fbx", new Vector3(51.8f, 1f, 5.8f), Quaternion.Euler(0f, -74f, 0f), "AshRoadBandit01Defeated", 42f, 9f);
+            CreateAshRoadBandit(parent, "AshRoadBandit_02", "Warrior.fbx", new Vector3(55.4f, 1f, -3.8f), Quaternion.Euler(0f, -105f, 0f), "AshRoadBandit02Defeated", 58f, 12f);
+            CreateAshRoadBandit(parent, "AshRoadBandit_03", "Rogue.fbx", new Vector3(60.2f, 1f, 5.1f), Quaternion.Euler(0f, -128f, 0f), "AshRoadBandit03Defeated", 42f, 9f);
+        }
+
+        private static void CreateAshRoadBandit(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, string deathFlag, float maxHealth, float damage)
+        {
+            var bandit = CreateRpgCharacterAnchor(parent, objectName, modelName, position, rotation, new Vector3(0.84f, 0.84f, 0.84f), new Color(0.22f, 0.12f, 0.08f, 1f));
+            CreateCharacterGroundRing(bandit, $"{objectName}_ThreatRing", new Color(0.62f, 0.07f, 0.035f, 1f), 0.86f);
+            var health = bandit.AddComponent<Health>();
+            health.Configure("Ash Road bandit", maxHealth);
+            AddCombatVisual(bandit, new Color(1f, 0.18f, 0.06f, 1f), new Color(0.1f, 0.05f, 0.035f, 1f));
+            var ai = bandit.AddComponent<EnemyAI>();
+            ai.Configure("Ash Road bandit", false, deathFlag, "", "", "The ambusher falls.");
+            ai.ConfigureCombat(10.5f, 1.7f, 2.35f, damage, 1.4f);
+            bandit.AddComponent<EnemyLootDrop>().Configure(
+                deathFlag + "_LootClaimed",
+                new[] { "Field Ration" },
+                6,
+                10,
+                "Loot: Field Ration, 6 coins, 10 XP.",
+                "Добыча: паёк, 6 монет, 10 опыта.");
         }
 
         private static void CreateSkeletonGuard(Transform parent, string objectName, Vector3 position, Quaternion rotation)
