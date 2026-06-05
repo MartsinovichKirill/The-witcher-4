@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Localization;
 
 namespace WitcherRightVersion.UI
 {
@@ -35,12 +36,12 @@ namespace WitcherRightVersion.UI
 
             if (titleText != null)
             {
-                titleText.text = GetTitle(endingType);
+                titleText.text = GameLocalization.Text(GetTitle(endingType));
             }
 
             if (bodyText != null)
             {
-                bodyText.text = GetBody(endingType);
+                bodyText.text = GameLocalization.Text(GetBody(endingType));
             }
         }
 

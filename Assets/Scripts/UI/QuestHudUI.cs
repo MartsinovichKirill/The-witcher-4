@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.Quest;
 
 namespace WitcherRightVersion.UI
@@ -47,12 +48,12 @@ namespace WitcherRightVersion.UI
 
             if (titleText != null)
             {
-                titleText.text = title;
+                titleText.text = GameLocalization.Text(title);
             }
 
             if (objectiveText != null)
             {
-                objectiveText.text = objective;
+                objectiveText.text = GameLocalization.Text(objective);
             }
         }
 

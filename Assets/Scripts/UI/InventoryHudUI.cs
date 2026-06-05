@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using WitcherRightVersion.Core;
 using WitcherRightVersion.Crafting;
 using WitcherRightVersion.Inventory;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.Quest;
 
 namespace WitcherRightVersion.UI
@@ -137,7 +138,7 @@ namespace WitcherRightVersion.UI
 
         private void AppendHeader()
         {
-            builder.Append("Inventory - ").Append(currentPage).Append(" ");
+            builder.Append(L("Inventory")).Append(" - ").Append(GetPageName(currentPage)).Append(" ");
             builder.Append((int)currentPage + 1).Append("/").Append(System.Enum.GetValues(typeof(InventoryPage)).Length).AppendLine();
             builder.AppendLine("------------------------");
         }
@@ -148,54 +149,54 @@ namespace WitcherRightVersion.UI
             var inventory = InventoryService.Instance;
             var quest = QuestService.Instance;
 
-            builder.Append("Level: ").Append(rewards != null ? rewards.Level : 1).Append("    ");
-            builder.Append("Skill points: ").Append(rewards != null ? rewards.SkillPoints : 0).AppendLine();
-            builder.Append("XP: ").Append(rewards != null ? rewards.Experience : 0);
+            builder.Append(L("Level")).Append(": ").Append(rewards != null ? rewards.Level : 1).Append("    ");
+            builder.Append(L("Skill points")).Append(": ").Append(rewards != null ? rewards.SkillPoints : 0).AppendLine();
+            builder.Append(L("XP")).Append(": ").Append(rewards != null ? rewards.Experience : 0);
             builder.Append(" (").Append(rewards != null ? rewards.ExperienceIntoLevel : 0).Append("/");
             builder.Append(PlayerRewardService.ExperiencePerLevel).Append(")").AppendLine();
-            builder.Append("Coins: ").Append(rewards != null ? rewards.Coins : 0).AppendLine();
-            builder.Append("Equipped: ").Append(inventory != null ? inventory.EquippedWeapon : "None").AppendLine();
-            builder.Append("Active quest: ").Append(quest != null && quest.HasActiveQuest ? quest.ActiveQuestTitle : "None").AppendLine();
+            builder.Append(L("Coins")).Append(": ").Append(rewards != null ? rewards.Coins : 0).AppendLine();
+            builder.Append(L("Equipped")).Append(": ").Append(L(inventory != null ? inventory.EquippedWeapon : "None")).AppendLine();
+            builder.Append(L("Active quest")).Append(": ").Append(L(quest != null && quest.HasActiveQuest ? quest.ActiveQuestTitle : "None")).AppendLine();
             builder.AppendLine();
 
-            builder.Append("Weapons: ").Append(inventory != null ? inventory.Weapons.Count : 0).AppendLine();
-            builder.Append("Items: ").Append(inventory != null ? inventory.Items.Count : 0).AppendLine();
-            builder.Append("Known recipes: ").Append(GetKnownRecipeCount()).AppendLine();
+            builder.Append(L("Weapons")).Append(": ").Append(inventory != null ? inventory.Weapons.Count : 0).AppendLine();
+            builder.Append(L("Items")).Append(": ").Append(inventory != null ? inventory.Items.Count : 0).AppendLine();
+            builder.Append(L("Known recipes")).Append(": ").Append(GetKnownRecipeCount()).AppendLine();
         }
 
         private void AppendGear()
         {
             var inventory = InventoryService.Instance;
-            builder.Append("Equipped weapon: ").Append(inventory != null ? inventory.EquippedWeapon : "None").AppendLine();
+            builder.Append(L("Equipped weapon")).Append(": ").Append(L(inventory != null ? inventory.EquippedWeapon : "None")).AppendLine();
             builder.AppendLine();
-            builder.AppendLine("Weapons:");
+            builder.Append(L("Weapons")).AppendLine(":");
 
             if (inventory == null || inventory.Weapons.Count == 0)
             {
-                builder.AppendLine("- None");
+                builder.Append("- ").AppendLine(L("None"));
             }
             else
             {
                 for (var i = 0; i < inventory.Weapons.Count; i++)
                 {
-                    builder.Append("- ").Append(inventory.Weapons[i]).AppendLine();
+                    builder.Append("- ").Append(L(inventory.Weapons[i])).AppendLine();
                 }
             }
 
             builder.AppendLine();
-            builder.AppendLine("Armor:");
+            builder.Append(L("Armor")).AppendLine(":");
             AppendFilteredItems(item => ArmorItems.Contains(item), "None");
         }
 
         private void AppendItems()
         {
-            builder.AppendLine("Consumables:");
+            builder.Append(L("Consumables")).AppendLine(":");
             AppendFilteredItems(item => ConsumableItems.Contains(item), "None");
             builder.AppendLine();
-            builder.AppendLine("Resources:");
+            builder.Append(L("Resources")).AppendLine(":");
             AppendFilteredItems(item => !ArmorItems.Contains(item) && !ConsumableItems.Contains(item) && !QuestItems.Contains(item), "None");
             builder.AppendLine();
-            builder.AppendLine("Quest items:");
+            builder.Append(L("Quest items")).AppendLine(":");
             AppendFilteredItems(item => QuestItems.Contains(item), "None");
         }
 
@@ -204,7 +205,7 @@ namespace WitcherRightVersion.UI
             var crafting = CraftingService.Instance;
             if (crafting == null || crafting.Recipes.Count == 0)
             {
-                builder.AppendLine("No recipes available.");
+                builder.AppendLine(L("No recipes available."));
                 return;
             }
 
@@ -213,9 +214,9 @@ namespace WitcherRightVersion.UI
                 var recipe = crafting.Recipes[i];
                 var canCraft = crafting.CanCraft(recipe.Id, out var reason);
 
-                builder.Append(canCraft ? "[READY] " : "[LOCKED] ");
-                builder.Append(recipe.DisplayName).Append(" -> ").Append(recipe.ResultItem).AppendLine();
-                builder.Append("  Needs: ");
+                builder.Append(canCraft ? L("[READY] ") : L("[LOCKED] "));
+                builder.Append(L(recipe.DisplayName)).Append(" -> ").Append(L(recipe.ResultItem)).AppendLine();
+                builder.Append("  ").Append(L("Needs")).Append(": ");
 
                 for (var ingredientIndex = 0; ingredientIndex < recipe.Ingredients.Length; ingredientIndex++)
                 {
@@ -224,13 +225,13 @@ namespace WitcherRightVersion.UI
                         builder.Append(", ");
                     }
 
-                    builder.Append(recipe.Ingredients[ingredientIndex]);
+                    builder.Append(L(recipe.Ingredients[ingredientIndex]));
                 }
 
                 builder.AppendLine();
                 if (!canCraft)
                 {
-                    builder.Append("  ").Append(reason).AppendLine();
+                    builder.Append("  ").Append(L(reason)).AppendLine();
                 }
 
                 if (i < crafting.Recipes.Count - 1)
@@ -247,7 +248,7 @@ namespace WitcherRightVersion.UI
 
             if (inventory == null || inventory.Items.Count == 0)
             {
-                builder.Append("- ").Append(emptyText).AppendLine();
+                builder.Append("- ").Append(L(emptyText)).AppendLine();
                 return;
             }
 
@@ -259,13 +260,33 @@ namespace WitcherRightVersion.UI
                     continue;
                 }
 
-                builder.Append("- ").Append(item).AppendLine();
+                builder.Append("- ").Append(L(item)).AppendLine();
                 count++;
             }
 
             if (count == 0)
             {
-                builder.Append("- ").Append(emptyText).AppendLine();
+                builder.Append("- ").Append(L(emptyText)).AppendLine();
+            }
+        }
+
+        private static string L(string english)
+        {
+            return GameLocalization.Text(english);
+        }
+
+        private static string GetPageName(InventoryPage page)
+        {
+            switch (page)
+            {
+                case InventoryPage.Gear:
+                    return L("Gear");
+                case InventoryPage.Items:
+                    return L("Items");
+                case InventoryPage.Crafting:
+                    return L("Crafting");
+                default:
+                    return L("Overview");
             }
         }
 

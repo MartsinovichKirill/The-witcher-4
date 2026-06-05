@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.Quest;
 using WitcherRightVersion.UI;
 
@@ -98,12 +99,12 @@ namespace WitcherRightVersion.Dialogue
 
             if (speakerText != null)
             {
-                speakerText.text = node.SpeakerName;
+                speakerText.text = GameLocalization.Text(node.SpeakerName);
             }
 
             if (bodyText != null)
             {
-                bodyText.text = node.Body;
+                bodyText.text = GameLocalization.Text(node.Body);
             }
 
             UpdateChoices(node.Choices);
@@ -146,7 +147,7 @@ namespace WitcherRightVersion.Dialogue
                 if (choices != null && i < choices.Length)
                 {
                     choiceText.gameObject.SetActive(true);
-                    choiceText.text = $"{i + 1}. {choices[i].Text}";
+                    choiceText.text = $"{i + 1}. {GameLocalization.Text(choices[i].Text)}";
                 }
                 else
                 {

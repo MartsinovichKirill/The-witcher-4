@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using WitcherRightVersion.Core;
 using WitcherRightVersion.Inventory;
+using WitcherRightVersion.Localization;
 
 namespace WitcherRightVersion.Quest
 {
@@ -874,21 +875,21 @@ namespace WitcherRightVersion.Quest
             switch (swampContractStage)
             {
                 case SwampContractStage.SpeakWithMarta:
-                    return "Speak with Marta about swamp poison.";
+                    return GameLocalization.Select("Speak with Marta about swamp poison.", "Поговорить с Мартой о болотном яде.");
                 case SwampContractStage.FindSwampTraces:
-                    return $"Inspect swamp traces south of the village ({swampTraceCount}/{RequiredSwampTraceCount}).";
+                    return GameLocalization.Select($"Inspect swamp traces south of the village ({swampTraceCount}/{RequiredSwampTraceCount}).", $"Осмотреть следы на болоте к югу от деревни ({swampTraceCount}/{RequiredSwampTraceCount}).");
                 case SwampContractStage.KillDrowner:
-                    return "Kill the drowner near the swamp road.";
+                    return GameLocalization.Select("Kill the drowner near the swamp road.", "Убить утопца у болотной дороги.");
                 case SwampContractStage.ReturnToElder:
-                    return "Return to Elder Voytsekh with proof.";
+                    return GameLocalization.Select("Return to Elder Voytsekh with proof.", "Вернуться к старосте Войцеху с доказательством.");
                 case SwampContractStage.ChooseResponse:
-                    return "Choose what to tell the elder.";
+                    return GameLocalization.Select("Choose what to tell the elder.", "Выбрать, что сказать старосте.");
                 case SwampContractStage.ReceiveReward:
-                    return "Receive 50 XP, 20 coins, and the Antitoxin recipe.";
+                    return GameLocalization.Select("Receive 50 XP, 20 coins, and the Antitoxin recipe.", "Получить 50 опыта, 20 монет и рецепт противоядия.");
                 case SwampContractStage.Completed:
-                    return "Contract completed.";
+                    return GameLocalization.Select("Contract completed.", "Контракт завершён.");
                 default:
-                    return "Talk to Elder Voytsekh.";
+                    return GameLocalization.Select("Talk to Elder Voytsekh.", "Поговорить со старостой Войцехом.");
             }
         }
 
@@ -897,15 +898,15 @@ namespace WitcherRightVersion.Quest
             switch (missingHunterStage)
             {
                 case MissingHunterStage.FindClues:
-                    return $"Search the Old Forest for hunter signs ({missingHunterClueCount}/{RequiredMissingHunterClueCount}).";
+                    return GameLocalization.Select($"Search the Old Forest for hunter signs ({missingHunterClueCount}/{RequiredMissingHunterClueCount}).", $"Найти следы охотника в Старом Лесу ({missingHunterClueCount}/{RequiredMissingHunterClueCount}).");
                 case MissingHunterStage.ReturnToCamp:
-                    return "Return to the hunter camp and decide what the signs mean.";
+                    return GameLocalization.Select("Return to the hunter camp and decide what the signs mean.", "Вернуться в лагерь охотника и понять, что значат следы.");
                 case MissingHunterStage.ReceiveReward:
-                    return "Take the hunter's emergency pouch: 25 XP and 10 coins.";
+                    return GameLocalization.Select("Take the hunter's emergency pouch: 25 XP and 10 coins.", "Забрать тайный кошель охотника: 25 опыта и 10 монет.");
                 case MissingHunterStage.Completed:
-                    return "Missing Hunter completed.";
+                    return GameLocalization.Select("Missing Hunter completed.", "Квест «Пропавший охотник» завершён.");
                 default:
-                    return "Search the Old Forest.";
+                    return GameLocalization.Select("Search the Old Forest.", "Обыскать Старый Лес.");
             }
         }
 
@@ -914,17 +915,17 @@ namespace WitcherRightVersion.Quest
             switch (rightVersionStage)
             {
                 case RightVersionStage.FindElsa:
-                    return "Find Elsa in the Black Swamp and hear the first version.";
+                    return GameLocalization.Select("Find Elsa in the Black Swamp and hear the first version.", "Найти Эльзу в Чёрном Болоте и услышать первую версию.");
                 case RightVersionStage.DecideElsa:
-                    return "Decide whether Elsa is witness, suspect, or bait.";
+                    return GameLocalization.Select("Decide whether Elsa is witness, suspect, or bait.", "Решить, кто Эльза: свидетель, подозреваемая или приманка.");
                 case RightVersionStage.FindMedallion:
-                    return "Find the girl's medallion near the drowned reeds.";
+                    return GameLocalization.Select("Find the girl's medallion near the drowned reeds.", "Найти медальон девушки у затопленных камышей.");
                 case RightVersionStage.OpenTowerRoute:
-                    return "Use Elsa's clue or the reed charm mark to open the tower route.";
+                    return GameLocalization.Select("Use Elsa's clue or the reed charm mark to open the tower route.", "Использовать подсказку Эльзы или знак камышового оберега, чтобы открыть путь к башне.");
                 case RightVersionStage.Completed:
-                    return "Right Version completed. The tower route is open.";
+                    return GameLocalization.Select("Right Version completed. The tower route is open.", "«Правильная версия» завершена. Путь к башне открыт.");
                 default:
-                    return "Follow the version the village tried to bury.";
+                    return GameLocalization.Select("Follow the version the village tried to bury.", "Идти за версией, которую деревня пыталась похоронить.");
             }
         }
 
@@ -933,17 +934,17 @@ namespace WitcherRightVersion.Quest
             switch (mirrorTruthStage)
             {
                 case MirrorTruthStage.EnterTower:
-                    return "Enter the ruined tower above the swamp.";
+                    return GameLocalization.Select("Enter the ruined tower above the swamp.", "Войти в разрушенную башню над болотом.");
                 case MirrorTruthStage.ReadOrtenDiary:
-                    return "Read Orten's diary in the tower ruins.";
+                    return GameLocalization.Select("Read Orten's diary in the tower ruins.", "Прочитать дневник Ортена в руинах башни.");
                 case MirrorTruthStage.ConfrontOrten:
-                    return "Confront Orten in the mirror hall.";
+                    return GameLocalization.Select("Confront Orten in the mirror hall.", "Противостоять Ортену в зеркальном зале.");
                 case MirrorTruthStage.ChooseEnding:
-                    return "Return to the Ash Road altars and choose Truth, Lie, or Sacrifice.";
+                    return GameLocalization.Select("Return to the Ash Road altars and choose Truth, Lie, or Sacrifice.", "Вернуться к алтарям на Пепельном тракте и выбрать Правду, Ложь или Жертву.");
                 case MirrorTruthStage.Completed:
-                    return "Mirror of Truth completed.";
+                    return GameLocalization.Select("Mirror of Truth completed.", "«Зеркало Правды» завершено.");
                 default:
-                    return "Follow the mirror's last memory.";
+                    return GameLocalization.Select("Follow the mirror's last memory.", "Следовать последнему воспоминанию зеркала.");
             }
         }
 
@@ -952,15 +953,15 @@ namespace WitcherRightVersion.Quest
             switch (smithDebtStage)
             {
                 case SmithDebtStage.FindOldCampBlade:
-                    return "Find the old camp blade in the Old Forest.";
+                    return GameLocalization.Select("Find the old camp blade in the Old Forest.", "Найти старый лагерный клинок в Старом Лесу.");
                 case SmithDebtStage.ReturnToSmith:
-                    return "Return the old camp blade to Boris in Vereskovy Brod.";
+                    return GameLocalization.Select("Return the old camp blade to Boris in Vereskovy Brod.", "Вернуть старый клинок Борису в Вересковом Броде.");
                 case SmithDebtStage.ReceiveReward:
-                    return "Receive the Improved Steel Sword.";
+                    return GameLocalization.Select("Receive the Improved Steel Sword.", "Получить улучшенный стальной меч.");
                 case SmithDebtStage.Completed:
-                    return "Smith's Debt completed.";
+                    return GameLocalization.Select("Smith's Debt completed.", "«Долг кузнеца» завершён.");
                 default:
-                    return "Speak with Boris the smith.";
+                    return GameLocalization.Select("Speak with Boris the smith.", "Поговорить с кузнецом Борисом.");
             }
         }
 
@@ -969,15 +970,15 @@ namespace WitcherRightVersion.Quest
             switch (voiceWellStage)
             {
                 case VoiceWellStage.ListenAtWell:
-                    return "Listen to the old village well.";
+                    return GameLocalization.Select("Listen to the old village well.", "Прислушаться к старому деревенскому колодцу.");
                 case VoiceWellStage.FindMedallion:
-                    return "Find the girl's medallion near the drowned reeds.";
+                    return GameLocalization.Select("Find the girl's medallion near the drowned reeds.", "Найти медальон девушки у затопленных камышей.");
                 case VoiceWellStage.HearGhostMemory:
-                    return "Listen to the ghost memory in the tower ruins.";
+                    return GameLocalization.Select("Listen to the ghost memory in the tower ruins.", "Выслушать воспоминание призрака в руинах башни.");
                 case VoiceWellStage.Completed:
-                    return "Voice from the Well completed.";
+                    return GameLocalization.Select("Voice from the Well completed.", "«Голос из колодца» завершён.");
                 default:
-                    return "Follow the voice buried under the village.";
+                    return GameLocalization.Select("Follow the voice buried under the village.", "Следовать голосу, похороненному под деревней.");
             }
         }
 
@@ -986,15 +987,15 @@ namespace WitcherRightVersion.Quest
             switch (drownerNestStage)
             {
                 case DrownerNestStage.AcceptNotice:
-                    return "Read the drowner nest notice in Vereskovy Brod.";
+                    return GameLocalization.Select("Read the drowner nest notice in Vereskovy Brod.", "Прочитать объявление о логове утопцев в Вересковом Броде.");
                 case DrownerNestStage.ClearNest:
-                    return $"Clear the drowner nest in the Black Swamp ({drownerNestKillCount}/{RequiredDrownerNestKillCount}).";
+                    return GameLocalization.Select($"Clear the drowner nest in the Black Swamp ({drownerNestKillCount}/{RequiredDrownerNestKillCount}).", $"Зачистить логово утопцев в Чёрном Болоте ({drownerNestKillCount}/{RequiredDrownerNestKillCount}).");
                 case DrownerNestStage.ReturnForReward:
-                    return "Return to the notice board cache for the drowner nest reward.";
+                    return GameLocalization.Select("Return to the notice board cache for the drowner nest reward.", "Вернуться к тайнику у доски объявлений за наградой за логово утопцев.");
                 case DrownerNestStage.Completed:
-                    return "Drowner Nest completed. The swamp is safer.";
+                    return GameLocalization.Select("Drowner Nest completed. The swamp is safer.", "«Логово утопцев» завершено. Болото стало безопаснее.");
                 default:
-                    return "Clear the drowner nest.";
+                    return GameLocalization.Select("Clear the drowner nest.", "Зачистить логово утопцев.");
             }
         }
 
@@ -1003,15 +1004,15 @@ namespace WitcherRightVersion.Quest
             switch (exileStage)
             {
                 case ExileStage.FindElsa:
-                    return "Find Elsa Cherntravka in the Black Swamp.";
+                    return GameLocalization.Select("Find Elsa Cherntravka in the Black Swamp.", "Найти Эльзу Чернотравку в Чёрном Болоте.");
                 case ExileStage.HearHerVersion:
-                    return "Hear Elsa's version of the buried murder.";
+                    return GameLocalization.Select("Hear Elsa's version of the buried murder.", "Выслушать версию Эльзы о похороненном убийстве.");
                 case ExileStage.DecideElsa:
-                    return "Decide whether to protect Elsa or hand her to Voytsekh.";
+                    return GameLocalization.Select("Decide whether to protect Elsa or hand her to Voytsekh.", "Решить, защитить Эльзу или выдать её Войцеху.");
                 case ExileStage.Completed:
-                    return "Exile completed. Elsa's fate is now part of the final consequences.";
+                    return GameLocalization.Select("Exile completed. Elsa's fate is now part of the final consequences.", "«Изгнанница» завершена. Судьба Эльзы теперь влияет на финал.");
                 default:
-                    return "Decide Elsa's fate.";
+                    return GameLocalization.Select("Decide Elsa's fate.", "Решить судьбу Эльзы.");
             }
         }
 

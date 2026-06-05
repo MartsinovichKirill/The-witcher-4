@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using WitcherRightVersion.Localization;
 
 namespace WitcherRightVersion.UI
 {
@@ -48,12 +49,12 @@ namespace WitcherRightVersion.UI
 
             if (titleText != null)
             {
-                titleText.text = title;
+                titleText.text = GameLocalization.Text(title);
             }
 
             if (actionText != null)
             {
-                actionText.text = $"{keyCode}: {action}";
+                actionText.text = $"{keyCode}: {GameLocalization.Text(action)}";
             }
         }
 
@@ -77,7 +78,7 @@ namespace WitcherRightVersion.UI
 
             if (messageText != null)
             {
-                messageText.text = message;
+                messageText.text = GameLocalization.Text(message);
             }
         }
 
