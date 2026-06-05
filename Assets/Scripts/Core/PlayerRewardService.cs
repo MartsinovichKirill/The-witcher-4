@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using WitcherRightVersion.Inventory;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Core
@@ -96,7 +97,7 @@ namespace WitcherRightVersion.Core
             AddCoins(20);
             UnlockRecipe("antitoxin");
             DecisionFlagService.Instance?.SetFlag("receivedAntitoxinRecipe");
-            InteractionPromptUI.Instance?.ShowMessage("Reward: 50 XP, 20 coins, Antitoxin recipe.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("Reward: 50 XP, 20 coins, Antitoxin recipe.", "Награда: 50 опыта, 20 монет, рецепт противоядия."));
         }
 
         public void GrantMissingHunterReward()
@@ -104,7 +105,7 @@ namespace WitcherRightVersion.Core
             AddExperience(25);
             AddCoins(10);
             DecisionFlagService.Instance?.SetFlag("missingHunterCompleted");
-            InteractionPromptUI.Instance?.ShowMessage("Reward: 25 XP and 10 coins.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("Reward: 25 XP and 10 coins.", "Награда: 25 опыта и 10 монет."));
         }
 
         public void GrantSmithDebtReward()
@@ -112,14 +113,14 @@ namespace WitcherRightVersion.Core
             AddExperience(30);
             InventoryService.Instance?.AddWeapon("Improved Steel Sword");
             DecisionFlagService.Instance?.SetFlag("smithDebtCompleted");
-            InteractionPromptUI.Instance?.ShowMessage("Reward: 30 XP and Improved Steel Sword.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("Reward: 30 XP and Improved Steel Sword.", "Награда: 30 опыта и улучшенный стальной меч."));
         }
 
         public void GrantVoiceWellReward()
         {
             AddExperience(20);
             DecisionFlagService.Instance?.SetFlag("voiceWellCompleted");
-            InteractionPromptUI.Instance?.ShowMessage("Reward: 20 XP. Truth evidence strengthened.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("Reward: 20 XP. Truth evidence strengthened.", "Награда: 20 опыта. Доказательство правды усилено."));
         }
 
         public void GrantDrownerNestReward()
@@ -128,7 +129,7 @@ namespace WitcherRightVersion.Core
             AddCoins(15);
             InventoryService.Instance?.AddItem("Drowner Slime");
             DecisionFlagService.Instance?.SetFlag("DrownerNestCleared");
-            InteractionPromptUI.Instance?.ShowMessage("Reward: 35 XP, 15 coins, Drowner Slime.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("Reward: 35 XP, 15 coins, Drowner Slime.", "Награда: 35 опыта, 15 монет, слизь утопца."));
         }
 
         public void GrantExileProtectedReward()
@@ -137,7 +138,7 @@ namespace WitcherRightVersion.Core
             InventoryService.Instance?.AddItem("Reed Charm");
             UnlockRecipe("swamp_oil");
             DecisionFlagService.Instance?.SetFlag("exileQuestCompleted");
-            InteractionPromptUI.Instance?.ShowMessage("Reward: 25 XP, Reed Charm, Swamp Oil recipe.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("Reward: 25 XP, Reed Charm, Swamp Oil recipe.", "Награда: 25 опыта, камышовый оберег, рецепт болотного масла."));
         }
 
         public void GrantExileBetrayedReward()
@@ -145,7 +146,7 @@ namespace WitcherRightVersion.Core
             AddExperience(15);
             AddCoins(25);
             DecisionFlagService.Instance?.SetFlag("exileQuestCompleted");
-            InteractionPromptUI.Instance?.ShowMessage("Reward: 15 XP and 25 coins. Voytsekh's version grows stronger.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("Reward: 15 XP and 25 coins. Voytsekh's version grows stronger.", "Награда: 15 опыта и 25 монет. Версия Войцеха становится сильнее."));
         }
 
         public PlayerRewardSnapshot CaptureSnapshot()

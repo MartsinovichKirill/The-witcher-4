@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.Quest;
 using WitcherRightVersion.Save;
 using WitcherRightVersion.UI;
@@ -28,12 +29,12 @@ namespace WitcherRightVersion.Interaction
         {
             if (!HasTruthRouteRequirements())
             {
-                InteractionPromptUI.Instance?.ShowMessage("The road is not ready. Finish the swamp contract and question the elder's story first.");
+                InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("The road is not ready. Finish the swamp contract and question the elder's story first.", "Дорога ещё закрыта. Заверши болотный контракт и сначала усомнись в версии старосты."));
                 return;
             }
 
             EndingService.UnlockTruthRoute();
-            InteractionPromptUI.Instance?.ShowMessage("The ash road opens. The village will have to hear the truth.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("The ash road opens. The village will have to hear the truth.", "Пепельный тракт открыт. Деревне придётся услышать правду."));
             SaveService.PrepareSceneTransfer();
             SceneManager.LoadScene(targetSceneName);
         }

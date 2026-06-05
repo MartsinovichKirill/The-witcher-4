@@ -159,10 +159,10 @@ namespace WitcherRightVersion.Editor
                 PlaceKenney(root.transform, $"VelemarEastWestRoad_{x}", "road.fbx", new Vector3(x, 0.04f, 0f), Quaternion.Euler(0f, 90f, 0f), new Vector3(1.25f, 1f, 1.25f));
             }
 
-            CreateZoneLabel(root.transform, "RoadSign_Village", "Vereskovy Brod", new Vector3(-4.5f, 1.2f, -5.5f), Quaternion.Euler(0f, 28f, 0f));
-            CreateZoneLabel(root.transform, "RoadSign_Forest", "Old Forest", new Vector3(-38f, 1.2f, 5.5f), Quaternion.Euler(0f, 70f, 0f));
-            CreateZoneLabel(root.transform, "RoadSign_Swamp", "Black Swamp", new Vector3(6.6f, 1.2f, -38f), Quaternion.Euler(0f, -28f, 0f));
-            CreateZoneLabel(root.transform, "RoadSign_AshRoad", "Ash Road", new Vector3(40f, 1.2f, 5.5f), Quaternion.Euler(0f, -70f, 0f));
+            CreateZoneLabel(root.transform, "RoadSign_Village", "Вересковый Брод", new Vector3(-4.5f, 1.2f, -5.5f), Quaternion.Euler(0f, 28f, 0f));
+            CreateZoneLabel(root.transform, "RoadSign_Forest", "Старый Лес", new Vector3(-38f, 1.2f, 5.5f), Quaternion.Euler(0f, 70f, 0f));
+            CreateZoneLabel(root.transform, "RoadSign_Swamp", "Чёрное Болото", new Vector3(6.6f, 1.2f, -38f), Quaternion.Euler(0f, -28f, 0f));
+            CreateZoneLabel(root.transform, "RoadSign_AshRoad", "Пепельный тракт", new Vector3(40f, 1.2f, 5.5f), Quaternion.Euler(0f, -70f, 0f));
         }
 
         private static void CreateVillageDistrict(Transform parent)
@@ -1374,7 +1374,7 @@ namespace WitcherRightVersion.Editor
 
             var panel = CreatePanel(canvasObject.transform, "WorldDirectionPanel", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(620f, 110f), new Vector2(44f, -44f), new Color(0.04f, 0.037f, 0.03f, 0.82f));
             CreateText(panel.transform, "WorldDirectionText", new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(0.5f, 0.5f), new Vector2(-42f, -24f), Vector2.zero, 19, TextAnchor.MiddleLeft, new Color(0.93f, 0.88f, 0.74f, 1f))
-                .text = "Semi-open Velemar prototype: village center, forest west, swamp south, ash road east, tower ruins north.";
+                .text = "Велемар: деревня в центре, Старый Лес на западе, Чёрное Болото на юге, Пепельный тракт на востоке, руины башни на севере.";
         }
 
         private static void CreateDialogueCanvas()

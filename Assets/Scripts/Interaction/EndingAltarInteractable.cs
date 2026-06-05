@@ -1,5 +1,6 @@
 using UnityEngine;
 using WitcherRightVersion.Core;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Interaction
@@ -25,7 +26,7 @@ namespace WitcherRightVersion.Interaction
         {
             if (EndingService.Instance == null)
             {
-                InteractionPromptUI.Instance?.ShowMessage("Nothing answers.");
+                InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("Nothing answers.", "Ничто не отвечает."));
                 return;
             }
 

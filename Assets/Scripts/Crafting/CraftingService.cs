@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using WitcherRightVersion.Core;
 using WitcherRightVersion.Inventory;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.UI;
 
 namespace WitcherRightVersion.Crafting
@@ -33,14 +34,14 @@ namespace WitcherRightVersion.Crafting
 
             if (!recipes.TryGetValue(recipeId, out var recipe))
             {
-                reason = "Unknown recipe.";
+                reason = GameLocalization.Select("Unknown recipe.", "Неизвестный рецепт.");
                 return false;
             }
 
             var flags = DecisionFlagService.Instance;
             if (flags != null && flags.HasFlag(recipe.CraftedFlag))
             {
-                reason = $"{recipe.ResultItem} is already crafted.";
+                reason = GameLocalization.Select($"{recipe.ResultItem} is already crafted.", $"{GameLocalization.Text(recipe.ResultItem)} уже создано.");
                 return false;
             }
 
@@ -48,14 +49,14 @@ namespace WitcherRightVersion.Crafting
             if (!string.IsNullOrWhiteSpace(recipe.RequiredUnlockedRecipe)
                 && (rewards == null || !rewards.HasRecipe(recipe.RequiredUnlockedRecipe)))
             {
-                reason = $"{recipe.DisplayName} recipe is locked.";
+                reason = GameLocalization.Select($"{recipe.DisplayName} recipe is locked.", $"Рецепт «{GameLocalization.Text(recipe.DisplayName)}» ещё закрыт.");
                 return false;
             }
 
             var inventory = InventoryService.Instance;
             if (inventory == null)
             {
-                reason = "Inventory is not ready.";
+                reason = GameLocalization.Select("Inventory is not ready.", "Инвентарь ещё не готов.");
                 return false;
             }
 
@@ -63,7 +64,7 @@ namespace WitcherRightVersion.Crafting
             {
                 if (!inventory.HasItem(recipe.Ingredients[i]))
                 {
-                    reason = $"Missing ingredient: {recipe.Ingredients[i]}.";
+                    reason = GameLocalization.Select($"Missing ingredient: {recipe.Ingredients[i]}.", $"Не хватает ингредиента: {GameLocalization.Text(recipe.Ingredients[i])}.");
                     return false;
                 }
             }
@@ -97,7 +98,7 @@ namespace WitcherRightVersion.Crafting
             }
 
             DecisionFlagService.Instance?.SetFlag(recipe.CraftedFlag);
-            InteractionPromptUI.Instance?.ShowMessage($"Crafted: {recipe.ResultItem}.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select($"Crafted: {recipe.ResultItem}.", $"Создано: {GameLocalization.Text(recipe.ResultItem)}."));
             Debug.Log($"Crafted recipe: {recipe.Id} -> {recipe.ResultItem}", this);
             return true;
         }

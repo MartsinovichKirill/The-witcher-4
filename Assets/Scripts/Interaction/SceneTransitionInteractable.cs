@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.Save;
 using WitcherRightVersion.UI;
 
@@ -29,9 +30,26 @@ namespace WitcherRightVersion.Interaction
                 return;
             }
 
-            InteractionPromptUI.Instance?.ShowMessage($"Traveling to {targetSceneName}.");
+            InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select($"Traveling to {targetSceneName}.", $"Переход: {GetLocalizedSceneName(targetSceneName)}."));
             SaveService.PrepareSceneTransfer();
             SceneManager.LoadScene(targetSceneName);
+        }
+
+        private static string GetLocalizedSceneName(string sceneName)
+        {
+            switch (sceneName)
+            {
+                case "VillageScene":
+                    return "Вересковый Брод";
+                case "ForestScene":
+                    return "Старый Лес";
+                case "AshRoadScene":
+                    return "Пепельный тракт";
+                case "VelemarWorldScene":
+                    return "Велемар";
+                default:
+                    return sceneName;
+            }
         }
     }
 }
