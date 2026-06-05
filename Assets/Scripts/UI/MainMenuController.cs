@@ -48,9 +48,29 @@ namespace WitcherRightVersion.UI
         private void Awake()
         {
             LoadSettings();
+            if (languageDropdown != null)
+            {
+                languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
+            }
             ShowMainPanel();
             ApplyLanguage();
             SetStatus(GetText("Ready for a new contract.", "Готов к новому контракту."));
+        }
+
+        private void OnDestroy()
+        {
+            if (languageDropdown != null)
+            {
+                languageDropdown.onValueChanged.RemoveListener(OnLanguageChanged);
+            }
+        }
+
+        public void OnLanguageChanged(int languageIndex)
+        {
+            PlayerPrefs.SetInt(LanguageKey, languageIndex);
+            PlayerPrefs.Save();
+            ApplyLanguage();
+            SetStatus(GetText("Language changed.", "Язык изменён."));
         }
 
         public void StartNewGame()
@@ -167,7 +187,7 @@ namespace WitcherRightVersion.UI
             SetText(titleText, "The Witcher 4", "Ведьмак 4");
             SetText(subtitleText, "Right Version", "Правильная версия");
             SetText(newGameButtonText, "New Game", "Новая игра");
-            SetText(worldGameButtonText, "Classic Slice", "Classic Slice");
+            SetText(worldGameButtonText, "Classic Slice", "Классический срез");
             SetText(continueButtonText, "Continue", "Продолжить");
             SetText(settingsButtonText, "Settings", "Настройки");
             SetText(exitButtonText, "Exit", "Выход");

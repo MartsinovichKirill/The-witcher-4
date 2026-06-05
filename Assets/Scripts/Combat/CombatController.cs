@@ -15,12 +15,12 @@ namespace WitcherRightVersion.Combat
 
         [Header("Attacks")]
         [SerializeField] private float lightAttackDamage = 24f;
-        [SerializeField] private float lightAttackRange = 2.15f;
-        [SerializeField] private float lightAttackRadius = 1.15f;
+        [SerializeField] private float lightAttackRange = 2.45f;
+        [SerializeField] private float lightAttackRadius = 1.25f;
         [SerializeField] private float lightAttackCooldown = 0.65f;
         [SerializeField] private float heavyAttackDamage = 42f;
-        [SerializeField] private float heavyAttackRange = 2.05f;
-        [SerializeField] private float heavyAttackRadius = 1.05f;
+        [SerializeField] private float heavyAttackRange = 2.35f;
+        [SerializeField] private float heavyAttackRadius = 1.2f;
         [SerializeField] private float heavyAttackCooldown = 1.35f;
         [SerializeField] private LayerMask targetMask = ~0;
 
@@ -35,8 +35,8 @@ namespace WitcherRightVersion.Combat
 
         [Header("Aard")]
         [SerializeField] private float aardDamage = 8f;
-        [SerializeField] private float aardRange = 3.2f;
-        [SerializeField] private float aardRadius = 1.35f;
+        [SerializeField] private float aardRange = 3.65f;
+        [SerializeField] private float aardRadius = 1.55f;
         [SerializeField] private float aardCooldown = 4f;
         [SerializeField] private float aardKnockbackDistance = 1.4f;
         [SerializeField] private float aardStunDuration = 0.8f;

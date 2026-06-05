@@ -10,10 +10,15 @@ namespace WitcherRightVersion.Player
 
         [Header("Orbit")]
         [SerializeField] private float distance = 5.5f;
+        [SerializeField] private float minDistance = 3.2f;
+        [SerializeField] private float maxDistance = 7.4f;
+        [SerializeField] private float zoomSensitivity = 1.4f;
         [SerializeField] private float minPitch = -25f;
         [SerializeField] private float maxPitch = 65f;
         [SerializeField] private float mouseSensitivity = 2.4f;
         [SerializeField] private float followSmoothTime = 0.08f;
+        [SerializeField] private float collisionRadius = 0.22f;
+        [SerializeField] private LayerMask collisionMask = ~0;
 
         private Vector3 smoothVelocity;
         private float yaw;
@@ -56,13 +61,32 @@ namespace WitcherRightVersion.Player
                 pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
             }
 
+            var scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (Mathf.Abs(scroll) > 0.001f)
+            {
+                distance = Mathf.Clamp(distance - scroll * zoomSensitivity, minDistance, maxDistance);
+            }
+
             var rotation = Quaternion.Euler(pitch, yaw, 0f);
             var targetPosition = target.position + targetOffset;
-            var desiredPosition = targetPosition - rotation * Vector3.forward * distance;
+            var desiredDistance = GetCollisionAdjustedDistance(targetPosition, rotation);
+            var desiredPosition = targetPosition - rotation * Vector3.forward * desiredDistance;
 
             transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref smoothVelocity, followSmoothTime);
             transform.rotation = rotation;
         }
+
+        private float GetCollisionAdjustedDistance(Vector3 targetPosition, Quaternion rotation)
+        {
+            var direction = -(rotation * Vector3.forward);
+            if (Physics.SphereCast(targetPosition, collisionRadius, direction, out var hit, distance, collisionMask, QueryTriggerInteraction.Ignore)
+                && target != null
+                && !hit.transform.IsChildOf(target))
+            {
+                return Mathf.Clamp(hit.distance - collisionRadius, minDistance * 0.45f, distance);
+            }
+
+            return distance;
+        }
     }
 }
-

@@ -10,13 +10,23 @@ namespace WitcherRightVersion.Interaction
         [SerializeField] private KeyCode interactKey = KeyCode.E;
 
         [Header("Search")]
-        [SerializeField] private float interactionRadius = 2.2f;
+        [SerializeField] private float interactionRadius = 2.8f;
+        [SerializeField] private float facingPreferenceWeight = 0.85f;
         [SerializeField] private LayerMask interactionMask = ~0;
+        [SerializeField] private Transform cameraTransform;
 
         private readonly Collider[] overlapResults = new Collider[16];
         private IInteractable currentInteractable;
 
         public IInteractable CurrentInteractable => currentInteractable;
+
+        private void Awake()
+        {
+            if (cameraTransform == null && Camera.main != null)
+            {
+                cameraTransform = Camera.main.transform;
+            }
+        }
 
         private void Update()
         {
@@ -40,7 +50,7 @@ namespace WitcherRightVersion.Interaction
         {
             var hitCount = Physics.OverlapSphereNonAlloc(transform.position, interactionRadius, overlapResults, interactionMask);
             IInteractable best = null;
-            var bestDistance = float.MaxValue;
+            var bestScore = float.MaxValue;
 
             for (var i = 0; i < hitCount; i++)
             {
@@ -50,15 +60,39 @@ namespace WitcherRightVersion.Interaction
                     continue;
                 }
 
-                var distance = Vector3.Distance(transform.position, overlapResults[i].ClosestPoint(transform.position));
-                if (distance < bestDistance)
+                var closestPoint = overlapResults[i].ClosestPoint(transform.position);
+                var distance = Vector3.Distance(transform.position, closestPoint);
+                var score = distance - GetFacingBonus(closestPoint);
+                if (score < bestScore)
                 {
                     best = candidate;
-                    bestDistance = distance;
+                    bestScore = score;
                 }
             }
 
             return best;
+        }
+
+        private float GetFacingBonus(Vector3 worldPoint)
+        {
+            var referenceForward = cameraTransform != null ? cameraTransform.forward : transform.forward;
+            referenceForward.y = 0f;
+            if (referenceForward.sqrMagnitude <= 0.01f)
+            {
+                return 0f;
+            }
+
+            referenceForward.Normalize();
+
+            var toPoint = worldPoint - transform.position;
+            toPoint.y = 0f;
+            if (toPoint.sqrMagnitude <= 0.01f)
+            {
+                return facingPreferenceWeight;
+            }
+
+            var facingDot = Vector3.Dot(referenceForward, toPoint.normalized);
+            return Mathf.Clamp01(facingDot) * facingPreferenceWeight;
         }
 
         private static IInteractable GetInteractable(Collider candidate)

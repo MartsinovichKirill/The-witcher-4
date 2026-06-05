@@ -61,6 +61,15 @@ namespace WitcherRightVersion.Combat
                 : newDeathMessage;
         }
 
+        public void ConfigureCombat(float newAggroRange, float newAttackRange, float newMoveSpeed, float newDamage, float newAttackCooldown)
+        {
+            aggroRange = Mathf.Max(0.5f, newAggroRange);
+            attackRange = Mathf.Max(0.35f, newAttackRange);
+            moveSpeed = Mathf.Max(0.1f, newMoveSpeed);
+            damage = Mathf.Max(0f, newDamage);
+            attackCooldown = Mathf.Max(0.2f, newAttackCooldown);
+        }
+
         private void Update()
         {
             var combatActive = IsCombatActive();

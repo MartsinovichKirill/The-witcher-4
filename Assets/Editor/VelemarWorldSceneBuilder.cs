@@ -99,9 +99,9 @@ namespace WitcherRightVersion.Editor
 
             var lightsRoot = new GameObject("VelemarAtmosphereLights");
             CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.58f, 0.28f, 1f), 1.15f, 10f);
-            CreatePointLight(lightsRoot.transform, "SwampColdMiasmaLight", new Vector3(5.4f, 2.2f, -25.8f), new Color(0.16f, 0.48f, 0.36f, 1f), 0.85f, 12f);
-            CreatePointLight(lightsRoot.transform, "TowerMirrorVioletLight", new Vector3(0f, 3.6f, 28.6f), new Color(0.48f, 0.28f, 0.86f, 1f), 1.35f, 13f);
-            CreatePointLight(lightsRoot.transform, "AshRoadEmberLight", new Vector3(24f, 2.5f, 5.5f), new Color(0.9f, 0.25f, 0.12f, 1f), 0.95f, 11f);
+            CreatePointLight(lightsRoot.transform, "SwampColdMiasmaLight", new Vector3(9.4f, 2.2f, -72.8f), new Color(0.16f, 0.48f, 0.36f, 1f), 0.85f, 18f);
+            CreatePointLight(lightsRoot.transform, "TowerMirrorVioletLight", new Vector3(0f, 3.6f, 76.6f), new Color(0.48f, 0.28f, 0.86f, 1f), 1.35f, 19f);
+            CreatePointLight(lightsRoot.transform, "AshRoadEmberLight", new Vector3(72f, 2.5f, 9.5f), new Color(0.9f, 0.25f, 0.12f, 1f), 0.95f, 17f);
         }
 
         private static void CreatePointLight(Transform parent, string name, Vector3 position, Color color, float intensity, float range)
@@ -149,20 +149,20 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("VelemarRoadNetwork");
             root.transform.SetParent(parent, false);
 
-            for (var z = -30; z <= 30; z += 6)
+            for (var z = -84; z <= 84; z += 6)
             {
                 PlaceKenney(root.transform, $"VelemarNorthSouthRoad_{z}", "road.fbx", new Vector3(0f, 0.035f, z), Quaternion.identity, new Vector3(1.25f, 1f, 1.25f));
             }
 
-            for (var x = -30; x <= 30; x += 6)
+            for (var x = -84; x <= 84; x += 6)
             {
                 PlaceKenney(root.transform, $"VelemarEastWestRoad_{x}", "road.fbx", new Vector3(x, 0.04f, 0f), Quaternion.Euler(0f, 90f, 0f), new Vector3(1.25f, 1f, 1.25f));
             }
 
             CreateZoneLabel(root.transform, "RoadSign_Village", "Vereskovy Brod", new Vector3(-4.5f, 1.2f, -5.5f), Quaternion.Euler(0f, 28f, 0f));
-            CreateZoneLabel(root.transform, "RoadSign_Forest", "Old Forest", new Vector3(-18f, 1.2f, 3.5f), Quaternion.Euler(0f, 70f, 0f));
-            CreateZoneLabel(root.transform, "RoadSign_Swamp", "Black Swamp", new Vector3(4.6f, 1.2f, -18f), Quaternion.Euler(0f, -28f, 0f));
-            CreateZoneLabel(root.transform, "RoadSign_AshRoad", "Ash Road", new Vector3(20f, 1.2f, 3.5f), Quaternion.Euler(0f, -70f, 0f));
+            CreateZoneLabel(root.transform, "RoadSign_Forest", "Old Forest", new Vector3(-38f, 1.2f, 5.5f), Quaternion.Euler(0f, 70f, 0f));
+            CreateZoneLabel(root.transform, "RoadSign_Swamp", "Black Swamp", new Vector3(6.6f, 1.2f, -38f), Quaternion.Euler(0f, -28f, 0f));
+            CreateZoneLabel(root.transform, "RoadSign_AshRoad", "Ash Road", new Vector3(40f, 1.2f, 5.5f), Quaternion.Euler(0f, -70f, 0f));
         }
 
         private static void CreateVillageDistrict(Transform parent)
@@ -171,37 +171,37 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
             root.transform.position = new Vector3(0f, 0f, -3f);
 
-            CreateRegionDisc(root.transform, "VillageDistrictGround", Vector3.zero, new Vector3(9f, 0.035f, 7f), new Color(0.17f, 0.23f, 0.14f, 1f));
+            CreateRegionDisc(root.transform, "VillageDistrictGround", Vector3.zero, new Vector3(13f, 0.035f, 10f), new Color(0.17f, 0.23f, 0.14f, 1f));
 
-            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-3.8f, 0f, -0.2f), Quaternion.Euler(0f, 18f, 0f), 1.15f);
-            CreateHouse(root.transform, "MartaHouse_World", new Vector3(3.8f, 0f, -0.4f), Quaternion.Euler(0f, -18f, 0f), 1.05f);
-            CreateHouse(root.transform, "Smithy_World", new Vector3(-2.2f, 0f, 3.4f), Quaternion.Euler(0f, -25f, 0f), 0.95f);
-            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-6.4f, 0f, 1.9f), Quaternion.Euler(0f, 58f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
-            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(2.2f, 0f, 2.0f), Quaternion.Euler(0f, -22f, 0f), new Vector3(1.2f, 1.2f, 1.2f));
+            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-5.2f, 0f, -0.7f), Quaternion.Euler(0f, 28f, 0f), 2.05f);
+            CreateHouse(root.transform, "MartaHouse_World", new Vector3(5.1f, 0f, -0.8f), Quaternion.Euler(0f, -28f, 0f), 1.95f);
+            CreateHouse(root.transform, "Smithy_World", new Vector3(-4.5f, 0f, 4.3f), Quaternion.Euler(0f, -18f, 0f), 1.85f);
+            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-8.5f, 0f, 2.8f), Quaternion.Euler(0f, 58f, 0f), new Vector3(2.05f, 2.05f, 2.05f));
+            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(2.7f, 0f, 3.4f), Quaternion.Euler(0f, -22f, 0f), new Vector3(1.75f, 1.75f, 1.75f));
             PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, -1.35f), Quaternion.identity, new Vector3(0.95f, 0.95f, 0.95f));
-            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(6.6f, 0f, 2.7f), Quaternion.Euler(0f, -50f, 0f), new Vector3(1.05f, 1.05f, 1.05f));
-            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(-6.8f, 0f, -2.8f), Quaternion.Euler(0f, 28f, 0f), new Vector3(0.95f, 0.95f, 0.95f));
-            PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(1.8f, 0f, 2.8f), Quaternion.Euler(0f, 35f, 0f), Vector3.one);
-            PlaceKenney(root.transform, "VillageLantern_World", "lantern.fbx", new Vector3(-0.9f, 0f, 1.7f), Quaternion.identity, Vector3.one);
+            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(8.9f, 0f, 3.7f), Quaternion.Euler(0f, -50f, 0f), new Vector3(1.7f, 1.7f, 1.7f));
+            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(-8.4f, 0f, -4.2f), Quaternion.Euler(0f, 28f, 0f), new Vector3(1.65f, 1.65f, 1.65f));
+            PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(1.8f, 0f, 4.8f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 1.15f);
+            PlaceKenney(root.transform, "VillageLantern_World", "lantern.fbx", new Vector3(-0.9f, 0f, 1.8f), Quaternion.identity, Vector3.one);
 
             for (var i = 0; i < 7; i++)
             {
-                PlaceKenney(root.transform, $"VillageFence_World_{i + 1}", i % 3 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(-6f + i * 2f, 0f, -4.2f), Quaternion.Euler(0f, 90f, 0f), Vector3.one);
+                PlaceKenney(root.transform, $"VillageFence_World_{i + 1}", i % 3 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(-8.6f + i * 2.9f, 0f, -6.7f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.15f);
             }
 
             for (var i = 0; i < 5; i++)
             {
-                PlaceKayKit(root.transform, $"VillageWallSegment_World_{i + 1}", "wall_straight.fbx", new Vector3(-5.6f + i * 2.8f, 0f, -5.5f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.1f);
+                PlaceKayKit(root.transform, $"VillageWallSegment_World_{i + 1}", "wall_straight.fbx", new Vector3(-8.4f + i * 4.2f, 0f, -7.6f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.55f);
             }
 
-            PlaceKayKit(root.transform, "VillageGate_World", "wall_gate.fbx", new Vector3(0f, 0f, -5.55f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.2f);
+            PlaceKayKit(root.transform, "VillageGate_World", "wall_gate.fbx", new Vector3(0f, 0f, -7.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.7f);
         }
 
         private static void CreateForestDistrict(Transform parent)
         {
             var root = new GameObject("ForestDistrict_OldForest");
             root.transform.SetParent(parent, false);
-            root.transform.position = new Vector3(-24f, 0f, 4f);
+            root.transform.position = new Vector3(-70f, 0f, 8f);
 
             CreateRegionDisc(root.transform, "ForestDistrictGround", Vector3.zero, new Vector3(13f, 0.035f, 11f), new Color(0.08f, 0.16f, 0.08f, 1f));
 
@@ -225,7 +225,7 @@ namespace WitcherRightVersion.Editor
         {
             var root = new GameObject("SwampDistrict_BlackSwamp");
             root.transform.SetParent(parent, false);
-            root.transform.position = new Vector3(4f, 0f, -25f);
+            root.transform.position = new Vector3(8f, 0f, -72f);
 
             CreateRegionDisc(root.transform, "SwampDistrictBog", Vector3.zero, new Vector3(13f, 0.035f, 10f), new Color(0.06f, 0.12f, 0.09f, 1f));
             CreateRegionDisc(root.transform, "SwampWaterPool_01", new Vector3(-3.5f, 0.035f, -1.4f), new Vector3(3.6f, 0.022f, 1.7f), new Color(0.025f, 0.055f, 0.05f, 1f));
@@ -247,7 +247,7 @@ namespace WitcherRightVersion.Editor
         {
             var root = new GameObject("AshRoadDistrict_PepelnyTrakt");
             root.transform.SetParent(parent, false);
-            root.transform.position = new Vector3(24f, 0f, 4f);
+            root.transform.position = new Vector3(72f, 0f, 8f);
 
             CreateRegionDisc(root.transform, "AshRoadDistrictGround", Vector3.zero, new Vector3(12f, 0.035f, 7f), new Color(0.15f, 0.13f, 0.12f, 1f));
             CreateMarker(root.transform, "AshRoadBurnedTrack_World", new Vector3(0f, 0.08f, 0f), new Vector3(2.5f, 0.08f, 9.5f), new Color(0.07f, 0.065f, 0.06f, 1f));
@@ -267,7 +267,7 @@ namespace WitcherRightVersion.Editor
         {
             var root = new GameObject("TowerVistaDistrict_Ruins");
             root.transform.SetParent(parent, false);
-            root.transform.position = new Vector3(0f, 0f, 26f);
+            root.transform.position = new Vector3(0f, 0f, 74f);
 
             CreateRegionDisc(root.transform, "TowerVistaGround", Vector3.zero, new Vector3(9f, 0.035f, 7f), new Color(0.12f, 0.12f, 0.13f, 1f));
             PlaceKayKit(root.transform, "TowerKayKitCastleCore_World", "castle.fbx", new Vector3(0f, 0f, 1.2f), Quaternion.Euler(0f, 180f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
@@ -290,6 +290,46 @@ namespace WitcherRightVersion.Editor
             CreateSwampDressing(root.transform);
             CreateTowerDressing(root.transform);
             CreateAshRoadDressing(root.transform);
+            CreateTravelRouteDressing(root.transform);
+        }
+
+        private static void CreateTravelRouteDressing(Transform parent)
+        {
+            var root = new GameObject("TravelRouteDressing");
+            root.transform.SetParent(parent, false);
+
+            var westStops = new[] { -18f, -32f, -46f, -58f };
+            for (var i = 0; i < westStops.Length; i++)
+            {
+                var x = westStops[i];
+                PlaceKenney(root.transform, $"WestRouteLandmark_{i + 1:00}", i % 2 == 0 ? "tree-high.fbx" : "rock-large.fbx", new Vector3(x, 0f, 4.8f + (i % 2) * 2.2f), Quaternion.Euler(0f, 25f * i, 0f), Vector3.one * (1.05f + i * 0.08f));
+                PlaceKenney(root.transform, $"WestRouteLantern_{i + 1:00}", "lantern.fbx", new Vector3(x + 2.4f, 0f, -1.5f), Quaternion.identity, Vector3.one * 0.9f);
+            }
+
+            var eastStops = new[] { 18f, 32f, 46f, 58f };
+            for (var i = 0; i < eastStops.Length; i++)
+            {
+                var x = eastStops[i];
+                PlaceKenney(root.transform, $"EastRouteLandmark_{i + 1:00}", i % 2 == 0 ? "wall-broken.fbx" : "cart.fbx", new Vector3(x, 0f, 4.5f + (i % 2) * 2.4f), Quaternion.Euler(0f, -18f * i, 0f), Vector3.one * (1.0f + i * 0.07f));
+            }
+
+            var northStops = new[] { 18f, 32f, 46f, 59f };
+            for (var i = 0; i < northStops.Length; i++)
+            {
+                var z = northStops[i];
+                PlaceKenney(root.transform, $"NorthRouteLandmark_{i + 1:00}", i % 2 == 0 ? "pillar-stone.fbx" : "tree-crooked.fbx", new Vector3(4.8f + (i % 2) * 1.8f, 0f, z), Quaternion.Euler(0f, 30f * i, 0f), Vector3.one * (1.05f + i * 0.08f));
+            }
+
+            var southStops = new[] { -18f, -32f, -46f, -59f };
+            for (var i = 0; i < southStops.Length; i++)
+            {
+                var z = southStops[i];
+                PlaceKenney(root.transform, $"SouthRouteLandmark_{i + 1:00}", i % 2 == 0 ? "tree-high-crooked.fbx" : "rock-wide.fbx", new Vector3(-5.2f - (i % 2) * 1.6f, 0f, z), Quaternion.Euler(0f, -24f * i, 0f), Vector3.one * (1.08f + i * 0.08f));
+                if (i == 2)
+                {
+                    PlaceKenney(root.transform, "SouthRouteAbandonedCart", "cart-high.fbx", new Vector3(3.8f, 0f, z - 2.4f), Quaternion.Euler(0f, 52f, 0f), Vector3.one);
+                }
+            }
         }
 
         private static void CreateVillageDressing(Transform parent)
@@ -297,13 +337,13 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("VillageDressing_DailyLife");
             root.transform.SetParent(parent, false);
 
-            PlaceKenney(root.transform, "VillageDressingNoticeBanner", "banner-red.fbx", new Vector3(-2.1f, 0f, -5.1f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.15f);
-            PlaceKenney(root.transform, "VillageDressingGreenBanner", "banner-green.fbx", new Vector3(2.0f, 0f, -5.1f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.15f);
-            PlaceKenney(root.transform, "VillageDressingMarketBench", "stall-bench.fbx", new Vector3(2.8f, 0f, -0.3f), Quaternion.Euler(0f, -22f, 0f), Vector3.one);
-            PlaceKenney(root.transform, "VillageDressingSmithPlanks", "planks.fbx", new Vector3(-2.2f, 0f, 1.2f), Quaternion.Euler(0f, -24f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "VillageDressingNoticeBanner", "banner-red.fbx", new Vector3(-2.1f, 0f, -7.25f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "VillageDressingGreenBanner", "banner-green.fbx", new Vector3(2.0f, 0f, -7.25f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "VillageDressingMarketBench", "stall-bench.fbx", new Vector3(3.8f, 0f, 2.2f), Quaternion.Euler(0f, -22f, 0f), Vector3.one * 1.1f);
+            PlaceKenney(root.transform, "VillageDressingSmithPlanks", "planks.fbx", new Vector3(-4.4f, 0f, 2.7f), Quaternion.Euler(0f, -24f, 0f), Vector3.one * 1.1f);
             PlaceKenney(root.transform, "VillageDressingWellLantern", "lantern.fbx", new Vector3(0.9f, 0f, -4.4f), Quaternion.Euler(0f, 45f, 0f), Vector3.one * 0.9f);
-            PlaceKenney(root.transform, "VillageDressingBrokenFenceNorth", "fence-broken.fbx", new Vector3(-4.2f, 0f, -6.2f), Quaternion.Euler(0f, 8f, 0f), Vector3.one);
-            PlaceKenney(root.transform, "VillageDressingCartByGate", "cart-high.fbx", new Vector3(4.7f, 0f, -5.9f), Quaternion.Euler(0f, -55f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "VillageDressingBrokenFenceNorth", "fence-broken.fbx", new Vector3(-6.8f, 0f, -7.25f), Quaternion.Euler(0f, 8f, 0f), Vector3.one * 1.1f);
+            PlaceKenney(root.transform, "VillageDressingCartByGate", "cart-high.fbx", new Vector3(6.2f, 0f, -7.45f), Quaternion.Euler(0f, -55f, 0f), Vector3.one * 1.15f);
         }
 
         private static void CreateForestDressing(Transform parent)
@@ -311,12 +351,12 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("ForestDressing_WolfDen");
             root.transform.SetParent(parent, false);
 
-            PlaceKayKit(root.transform, "ForestDressingDeepPatch_A", "detail_forestA.fbx", new Vector3(-31.3f, 0f, 10.6f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 1.3f);
-            PlaceKayKit(root.transform, "ForestDressingDeepPatch_B", "detail_forestB.fbx", new Vector3(-17.8f, 0f, 11.4f), Quaternion.Euler(0f, -35f, 0f), Vector3.one * 1.25f);
-            PlaceKenney(root.transform, "ForestWolfDen_World", "rock-wide.fbx", new Vector3(-29.6f, 0f, 8.9f), Quaternion.Euler(0f, 14f, 0f), new Vector3(1.35f, 1.05f, 1.35f));
-            PlaceKenney(root.transform, "ForestWolfDenBones_World", "blade.fbx", new Vector3(-28.9f, 0.05f, 7.7f), Quaternion.Euler(80f, 0f, 24f), Vector3.one * 0.65f);
-            CreateMarker(root.transform, "ForestWolfDenScratchMarks", new Vector3(-29.2f, 0.07f, 8.2f), new Vector3(0.9f, 0.04f, 0.18f), new Color(0.33f, 0.12f, 0.07f, 1f));
-            CreateMarker(root.transform, "ForestHunterBloodPool", new Vector3(-22.9f, 0.055f, 6.8f), new Vector3(0.7f, 0.025f, 0.46f), new Color(0.28f, 0.035f, 0.025f, 1f));
+            PlaceKayKit(root.transform, "ForestDressingDeepPatch_A", "detail_forestA.fbx", new Vector3(-77.3f, 0f, 14.6f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 1.3f);
+            PlaceKayKit(root.transform, "ForestDressingDeepPatch_B", "detail_forestB.fbx", new Vector3(-63.8f, 0f, 15.4f), Quaternion.Euler(0f, -35f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "ForestWolfDen_World", "rock-wide.fbx", new Vector3(-75.6f, 0f, 12.9f), Quaternion.Euler(0f, 14f, 0f), new Vector3(1.35f, 1.05f, 1.35f));
+            PlaceKenney(root.transform, "ForestWolfDenBones_World", "blade.fbx", new Vector3(-74.9f, 0.05f, 11.7f), Quaternion.Euler(80f, 0f, 24f), Vector3.one * 0.65f);
+            CreateMarker(root.transform, "ForestWolfDenScratchMarks", new Vector3(-75.2f, 0.07f, 12.2f), new Vector3(0.9f, 0.04f, 0.18f), new Color(0.33f, 0.12f, 0.07f, 1f));
+            CreateMarker(root.transform, "ForestHunterBloodPool", new Vector3(-68.9f, 0.055f, 10.8f), new Vector3(0.7f, 0.025f, 0.46f), new Color(0.28f, 0.035f, 0.025f, 1f));
         }
 
         private static void CreateSwampDressing(Transform parent)
@@ -326,20 +366,20 @@ namespace WitcherRightVersion.Editor
 
             for (var i = 0; i < 7; i++)
             {
-                PlaceKenney(root.transform, $"SwampPlankPath_{i + 1:00}", i % 2 == 0 ? "planks.fbx" : "planks-half.fbx", new Vector3(0.1f + i * 1.18f, 0.035f, -27.6f + (i % 2) * 0.34f), Quaternion.Euler(0f, 82f + i * 7f, 0f), new Vector3(0.95f, 1f, 0.95f));
+                PlaceKenney(root.transform, $"SwampPlankPath_{i + 1:00}", i % 2 == 0 ? "planks.fbx" : "planks-half.fbx", new Vector3(4.1f + i * 1.18f, 0.035f, -74.6f + (i % 2) * 0.34f), Quaternion.Euler(0f, 82f + i * 7f, 0f), new Vector3(0.95f, 1f, 0.95f));
             }
 
-            PlaceKenney(root.transform, "SwampDressingDrownedCart", "cart.fbx", new Vector3(9.7f, -0.05f, -27.9f), Quaternion.Euler(4f, -64f, 9f), Vector3.one);
-            PlaceKenney(root.transform, "SwampDressingCrookedTreeA", "tree-high-crooked.fbx", new Vector3(-2.7f, 0f, -28.9f), Quaternion.Euler(0f, 20f, 0f), Vector3.one * 1.25f);
-            PlaceKenney(root.transform, "SwampDressingCrookedTreeB", "tree-crooked.fbx", new Vector3(11.2f, 0f, -22.4f), Quaternion.Euler(0f, -42f, 0f), Vector3.one * 1.45f);
-            CreateReedCluster(root.transform, "SwampDressingTallReeds_A", new Vector3(6.2f, 0f, -30.2f), 1.3f);
-            CreateReedCluster(root.transform, "SwampDressingTallReeds_B", new Vector3(10.6f, 0f, -24.7f), 1.45f);
-            CreateMarker(root.transform, "SwampDressingPoisonPool", new Vector3(7.6f, 0.055f, -27.2f), new Vector3(1.35f, 0.035f, 0.92f), new Color(0.03f, 0.14f, 0.09f, 1f));
+            PlaceKenney(root.transform, "SwampDressingDrownedCart", "cart.fbx", new Vector3(13.7f, -0.05f, -74.9f), Quaternion.Euler(4f, -64f, 9f), Vector3.one);
+            PlaceKenney(root.transform, "SwampDressingCrookedTreeA", "tree-high-crooked.fbx", new Vector3(1.3f, 0f, -75.9f), Quaternion.Euler(0f, 20f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "SwampDressingCrookedTreeB", "tree-crooked.fbx", new Vector3(15.2f, 0f, -69.4f), Quaternion.Euler(0f, -42f, 0f), Vector3.one * 1.45f);
+            CreateReedCluster(root.transform, "SwampDressingTallReeds_A", new Vector3(10.2f, 0f, -77.2f), 1.3f);
+            CreateReedCluster(root.transform, "SwampDressingTallReeds_B", new Vector3(14.6f, 0f, -71.7f), 1.45f);
+            CreateMarker(root.transform, "SwampDressingPoisonPool", new Vector3(11.6f, 0.055f, -74.2f), new Vector3(1.35f, 0.035f, 0.92f), new Color(0.03f, 0.14f, 0.09f, 1f));
 
-            var foreshadow = InstantiateModel($"{MonsterPath}/Slime.fbx", "SwampBossForeshadow_Model", root.transform, new Vector3(10.8f, 0.05f, -20.9f), Quaternion.Euler(0f, 160f, 0f), new Vector3(2.2f, 2.2f, 2.2f));
+            var foreshadow = InstantiateModel($"{MonsterPath}/Slime.fbx", "SwampBossForeshadow_Model", root.transform, new Vector3(14.8f, 0.05f, -67.9f), Quaternion.Euler(0f, 160f, 0f), new Vector3(2.2f, 2.2f, 2.2f));
             if (foreshadow == null)
             {
-                CreateMarker(root.transform, "SwampBossForeshadow_Fallback", new Vector3(10.8f, 0.8f, -20.9f), new Vector3(1.6f, 1.2f, 1.6f), new Color(0.06f, 0.22f, 0.12f, 1f));
+                CreateMarker(root.transform, "SwampBossForeshadow_Fallback", new Vector3(14.8f, 0.8f, -67.9f), new Vector3(1.6f, 1.2f, 1.6f), new Color(0.06f, 0.22f, 0.12f, 1f));
             }
         }
 
@@ -348,12 +388,12 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("TowerDressing_RitualYard");
             root.transform.SetParent(parent, false);
 
-            CreateMarker(root.transform, "TowerRitualCircle_World", new Vector3(0f, 0.06f, 24.7f), new Vector3(2.8f, 0.035f, 2.8f), new Color(0.22f, 0.16f, 0.31f, 1f));
-            PlaceKenney(root.transform, "TowerDressingBrokenArchLeft", "wall-arch.fbx", new Vector3(-4.2f, 0f, 25.0f), Quaternion.Euler(0f, -28f, 0f), new Vector3(1.15f, 1.15f, 1.15f));
-            PlaceKenney(root.transform, "TowerDressingBrokenArchRight", "wall-arch-top.fbx", new Vector3(4.0f, 0f, 25.1f), Quaternion.Euler(0f, 32f, 0f), new Vector3(1.15f, 1.15f, 1.15f));
-            PlaceKenney(root.transform, "TowerDressingPillarBackA", "pillar-stone.fbx", new Vector3(-1.6f, 0f, 29.5f), Quaternion.identity, Vector3.one * 1.25f);
-            PlaceKenney(root.transform, "TowerDressingPillarBackB", "pillar-stone.fbx", new Vector3(1.6f, 0f, 29.5f), Quaternion.identity, Vector3.one * 1.25f);
-            CreateMarker(root.transform, "TowerDressingMirrorShardTrail", new Vector3(0.8f, 0.12f, 27.8f), new Vector3(0.42f, 0.08f, 0.42f), new Color(0.45f, 0.32f, 0.72f, 1f));
+            CreateMarker(root.transform, "TowerRitualCircle_World", new Vector3(0f, 0.06f, 72.7f), new Vector3(2.8f, 0.035f, 2.8f), new Color(0.22f, 0.16f, 0.31f, 1f));
+            PlaceKenney(root.transform, "TowerDressingBrokenArchLeft", "wall-arch.fbx", new Vector3(-4.2f, 0f, 73.0f), Quaternion.Euler(0f, -28f, 0f), new Vector3(1.15f, 1.15f, 1.15f));
+            PlaceKenney(root.transform, "TowerDressingBrokenArchRight", "wall-arch-top.fbx", new Vector3(4.0f, 0f, 73.1f), Quaternion.Euler(0f, 32f, 0f), new Vector3(1.15f, 1.15f, 1.15f));
+            PlaceKenney(root.transform, "TowerDressingPillarBackA", "pillar-stone.fbx", new Vector3(-1.6f, 0f, 77.5f), Quaternion.identity, Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "TowerDressingPillarBackB", "pillar-stone.fbx", new Vector3(1.6f, 0f, 77.5f), Quaternion.identity, Vector3.one * 1.25f);
+            CreateMarker(root.transform, "TowerDressingMirrorShardTrail", new Vector3(0.8f, 0.12f, 75.8f), new Vector3(0.42f, 0.08f, 0.42f), new Color(0.45f, 0.32f, 0.72f, 1f));
         }
 
         private static void CreateAshRoadDressing(Transform parent)
@@ -361,12 +401,12 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("AshRoadDressing_SurvivorCamp");
             root.transform.SetParent(parent, false);
 
-            PlaceKenney(root.transform, "AshRoadSurvivorCamp_World", "cart-high.fbx", new Vector3(19.5f, 0f, 6.2f), Quaternion.Euler(0f, 24f, 0f), Vector3.one);
-            PlaceKenney(root.transform, "AshRoadDressingBrokenFenceA", "fence-broken.fbx", new Vector3(20.6f, 0f, 4.2f), Quaternion.Euler(0f, 65f, 0f), Vector3.one);
-            PlaceKenney(root.transform, "AshRoadDressingBrokenFenceB", "fence-broken.fbx", new Vector3(27.8f, 0f, 6.7f), Quaternion.Euler(0f, -50f, 0f), Vector3.one);
-            PlaceKenney(root.transform, "AshRoadDressingCollapsedWall", "wall-broken.fbx", new Vector3(27.9f, 0f, 11.0f), Quaternion.Euler(0f, 18f, 0f), new Vector3(1.3f, 1.3f, 1.3f));
-            CreateMarker(root.transform, "AshRoadDressingCampfireCoals", new Vector3(20.8f, 0.1f, 7.4f), new Vector3(0.75f, 0.12f, 0.75f), new Color(0.46f, 0.11f, 0.035f, 1f));
-            CreateMarker(root.transform, "AshRoadDressingAshDrift", new Vector3(24.1f, 0.055f, 5.0f), new Vector3(3.6f, 0.035f, 1.3f), new Color(0.18f, 0.17f, 0.16f, 1f));
+            PlaceKenney(root.transform, "AshRoadSurvivorCamp_World", "cart-high.fbx", new Vector3(67.5f, 0f, 10.2f), Quaternion.Euler(0f, 24f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "AshRoadDressingBrokenFenceA", "fence-broken.fbx", new Vector3(68.6f, 0f, 8.2f), Quaternion.Euler(0f, 65f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "AshRoadDressingBrokenFenceB", "fence-broken.fbx", new Vector3(75.8f, 0f, 10.7f), Quaternion.Euler(0f, -50f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "AshRoadDressingCollapsedWall", "wall-broken.fbx", new Vector3(75.9f, 0f, 15.0f), Quaternion.Euler(0f, 18f, 0f), new Vector3(1.3f, 1.3f, 1.3f));
+            CreateMarker(root.transform, "AshRoadDressingCampfireCoals", new Vector3(68.8f, 0.1f, 11.4f), new Vector3(0.75f, 0.12f, 0.75f), new Color(0.46f, 0.11f, 0.035f, 1f));
+            CreateMarker(root.transform, "AshRoadDressingAshDrift", new Vector3(72.1f, 0.055f, 9.0f), new Vector3(3.6f, 0.035f, 1.3f), new Color(0.18f, 0.17f, 0.16f, 1f));
         }
 
         private static void CreateGameplayObjects(Transform parent)
@@ -522,7 +562,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateBorisDialogue(Transform parent)
         {
-            var boris = CreateRpgCharacterAnchor(parent, "BorisSmith_World", "Warrior.fbx", new Vector3(-3.1f, 1f, 0.7f), Quaternion.Euler(0f, 55f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.18f, 0.14f, 0.1f, 1f));
+            var boris = CreateRpgCharacterAnchor(parent, "BorisSmith_World", "Warrior.fbx", new Vector3(-4.2f, 1f, -0.4f), Quaternion.Euler(0f, 35f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.18f, 0.14f, 0.1f, 1f));
             CreateCharacterGroundRing(boris, "BorisRoleRing", new Color(0.62f, 0.31f, 0.12f, 1f), 0.78f);
             var dialogue = boris.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -562,7 +602,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateRadekMerchant(Transform parent)
         {
-            var radek = CreateRpgCharacterAnchor(parent, "RadekTrader_World", "Rogue.fbx", new Vector3(2.4f, 1f, -0.1f), Quaternion.Euler(0f, -120f, 0f), new Vector3(0.82f, 0.82f, 0.82f), new Color(0.2f, 0.16f, 0.09f, 1f));
+            var radek = CreateRpgCharacterAnchor(parent, "RadekTrader_World", "Rogue.fbx", new Vector3(3.1f, 1f, -0.7f), Quaternion.Euler(0f, -135f, 0f), new Vector3(0.82f, 0.82f, 0.82f), new Color(0.2f, 0.16f, 0.09f, 1f));
             CreateCharacterGroundRing(radek, "RadekRoleRing", new Color(0.66f, 0.5f, 0.18f, 1f), 0.76f);
             var merchant = radek.AddComponent<MerchantInteractable>();
             merchant.Configure(
@@ -578,7 +618,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateElsaDialogue(Transform parent)
         {
-            var elsa = CreateRpgCharacterAnchor(parent, "ElsaCherntravka_World", "Wizard.fbx", new Vector3(12.6f, 1f, -25.6f), Quaternion.Euler(0f, -35f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            var elsa = CreateRpgCharacterAnchor(parent, "ElsaCherntravka_World", "Wizard.fbx", new Vector3(16.6f, 1f, -72.6f), Quaternion.Euler(0f, -35f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
             CreateCharacterGroundRing(elsa, "ElsaRoleRing", new Color(0.16f, 0.48f, 0.4f, 1f), 0.82f);
             var dialogue = elsa.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -628,7 +668,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateOrtenDialogue(Transform parent)
         {
-            var orten = CreateRpgCharacterAnchor(parent, "OrtenMirrorMage_World", "Wizard.fbx", new Vector3(0f, 1f, 30.2f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.24f, 0.18f, 0.32f, 1f));
+            var orten = CreateRpgCharacterAnchor(parent, "OrtenMirrorMage_World", "Wizard.fbx", new Vector3(0f, 1f, 78.2f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.24f, 0.18f, 0.32f, 1f));
             CreateCharacterGroundRing(orten, "OrtenRoleRing", new Color(0.42f, 0.22f, 0.72f, 1f), 0.86f);
             var dialogue = orten.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -677,7 +717,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateIvarDialogue(Transform parent)
         {
-            var ivar = CreateRpgCharacterAnchor(parent, "IvarSedoy_World", "Ranger.fbx", new Vector3(-21.7f, 1f, 3.2f), Quaternion.Euler(0f, 60f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
+            var ivar = CreateRpgCharacterAnchor(parent, "IvarSedoy_World", "Ranger.fbx", new Vector3(-67.7f, 1f, 7.2f), Quaternion.Euler(0f, 60f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
             CreateCharacterGroundRing(ivar, "IvarRoleRing", new Color(0.28f, 0.48f, 0.2f, 1f), 0.78f);
             var dialogue = ivar.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -708,11 +748,11 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateGhostGirlDialogue(Transform parent)
         {
-            var ghost = CreateRpgCharacterAnchor(parent, "GhostGirl_World", "Wizard.fbx", new Vector3(-2.7f, 1f, 27.0f), Quaternion.Euler(0f, 165f, 0f), new Vector3(0.62f, 0.62f, 0.62f), new Color(0.44f, 0.42f, 0.72f, 1f));
+            var ghost = CreateRpgCharacterAnchor(parent, "GhostGirl_World", "Wizard.fbx", new Vector3(-2.7f, 1f, 75.0f), Quaternion.Euler(0f, 165f, 0f), new Vector3(0.62f, 0.62f, 0.62f), new Color(0.44f, 0.42f, 0.72f, 1f));
             ApplyMaterialToChildRenderers(ghost, CreateMaterial("Assets/Materials/GhostGirl_World_Spectral.mat", new Color(0.48f, 0.58f, 0.9f, 0.82f)));
             CreateCharacterGroundRing(ghost, "GhostGirlReadabilityRing", new Color(0.32f, 0.42f, 0.88f, 1f), 0.95f);
-            CreatePointLight(parent, "GhostGirlColdLight", new Vector3(-2.7f, 2.0f, 27.0f), new Color(0.34f, 0.48f, 0.88f, 1f), 1.05f, 6.5f);
-            CreateMarker(parent, "GhostGirlMemoryRing", new Vector3(-2.7f, 0.08f, 27.0f), new Vector3(1.05f, 0.035f, 1.05f), new Color(0.22f, 0.28f, 0.52f, 1f));
+            CreatePointLight(parent, "GhostGirlColdLight", new Vector3(-2.7f, 2.0f, 75.0f), new Color(0.34f, 0.48f, 0.88f, 1f), 1.05f, 6.5f);
+            CreateMarker(parent, "GhostGirlMemoryRing", new Vector3(-2.7f, 0.08f, 75.0f), new Vector3(1.05f, 0.035f, 1.05f), new Color(0.22f, 0.28f, 0.52f, 1f));
 
             var dialogue = ghost.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -753,14 +793,14 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateWorldTraceObjects(Transform parent)
         {
-            CreateQuestMarker(parent, "WorldTrace_ClawMarks", "Claw marks", "Inspect", QuestService.ActionSwampTracesFound, "Deep claw cuts in the mud point toward the south pool.", "Marta should explain what to look for first.", new Vector3(1.4f, 0.08f, -23.2f), new Vector3(0.9f, 0.04f, 0.55f), new Color(0.18f, 0.12f, 0.08f, 1f));
-            CreateQuestMarker(parent, "WorldTrace_SlimeTrail", "Black slime trail", "Inspect", QuestService.ActionSwampTracesFound, "The slime bubbles like something alive. The trail bends toward the drowned reeds.", "The slime looks wrong, but Reynard needs Marta's warning first.", new Vector3(5.5f, 0.08f, -26.2f), new Vector3(0.55f, 0.04f, 1.1f), new Color(0.08f, 0.16f, 0.11f, 1f));
-            CreateQuestMarker(parent, "WorldTrace_TornCloth", "Torn cloth", "Inspect", QuestService.ActionSwampTracesFound, "A strip of wet cloth hangs from the reeds. Someone was dragged deeper.", "This cloth is just a rag until Reynard knows the swamp signs.", new Vector3(8.0f, 0.08f, -23.8f), new Vector3(0.45f, 0.04f, 0.45f), new Color(0.32f, 0.29f, 0.22f, 1f));
+            CreateQuestMarker(parent, "WorldTrace_ClawMarks", "Claw marks", "Inspect", QuestService.ActionSwampTracesFound, "Deep claw cuts in the mud point toward the south pool.", "Marta should explain what to look for first.", new Vector3(5.4f, 0.08f, -70.2f), new Vector3(0.9f, 0.04f, 0.55f), new Color(0.18f, 0.12f, 0.08f, 1f));
+            CreateQuestMarker(parent, "WorldTrace_SlimeTrail", "Black slime trail", "Inspect", QuestService.ActionSwampTracesFound, "The slime bubbles like something alive. The trail bends toward the drowned reeds.", "The slime looks wrong, but Reynard needs Marta's warning first.", new Vector3(9.5f, 0.08f, -73.2f), new Vector3(0.55f, 0.04f, 1.1f), new Color(0.08f, 0.16f, 0.11f, 1f));
+            CreateQuestMarker(parent, "WorldTrace_TornCloth", "Torn cloth", "Inspect", QuestService.ActionSwampTracesFound, "A strip of wet cloth hangs from the reeds. Someone was dragged deeper.", "This cloth is just a rag until Reynard knows the swamp signs.", new Vector3(12.0f, 0.08f, -70.8f), new Vector3(0.45f, 0.04f, 0.45f), new Color(0.32f, 0.29f, 0.22f, 1f));
         }
 
         private static void CreateWorldDrowner(Transform parent)
         {
-            var drowner = CreateCapsule(parent, "WorldDrowner_Prototype", new Vector3(8.5f, 1f, -28.4f), new Vector3(0.9f, 0.85f, 0.9f), new Color(0.08f, 0.18f, 0.14f, 1f));
+            var drowner = CreateCapsule(parent, "WorldDrowner_Prototype", new Vector3(12.5f, 1f, -75.4f), new Vector3(0.9f, 0.85f, 0.9f), new Color(0.08f, 0.18f, 0.14f, 1f));
             drowner.transform.rotation = Quaternion.Euler(0f, -140f, 0f);
             var renderer = drowner.GetComponent<Renderer>();
             if (renderer != null)
@@ -785,6 +825,7 @@ namespace WitcherRightVersion.Editor
             AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
             var ai = drowner.AddComponent<EnemyAI>();
             ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
+            ai.ConfigureCombat(9f, 1.6f, 2.0f, 10f, 1.55f);
         }
 
         private static void CreateWorldDrownerNestQuest(Transform parent)
@@ -813,9 +854,9 @@ namespace WitcherRightVersion.Editor
                 new Vector3(0.42f, 0.16f, 0.42f),
                 new Color(0.2f, 0.15f, 0.08f, 1f));
 
-            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_01", new Vector3(10.6f, 1f, -29.8f), Quaternion.Euler(0f, -120f, 0f), "DrownerNestEnemy01Killed");
-            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_02", new Vector3(11.8f, 1f, -26.5f), Quaternion.Euler(0f, -155f, 0f), "DrownerNestEnemy02Killed");
-            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_03", new Vector3(7.0f, 1f, -31.2f), Quaternion.Euler(0f, -80f, 0f), "DrownerNestEnemy03Killed");
+            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_01", new Vector3(14.6f, 1f, -76.8f), Quaternion.Euler(0f, -120f, 0f), "DrownerNestEnemy01Killed");
+            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_02", new Vector3(15.8f, 1f, -73.5f), Quaternion.Euler(0f, -155f, 0f), "DrownerNestEnemy02Killed");
+            CreateWorldNestDrowner(parent, "WorldDrownerNestEnemy_03", new Vector3(11.0f, 1f, -78.2f), Quaternion.Euler(0f, -80f, 0f), "DrownerNestEnemy03Killed");
         }
 
         private static void CreateWorldNestDrowner(Transform parent, string objectName, Vector3 position, Quaternion rotation, string deathFlag)
@@ -845,12 +886,13 @@ namespace WitcherRightVersion.Editor
             AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
             var ai = drowner.AddComponent<EnemyAI>();
             ai.Configure("Nest drowner", false, deathFlag, QuestService.ActionDrownerNestEnemyKilled, "drownerNestStarted", "Nest drowner is dead. Keep clearing the den.");
+            ai.ConfigureCombat(8f, 1.55f, 2.15f, 9f, 1.6f);
         }
 
         private static void CreateTowerSkeletonGuards(Transform parent)
         {
-            CreateSkeletonGuard(parent, "TowerSkeletonGuard_Left", new Vector3(-4.5f, 1f, 27.5f), Quaternion.Euler(0f, 35f, 0f));
-            CreateSkeletonGuard(parent, "TowerSkeletonGuard_Right", new Vector3(4.5f, 1f, 27.5f), Quaternion.Euler(0f, -35f, 0f));
+            CreateSkeletonGuard(parent, "TowerSkeletonGuard_Left", new Vector3(-4.5f, 1f, 75.5f), Quaternion.Euler(0f, 35f, 0f));
+            CreateSkeletonGuard(parent, "TowerSkeletonGuard_Right", new Vector3(4.5f, 1f, 75.5f), Quaternion.Euler(0f, -35f, 0f));
         }
 
         private static void CreateSkeletonGuard(Transform parent, string objectName, Vector3 position, Quaternion rotation)
@@ -880,23 +922,24 @@ namespace WitcherRightVersion.Editor
             AddCombatVisual(guard, new Color(1f, 0.2f, 0.1f, 1f), new Color(0.12f, 0.1f, 0.08f, 1f));
             var ai = guard.AddComponent<EnemyAI>();
             ai.Configure("Skeleton guard", false, objectName + "_Defeated", "");
+            ai.ConfigureCombat(8.5f, 1.65f, 1.65f, 14f, 1.8f);
         }
 
         private static void CreateWorldCraftingObjects(Transform parent)
         {
             CreateSupplyCrate(parent, "WorldMartaHerbBasket", "Marta's herb basket", "Take herbs", new[] { "Swallow Grass", "Field Ration", "Bogweed" }, "Resources gained: Swallow Grass, Field Ration, Bogweed.", new Vector3(5.5f, 0.2f, -4.7f), new Vector3(0.5f, 0.25f, 0.5f), new Color(0.13f, 0.28f, 0.12f, 1f));
-            CreateSupplyCrate(parent, "WorldForgeSupplies", "Forge supplies", "Take supplies", new[] { "Iron Ore", "Wolf Pelt", "Drowner Slime" }, "Resources gained: Iron Ore, Wolf Pelt, Drowner Slime.", new Vector3(-2.1f, 0.2f, 1.1f), new Vector3(0.6f, 0.3f, 0.5f), new Color(0.25f, 0.19f, 0.12f, 1f));
+            CreateSupplyCrate(parent, "WorldForgeSupplies", "Forge supplies", "Take supplies", new[] { "Iron Ore", "Wolf Pelt", "Drowner Slime" }, "Resources gained: Iron Ore, Wolf Pelt, Drowner Slime.", new Vector3(-4.7f, 0.2f, 0.9f), new Vector3(0.6f, 0.3f, 0.5f), new Color(0.25f, 0.19f, 0.12f, 1f));
             CreateCraftingStation(parent, "WorldAlchemyTable_Swallow", "Alchemy table: Swallow", "Craft", "swallow", new Vector3(5.1f, 0.35f, -5.7f), new Vector3(0.95f, 0.2f, 0.58f), new Color(0.11f, 0.24f, 0.16f, 1f));
             CreateCraftingStation(parent, "WorldAlchemyTable_Antitoxin", "Alchemy table: Antitoxin", "Craft", "antitoxin", new Vector3(5.1f, 0.62f, -5.7f), new Vector3(0.7f, 0.08f, 0.42f), new Color(0.08f, 0.36f, 0.26f, 1f));
-            CreateCraftingStation(parent, "WorldForge_ReinforcedArmor", "Boris's forge: Reinforced Armor", "Craft", "reinforced_armor", new Vector3(-2.5f, 0.55f, 0.55f), new Vector3(0.85f, 0.32f, 0.58f), new Color(0.26f, 0.16f, 0.1f, 1f));
+            CreateCraftingStation(parent, "WorldForge_ReinforcedArmor", "Boris's forge: Reinforced Armor", "Craft", "reinforced_armor", new Vector3(-5.1f, 0.55f, 0.2f), new Vector3(0.85f, 0.32f, 0.58f), new Color(0.26f, 0.16f, 0.1f, 1f));
         }
 
         private static void CreateWorldForestQuestObjects(Transform parent)
         {
-            CreateQuestMarker(parent, "WorldHunterCamp_Start", "Abandoned hunter camp", "Inspect", QuestService.ActionStartMissingHunter, "The camp is torn open. Someone fled west into the trees.", "The camp waits in silence.", new Vector3(-21.6f, 0.12f, 1.8f), new Vector3(1.2f, 0.12f, 1.2f), new Color(0.24f, 0.15f, 0.08f, 1f), true);
-            CreateQuestMarker(parent, "WorldHunterClue_BloodTrail", "Blood trail", "Inspect", QuestService.ActionMissingHunterClueFound, "Fresh blood marks the moss.", "The trail makes more sense after the camp is inspected.", new Vector3(-25.5f, 0.08f, 4.2f), new Vector3(0.7f, 0.04f, 1.0f), new Color(0.3f, 0.04f, 0.03f, 1f));
-            CreateQuestMarker(parent, "WorldHunterClue_BrokenKnife", "Broken knife", "Inspect", QuestService.ActionMissingHunterClueFound, "The blade snapped against bone or old iron.", "A broken knife, but not yet a story.", new Vector3(-28.2f, 0.1f, 8.4f), new Vector3(0.45f, 0.05f, 0.55f), new Color(0.36f, 0.34f, 0.3f, 1f));
-            CreateQuestMarker(parent, "WorldHunterCamp_RewardPouch", "Hunter's hidden pouch", "Take reward", QuestService.ActionMissingHunterReturned, "You find coin and a note: Ivar survived the first night.", "The pouch stays hidden until the trail is understood.", new Vector3(-20.8f, 0.16f, 0.5f), new Vector3(0.4f, 0.18f, 0.4f), new Color(0.24f, 0.18f, 0.1f, 1f));
+            CreateQuestMarker(parent, "WorldHunterCamp_Start", "Abandoned hunter camp", "Inspect", QuestService.ActionStartMissingHunter, "The camp is torn open. Someone fled west into the trees.", "The camp waits in silence.", new Vector3(-67.6f, 0.12f, 5.8f), new Vector3(1.2f, 0.12f, 1.2f), new Color(0.24f, 0.15f, 0.08f, 1f), true);
+            CreateQuestMarker(parent, "WorldHunterClue_BloodTrail", "Blood trail", "Inspect", QuestService.ActionMissingHunterClueFound, "Fresh blood marks the moss.", "The trail makes more sense after the camp is inspected.", new Vector3(-71.5f, 0.08f, 8.2f), new Vector3(0.7f, 0.04f, 1.0f), new Color(0.3f, 0.04f, 0.03f, 1f));
+            CreateQuestMarker(parent, "WorldHunterClue_BrokenKnife", "Broken knife", "Inspect", QuestService.ActionMissingHunterClueFound, "The blade snapped against bone or old iron.", "A broken knife, but not yet a story.", new Vector3(-74.2f, 0.1f, 12.4f), new Vector3(0.45f, 0.05f, 0.55f), new Color(0.36f, 0.34f, 0.3f, 1f));
+            CreateQuestMarker(parent, "WorldHunterCamp_RewardPouch", "Hunter's hidden pouch", "Take reward", QuestService.ActionMissingHunterReturned, "You find coin and a note: Ivar survived the first night.", "The pouch stays hidden until the trail is understood.", new Vector3(-66.8f, 0.16f, 4.5f), new Vector3(0.4f, 0.18f, 0.4f), new Color(0.24f, 0.18f, 0.1f, 1f));
         }
 
         private static void CreateWorldStoryEvidenceObjects(Transform parent)
@@ -920,7 +963,7 @@ namespace WitcherRightVersion.Editor
                 "Take",
                 "MedallionFound",
                 "The medallion is old, scratched, and still warm near the mirror rot. Truth ending evidence recorded.",
-                new Vector3(2.5f, 0.18f, -31.4f),
+                new Vector3(6.5f, 0.18f, -78.4f),
                 new Vector3(0.38f, 0.08f, 0.38f),
                 new Color(0.82f, 0.66f, 0.28f, 1f),
                 QuestService.ActionMedallionFound);
@@ -932,7 +975,7 @@ namespace WitcherRightVersion.Editor
                 "Read",
                 "OrtenDiaryFound",
                 "Orten wrote how the mirror rewrites memory. Sacrifice ending evidence recorded.",
-                new Vector3(-1.4f, 0.28f, 28.4f),
+                new Vector3(-1.4f, 0.28f, 76.4f),
                 new Vector3(0.52f, 0.08f, 0.72f),
                 new Color(0.22f, 0.15f, 0.1f, 1f),
                 QuestService.ActionOrtenDiaryFound);
@@ -944,7 +987,7 @@ namespace WitcherRightVersion.Editor
                 "Break",
                 "MirrorShardsDestroyed",
                 "The shard cache cracks. The mirror loses one anchor in the living world.",
-                new Vector3(1.7f, 0.32f, 27.4f),
+                new Vector3(1.7f, 0.32f, 75.4f),
                 new Vector3(0.5f, 0.32f, 0.5f),
                 new Color(0.28f, 0.18f, 0.44f, 1f),
                 QuestService.ActionMirrorShardsDestroyed);
@@ -956,7 +999,7 @@ namespace WitcherRightVersion.Editor
                 "Touch",
                 "TowerRouteOpened",
                 "The tower stones answer the reed charm. The ruin route is marked for Reynard.",
-                new Vector3(5.2f, 0.28f, 24.6f),
+                new Vector3(5.2f, 0.28f, 72.6f),
                 new Vector3(0.65f, 0.12f, 0.65f),
                 new Color(0.16f, 0.28f, 0.21f, 1f),
                 QuestService.ActionTowerRouteOpened);
@@ -969,7 +1012,7 @@ namespace WitcherRightVersion.Editor
                 QuestService.ActionGhostMemoryHeard,
                 "A girl's voice names the well, the seal, and the men who called murder mercy.",
                 "The memory will not answer without the girl's medallion.",
-                new Vector3(-2.9f, 0.45f, 26.8f),
+                new Vector3(-2.9f, 0.45f, 74.8f),
                 new Vector3(0.42f, 0.42f, 0.42f),
                 new Color(0.58f, 0.52f, 0.82f, 1f));
 
@@ -993,12 +1036,12 @@ namespace WitcherRightVersion.Editor
                 "World final truth altar",
                 "Choose truth",
                 EndingService.TruthEndingType,
-                new Vector3(22.4f, 0.45f, 8.5f),
+                new Vector3(70.4f, 0.45f, 12.5f),
                 new Color(0.23f, 0.2f, 0.27f, 1f));
             CreateEndingAltarSilhouette(
                 parent,
                 "WorldFinalTruthSilhouette",
-                new Vector3(22.4f, 0f, 8.5f),
+                new Vector3(70.4f, 0f, 12.5f),
                 new Color(0.88f, 0.72f, 0.36f, 1f),
                 EndingType.Truth);
 
@@ -1008,12 +1051,12 @@ namespace WitcherRightVersion.Editor
                 "World final corrected-story altar",
                 "Choose lie",
                 EndingService.LieEndingType,
-                new Vector3(24.4f, 0.45f, 7.4f),
+                new Vector3(72.4f, 0.45f, 11.4f),
                 new Color(0.26f, 0.19f, 0.11f, 1f));
             CreateEndingAltarSilhouette(
                 parent,
                 "WorldFinalLieSilhouette",
-                new Vector3(24.4f, 0f, 7.4f),
+                new Vector3(72.4f, 0f, 11.4f),
                 new Color(0.72f, 0.43f, 0.17f, 1f),
                 EndingType.Lie);
 
@@ -1023,19 +1066,19 @@ namespace WitcherRightVersion.Editor
                 "World final sacrifice altar",
                 "Choose sacrifice",
                 EndingService.SacrificeEndingType,
-                new Vector3(24.4f, 0.45f, 9.7f),
+                new Vector3(72.4f, 0.45f, 13.7f),
                 new Color(0.19f, 0.1f, 0.12f, 1f));
             CreateEndingAltarSilhouette(
                 parent,
                 "WorldFinalSacrificeSilhouette",
-                new Vector3(24.4f, 0f, 9.7f),
+                new Vector3(72.4f, 0f, 13.7f),
                 new Color(0.72f, 0.12f, 0.08f, 1f),
                 EndingType.Sacrifice);
         }
 
         private static void CreateWorldFinalConsequences(Transform parent)
         {
-            var elsa = CreateRpgCharacterAnchor(parent, "FinalElsaAlly_World", "Wizard.fbx", new Vector3(21.0f, 1f, 6.9f), Quaternion.Euler(0f, 45f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            var elsa = CreateRpgCharacterAnchor(parent, "FinalElsaAlly_World", "Wizard.fbx", new Vector3(69.0f, 1f, 10.9f), Quaternion.Euler(0f, 45f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
             CreateCharacterGroundRing(elsa, "FinalElsaRoleRing", new Color(0.16f, 0.48f, 0.4f, 1f), 0.82f);
             elsa.AddComponent<FlagConditionalObject>().Configure("ElsaProtected");
             elsa.AddComponent<DialogueInteractable>().Configure(
@@ -1053,9 +1096,9 @@ namespace WitcherRightVersion.Editor
                             new DialogueChoice("Stay near the altar.", "", "", true)
                         })
                 });
-            CreateConditionalMarker(parent, "FinalElsaWardCircle", "Elsa's ward", "Inspect", "ElsaProtected", new Vector3(21.0f, 0.08f, 6.9f), new Vector3(1.1f, 0.04f, 1.1f), new Color(0.12f, 0.38f, 0.25f, 1f), "Elsa has marked a safer path through the ash.");
+            CreateConditionalMarker(parent, "FinalElsaWardCircle", "Elsa's ward", "Inspect", "ElsaProtected", new Vector3(69.0f, 0.08f, 10.9f), new Vector3(1.1f, 0.04f, 1.1f), new Color(0.12f, 0.38f, 0.25f, 1f), "Elsa has marked a safer path through the ash.");
 
-            var ivar = CreateRpgCharacterAnchor(parent, "FinalIvarAlly_World", "Ranger.fbx", new Vector3(26.1f, 1f, 6.5f), Quaternion.Euler(0f, -62f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
+            var ivar = CreateRpgCharacterAnchor(parent, "FinalIvarAlly_World", "Ranger.fbx", new Vector3(74.1f, 1f, 10.5f), Quaternion.Euler(0f, -62f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
             CreateCharacterGroundRing(ivar, "FinalIvarRoleRing", new Color(0.28f, 0.48f, 0.2f, 1f), 0.78f);
             ivar.AddComponent<FlagConditionalObject>().Configure("IvarSaved");
             ivar.AddComponent<DialogueInteractable>().Configure(
@@ -1074,12 +1117,12 @@ namespace WitcherRightVersion.Editor
                         })
                 });
 
-            CreateFinalEnforcer(parent, "FinalMayorEnforcer_01", new Vector3(26.9f, 1f, 8.6f), Quaternion.Euler(0f, -112f, 0f), "FinalMayorEnforcer01Defeated");
-            CreateFinalEnforcer(parent, "FinalMayorEnforcer_02", new Vector3(27.5f, 1f, 10.2f), Quaternion.Euler(0f, -138f, 0f), "FinalMayorEnforcer02Defeated");
+            CreateFinalEnforcer(parent, "FinalMayorEnforcer_01", new Vector3(74.9f, 1f, 12.6f), Quaternion.Euler(0f, -112f, 0f), "FinalMayorEnforcer01Defeated");
+            CreateFinalEnforcer(parent, "FinalMayorEnforcer_02", new Vector3(75.5f, 1f, 14.2f), Quaternion.Euler(0f, -138f, 0f), "FinalMayorEnforcer02Defeated");
 
-            CreateConditionalMarker(parent, "FinalMayorControlPost", "Voytsekh's control post", "Inspect", "ElsaBetrayed", new Vector3(25.6f, 0.25f, 4.9f), new Vector3(0.9f, 0.35f, 0.9f), new Color(0.36f, 0.18f, 0.08f, 1f), "The elder's people stand bolder after Elsa is handed over.");
-            CreateConditionalMarker(parent, "FinalTruthEvidenceShrine", "Medallion proof", "Inspect", "MedallionFound", new Vector3(22.2f, 0.22f, 10.2f), new Vector3(0.52f, 0.16f, 0.52f), new Color(0.7f, 0.55f, 0.23f, 1f), "The girl's medallion answers the Truth altar.");
-            CreateConditionalMarker(parent, "FinalSacrificeDiaryShrine", "Orten's diary proof", "Inspect", "OrtenDiaryFound", new Vector3(25.5f, 0.22f, 10.8f), new Vector3(0.52f, 0.16f, 0.52f), new Color(0.46f, 0.08f, 0.08f, 1f), "Orten's notes explain how to break the Mirror without asking it for another lie.");
+            CreateConditionalMarker(parent, "FinalMayorControlPost", "Voytsekh's control post", "Inspect", "ElsaBetrayed", new Vector3(73.6f, 0.25f, 8.9f), new Vector3(0.9f, 0.35f, 0.9f), new Color(0.36f, 0.18f, 0.08f, 1f), "The elder's people stand bolder after Elsa is handed over.");
+            CreateConditionalMarker(parent, "FinalTruthEvidenceShrine", "Medallion proof", "Inspect", "MedallionFound", new Vector3(70.2f, 0.22f, 14.2f), new Vector3(0.52f, 0.16f, 0.52f), new Color(0.7f, 0.55f, 0.23f, 1f), "The girl's medallion answers the Truth altar.");
+            CreateConditionalMarker(parent, "FinalSacrificeDiaryShrine", "Orten's diary proof", "Inspect", "OrtenDiaryFound", new Vector3(73.5f, 0.22f, 14.8f), new Vector3(0.52f, 0.16f, 0.52f), new Color(0.46f, 0.08f, 0.08f, 1f), "Orten's notes explain how to break the Mirror without asking it for another lie.");
         }
 
         private static void CreateFinalEnforcer(Transform parent, string objectName, Vector3 position, Quaternion rotation, string deathFlag)
@@ -1097,6 +1140,7 @@ namespace WitcherRightVersion.Editor
                 "",
                 "questionedElderVersion",
                 "Voytsekh's enforcer falls back from the ash road.");
+            ai.ConfigureCombat(10f, 1.7f, 2.4f, 11f, 1.45f);
         }
 
         private static void CreateConditionalMarker(
@@ -1222,7 +1266,7 @@ namespace WitcherRightVersion.Editor
             for (var i = 0; i < 24; i++)
             {
                 var angle = i * Mathf.PI * 2f / 24f;
-                var radius = 38f + (i % 3) * 1.2f;
+                var radius = 105f + (i % 3) * 1.8f;
                 var position = new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
                 PlaceKenney(root.transform, $"BoundaryTree_{i + 1:00}", i % 2 == 0 ? "tree-high-crooked.fbx" : "tree-high.fbx", position, Quaternion.Euler(0f, i * 31f, 0f), Vector3.one * 1.35f);
             }
