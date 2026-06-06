@@ -175,6 +175,8 @@ namespace WitcherRightVersion.Editor
             CreateLandmarkAndTraversalPass(root.transform);
             CreateWorldCompositionPolishPass(root.transform);
             CreateFullMapVisualOverhaulPass(root.transform);
+            CreateTerrainDepthAndSilhouettePass(root.transform);
+            CreateAmbientCharacterPopulationPass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -1203,6 +1205,182 @@ namespace WitcherRightVersion.Editor
             {
                 ApplyMaterialToChildRenderers(dragon, CreateMaterial("Assets/Materials/SwampOverhaulBossBackdrop.mat", new Color(0.12f, 0.16f, 0.12f, 1f)));
             }
+        }
+
+        private static void CreateTerrainDepthAndSilhouettePass(Transform parent)
+        {
+            var root = new GameObject("TerrainDepthAndSilhouettePass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageReliefSilhouette(root.transform);
+            CreateForestRidgeSilhouette(root.transform);
+            CreateSwampWaterMazeSilhouette(root.transform);
+            CreateAshRoadBattlefieldSilhouette(root.transform);
+            CreateTowerCliffSilhouette(root.transform);
+        }
+
+        private static void CreateVillageReliefSilhouette(Transform parent)
+        {
+            var root = new GameObject("VillageReliefSilhouette");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "VillageReliefOuterDitchNorth", new Vector3(0f, 0.058f, 21.8f), new Vector3(36f, 0.012f, 3.2f), new Color(0.055f, 0.075f, 0.046f, 1f));
+            CreateSurfacePatch(root.transform, "VillageReliefOuterDitchSouth", new Vector3(0f, 0.059f, -27.8f), new Vector3(34f, 0.012f, 3.4f), new Color(0.072f, 0.055f, 0.038f, 1f));
+            CreateSurfacePatch(root.transform, "VillageReliefRaisedMarketLip", new Vector3(0.4f, 0.19f, 6.6f), new Vector3(13f, 0.18f, 0.42f), new Color(0.13f, 0.095f, 0.057f, 1f));
+
+            for (var i = 0; i < 12; i++)
+            {
+                var x = -17.5f + i * 3.1f;
+                PlaceKenney(root.transform, $"VillageReliefNorthHedge_{i + 1:00}", i % 3 == 0 ? "hedge-large.fbx" : "hedge.fbx", new Vector3(x, 0f, 20.3f + (i % 2) * 0.7f), Quaternion.Euler(0f, 88f + i * 2f, 0f), Vector3.one * (0.88f + (i % 2) * 0.08f));
+                if (i % 4 == 0)
+                {
+                    PlaceKenney(root.transform, $"VillageReliefBrokenBoundary_{i + 1:00}", "fence-broken.fbx", new Vector3(x + 0.9f, 0f, -25.8f), Quaternion.Euler(0f, 72f, 0f), Vector3.one * 0.95f);
+                }
+            }
+
+            PlaceKayKit(root.transform, "VillageReliefBackHillLeft", "detail_hill.fbx", new Vector3(-23f, 0f, 20f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 1.45f);
+            PlaceKayKit(root.transform, "VillageReliefBackHillRight", "detail_hill.fbx", new Vector3(24f, 0f, 18.5f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 1.35f);
+        }
+
+        private static void CreateForestRidgeSilhouette(Transform parent)
+        {
+            var root = new GameObject("ForestRidgeSilhouette");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ForestRidgeShadowGully", new Vector3(-84f, 0.081f, -3.8f), new Vector3(45f, 0.012f, 5.2f), new Color(0.016f, 0.038f, 0.026f, 1f));
+            CreateSurfacePatch(root.transform, "ForestRidgeHighBank", new Vector3(-101f, 0.22f, 27f), new Vector3(34f, 0.28f, 4.8f), new Color(0.032f, 0.071f, 0.035f, 1f));
+
+            for (var i = 0; i < 16; i++)
+            {
+                PlaceKayKit(root.transform, $"ForestRidgeRockLine_{i + 1:00}", i % 2 == 0 ? "detail_rocks.fbx" : "detail_rocks_small.fbx", new Vector3(-57f - i * 4.2f, 0f, -0.8f + (i % 4) * 1.1f), Quaternion.Euler(0f, i * 17f, 0f), Vector3.one * (1.05f + (i % 4) * 0.13f));
+            }
+
+            for (var i = 0; i < 18; i++)
+            {
+                PlaceKenney(root.transform, $"ForestRidgeTallPineSilhouette_{i + 1:00}", i % 2 == 0 ? "tree-high-crooked.fbx" : "tree-high.fbx", new Vector3(-74f - (i % 9) * 5.2f, 0f, 28f + (i / 9) * 5.8f), Quaternion.Euler(0f, i * 29f, 0f), Vector3.one * (1.22f + (i % 3) * 0.1f));
+            }
+        }
+
+        private static void CreateSwampWaterMazeSilhouette(Transform parent)
+        {
+            var root = new GameObject("SwampWaterMazeSilhouette");
+            root.transform.SetParent(parent, false);
+
+            for (var i = 0; i < 9; i++)
+            {
+                var x = -10f + (i % 3) * 15f;
+                var z = -78f - (i / 3) * 13f;
+                CreateSurfacePatch(root.transform, $"SwampMazeWaterPocket_{i + 1:00}", new Vector3(x, 0.068f + i * 0.001f, z), new Vector3(8.5f + (i % 2) * 2.2f, 0.012f, 5.8f), new Color(0.008f, 0.032f, 0.03f, 1f));
+                CreateReedCluster(root.transform, $"SwampMazeReedIsland_{i + 1:00}", new Vector3(x + 3.8f, 0f, z + 2.7f), 1.25f + (i % 4) * 0.1f);
+            }
+
+            for (var i = 0; i < 10; i++)
+            {
+                PlaceKenney(root.transform, $"SwampMazeCrookedTreeWall_{i + 1:00}", "tree-high-crooked.fbx", new Vector3(-18f + i * 6.8f, 0f, -112f + (i % 2) * 5.5f), Quaternion.Euler(0f, i * 33f, 0f), Vector3.one * (1.05f + (i % 3) * 0.16f));
+            }
+
+            PlaceKayKit(root.transform, "SwampMazeCollapsedBridgeSilhouette", "bridge.fbx", new Vector3(25.5f, -0.03f, -104f), Quaternion.Euler(0f, -28f, 8f), Vector3.one * 0.9f);
+            CreatePointLight(root.transform, "SwampMazeDeepWispLight", new Vector3(-5f, 1.1f, -101f), new Color(0.08f, 0.58f, 0.36f, 1f), 0.48f, 12f);
+        }
+
+        private static void CreateAshRoadBattlefieldSilhouette(Transform parent)
+        {
+            var root = new GameObject("AshRoadBattlefieldSilhouette");
+            root.transform.SetParent(parent, false);
+
+            for (var i = 0; i < 8; i++)
+            {
+                CreateNonBlockingMarker(root.transform, $"AshBattlefieldCrater_{i + 1:00}", new Vector3(83f + i * 5.4f, 0.091f, -8f + (i % 4) * 5.2f), new Vector3(2.4f + (i % 2) * 0.9f, 0.03f, 1.35f), new Color(0.032f, 0.027f, 0.022f, 1f));
+            }
+
+            for (var i = 0; i < 18; i++)
+            {
+                PlaceKenney(root.transform, $"AshBattlefieldStakeLine_{i + 1:00}", i % 3 == 0 ? "pillar-wood.fbx" : "fence-broken.fbx", new Vector3(78f + i * 3.1f, 0f, -13.5f + (i % 2) * 2.2f), Quaternion.Euler(0f, 72f + i * 11f, (i % 2 == 0 ? 0f : 5f)), Vector3.one * (0.82f + (i % 3) * 0.08f));
+            }
+
+            PlaceKayKit(root.transform, "AshBattlefieldFarGateSilhouette", "wall_gate_closed.fbx", new Vector3(135f, 0f, 6f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.3f);
+            PlaceKayKit(root.transform, "AshBattlefieldMountainBlocker", "mountain.fbx", new Vector3(150f, 0f, 31f), Quaternion.Euler(0f, -38f, 0f), new Vector3(2.2f, 0.72f, 2.2f));
+            CreatePointLight(root.transform, "AshBattlefieldCoalLineLight", new Vector3(111f, 1.0f, -4f), new Color(0.95f, 0.18f, 0.06f, 1f), 0.42f, 14f);
+        }
+
+        private static void CreateTowerCliffSilhouette(Transform parent)
+        {
+            var root = new GameObject("TowerCliffSilhouette");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "TowerCliffRaisedNorthShelf", new Vector3(0f, 0.245f, 127f), new Vector3(42f, 0.33f, 8f), new Color(0.06f, 0.057f, 0.067f, 1f));
+            CreateSurfacePatch(root.transform, "TowerCliffShadowDropLeft", new Vector3(-17.5f, 0.11f, 105f), new Vector3(4.2f, 0.05f, 42f), new Color(0.026f, 0.025f, 0.032f, 1f));
+            CreateSurfacePatch(root.transform, "TowerCliffShadowDropRight", new Vector3(17.5f, 0.11f, 105f), new Vector3(4.2f, 0.05f, 42f), new Color(0.026f, 0.025f, 0.032f, 1f));
+
+            for (var i = 0; i < 18; i++)
+            {
+                var side = i % 2 == 0 ? -1f : 1f;
+                var z = 90f + i * 2.4f;
+                PlaceKenney(root.transform, $"TowerCliffBrokenColumn_{i + 1:00}", i % 3 == 0 ? "pillar-stone.fbx" : "wall-block.fbx", new Vector3(side * (10f + (i % 4) * 1.8f), 0f, z), Quaternion.Euler(0f, side * (16f + i * 8f), 0f), Vector3.one * (0.8f + (i % 4) * 0.1f));
+            }
+
+            CreatePointLight(root.transform, "TowerCliffColdBackLight", new Vector3(0f, 2.2f, 126f), new Color(0.34f, 0.32f, 0.7f, 1f), 0.62f, 20f);
+        }
+
+        private static void CreateAmbientCharacterPopulationPass(Transform parent)
+        {
+            var root = new GameObject("AmbientCharacterPopulationPass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageAmbientPopulation(root.transform);
+            CreateForestAmbientPopulation(root.transform);
+            CreateAshRoadAmbientPopulation(root.transform);
+            CreateTowerAmbientPopulation(root.transform);
+        }
+
+        private static void CreateVillageAmbientPopulation(Transform parent)
+        {
+            var root = new GameObject("VillageAmbientPopulation");
+            root.transform.SetParent(parent, false);
+
+            CreateAmbientCharacter(root.transform, "AmbientVillager_Market_01", "Monk.fbx", new Vector3(-2.8f, 1f, 2.8f), Quaternion.Euler(0f, 122f, 0f), new Color(0.24f, 0.18f, 0.12f, 1f), 0.78f);
+            CreateAmbientCharacter(root.transform, "AmbientVillager_Market_02", "Cleric.fbx", new Vector3(3.8f, 1f, 2.1f), Quaternion.Euler(0f, -118f, 0f), new Color(0.16f, 0.22f, 0.14f, 1f), 0.76f);
+            CreateAmbientCharacter(root.transform, "AmbientVillager_Gate_01", "Rogue.fbx", new Vector3(-7.4f, 1f, -17.2f), Quaternion.Euler(0f, 45f, 0f), new Color(0.18f, 0.14f, 0.1f, 1f), 0.74f);
+            CreateAmbientCharacter(root.transform, "AmbientVillager_Gate_02", "Warrior.fbx", new Vector3(8.2f, 1f, -16.8f), Quaternion.Euler(0f, -42f, 0f), new Color(0.2f, 0.13f, 0.09f, 1f), 0.76f);
+        }
+
+        private static void CreateForestAmbientPopulation(Transform parent)
+        {
+            var root = new GameObject("ForestAmbientPopulation");
+            root.transform.SetParent(parent, false);
+
+            CreateAmbientCharacter(root.transform, "AmbientForestHunter_01", "Ranger.fbx", new Vector3(-92.5f, 1f, 8.2f), Quaternion.Euler(0f, 72f, 0f), new Color(0.13f, 0.17f, 0.11f, 1f), 0.76f);
+            CreateAmbientCharacter(root.transform, "AmbientForestHunter_02", "Rogue.fbx", new Vector3(-102.4f, 1f, -5.8f), Quaternion.Euler(0f, -34f, 0f), new Color(0.15f, 0.13f, 0.09f, 1f), 0.72f);
+        }
+
+        private static void CreateAshRoadAmbientPopulation(Transform parent)
+        {
+            var root = new GameObject("AshRoadAmbientPopulation");
+            root.transform.SetParent(parent, false);
+
+            CreateAmbientCharacter(root.transform, "AmbientAshRoadRefugee_01", "Monk.fbx", new Vector3(88.4f, 1f, 24.8f), Quaternion.Euler(0f, -86f, 0f), new Color(0.18f, 0.14f, 0.11f, 1f), 0.7f);
+            CreateAmbientCharacter(root.transform, "AmbientAshRoadRefugee_02", "Cleric.fbx", new Vector3(94.2f, 1f, 19.7f), Quaternion.Euler(0f, -122f, 0f), new Color(0.18f, 0.12f, 0.1f, 1f), 0.72f);
+        }
+
+        private static void CreateTowerAmbientPopulation(Transform parent)
+        {
+            var root = new GameObject("TowerAmbientPopulation");
+            root.transform.SetParent(parent, false);
+
+            CreateAmbientCharacter(root.transform, "AmbientTowerMemory_01", "Wizard.fbx", new Vector3(-6.8f, 1f, 91.5f), Quaternion.Euler(0f, 28f, 0f), new Color(0.18f, 0.15f, 0.28f, 1f), 0.66f);
+            CreateAmbientCharacter(root.transform, "AmbientTowerMemory_02", "Wizard.fbx", new Vector3(7.4f, 1f, 97.2f), Quaternion.Euler(0f, -36f, 0f), new Color(0.15f, 0.15f, 0.29f, 1f), 0.62f);
+        }
+
+        private static void CreateAmbientCharacter(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Color fallbackColor, float scale)
+        {
+            var character = CreateRpgCharacterAnchor(parent, objectName, modelName, position, rotation, Vector3.one * scale, fallbackColor);
+            var collider = character.GetComponent<Collider>();
+            if (collider != null)
+            {
+                Object.DestroyImmediate(collider);
+            }
+
+            CreateCharacterGroundRing(character, $"{objectName}_PresenceRing", new Color(0.36f, 0.28f, 0.14f, 1f), 0.62f);
         }
 
         private static void CreateWorldDressing(Transform parent)
