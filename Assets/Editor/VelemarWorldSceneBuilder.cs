@@ -174,6 +174,7 @@ namespace WitcherRightVersion.Editor
             CreateGameplayCompositionPass(root.transform);
             CreateLandmarkAndTraversalPass(root.transform);
             CreateWorldCompositionPolishPass(root.transform);
+            CreateFullMapVisualOverhaulPass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -1031,6 +1032,177 @@ namespace WitcherRightVersion.Editor
 
             PlaceKayKit(root.transform, "TowerOuterRuinsBackdropWall", "wall_straight.fbx", new Vector3(0f, 0f, 132f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * 1.65f);
             CreatePointLight(root.transform, "TowerOuterRuinVioletLight", new Vector3(0f, 2.0f, 116f), new Color(0.42f, 0.24f, 0.74f, 1f), 0.95f, 14f);
+        }
+
+        private static void CreateFullMapVisualOverhaulPass(Transform parent)
+        {
+            var root = new GameObject("FullMapVisualOverhaulPass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageStreetOverhaul(root.transform);
+            CreateForestDepthOverhaul(root.transform);
+            CreateSwampDepthOverhaul(root.transform);
+            CreateAshRoadDepthOverhaul(root.transform);
+            CreateTowerDepthOverhaul(root.transform);
+            CreateCreatureModelShowcase(root.transform);
+        }
+
+        private static void CreateVillageStreetOverhaul(Transform parent)
+        {
+            var root = new GameObject("VillageStreetOverhaul");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "VillageOverhaulMarketMud", new Vector3(0.5f, 0.134f, -0.2f), new Vector3(16f, 0.012f, 9.5f), new Color(0.108f, 0.083f, 0.051f, 1f));
+            CreateSurfacePatch(root.transform, "VillageOverhaulNorthLaneMud", new Vector3(0f, 0.136f, 12.2f), new Vector3(28f, 0.012f, 5.4f), new Color(0.116f, 0.089f, 0.052f, 1f));
+            CreateSurfacePatch(root.transform, "VillageOverhaulSouthGateMud", new Vector3(0f, 0.138f, -18.8f), new Vector3(28f, 0.012f, 5.4f), new Color(0.105f, 0.078f, 0.047f, 1f));
+
+            for (var i = 0; i < 10; i++)
+            {
+                PlaceKenney(root.transform, $"VillageOverhaulFenceLineNorth_{i + 1:00}", i % 3 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(-14f + i * 3.2f, 0f, 16.6f), Quaternion.Euler(0f, 88f + (i % 2) * 5f, 0f), Vector3.one * 1.05f);
+                PlaceKenney(root.transform, $"VillageOverhaulFenceLineSouth_{i + 1:00}", i % 4 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(-14f + i * 3.2f, 0f, -22.4f), Quaternion.Euler(0f, 90f - (i % 2) * 5f, 0f), Vector3.one * 1.05f);
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                var x = -8.4f + i * 2.4f;
+                PlaceKenney(root.transform, $"VillageOverhaulMarketCrate_{i + 1:00}", i % 2 == 0 ? "stall-bench.fbx" : "stall-stool.fbx", new Vector3(x, 0f, -0.2f + (i % 2) * 2.2f), Quaternion.Euler(0f, -28f + i * 13f, 0f), Vector3.one * (0.8f + (i % 3) * 0.06f));
+            }
+
+            PlaceKayKit(root.transform, "VillageOverhaulGateHouseLeft", "house.fbx", new Vector3(-12.8f, 0f, -19.0f), Quaternion.Euler(0f, 32f, 0f), Vector3.one * 0.86f);
+            PlaceKayKit(root.transform, "VillageOverhaulGateHouseRight", "house.fbx", new Vector3(12.8f, 0f, -18.8f), Quaternion.Euler(0f, -34f, 0f), Vector3.one * 0.86f);
+            PlaceKenney(root.transform, "VillageOverhaulGateCartBlock", "cart-high.fbx", new Vector3(6.5f, 0f, -16.9f), Quaternion.Euler(0f, -62f, 0f), Vector3.one * 0.86f);
+            CreatePointLight(root.transform, "VillageOverhaulMarketWarmLight", new Vector3(0.8f, 1.8f, 0.6f), new Color(1f, 0.55f, 0.25f, 1f), 0.6f, 10f);
+        }
+
+        private static void CreateForestDepthOverhaul(Transform parent)
+        {
+            var root = new GameObject("ForestDepthOverhaul");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ForestOverhaulNeedleFloor", new Vector3(-92f, 0.071f, 22f), new Vector3(44f, 0.012f, 26f), new Color(0.026f, 0.066f, 0.032f, 1f));
+            CreateSurfacePatch(root.transform, "ForestOverhaulWolfClearing", new Vector3(-76f, 0.073f, 12f), new Vector3(13f, 0.012f, 9f), new Color(0.043f, 0.078f, 0.038f, 1f));
+
+            for (var i = 0; i < 64; i++)
+            {
+                var side = i % 2 == 0 ? -1f : 1f;
+                var x = -55f - (i % 16) * 4.8f;
+                var z = 7f + side * (7f + (i / 16) * 4.2f) + (i % 3) * 0.7f;
+                PlaceKenney(root.transform, $"ForestOverhaulTreeWall_{i + 1:00}", i % 5 == 0 ? "tree-high-crooked.fbx" : i % 5 == 1 ? "tree-high-round.fbx" : "tree-high.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, i * 23f, 0f), Vector3.one * (1.05f + (i % 4) * 0.11f));
+            }
+
+            for (var i = 0; i < 10; i++)
+            {
+                PlaceKayKit(root.transform, $"ForestOverhaulRockRib_{i + 1:00}", i % 2 == 0 ? "detail_rocks.fbx" : "detail_rocks_small.fbx", new Vector3(-64f - i * 5.5f, 0f, 1.8f + (i % 3) * 2.4f), Quaternion.Euler(0f, 22f + i * 19f, 0f), Vector3.one * (1.0f + (i % 3) * 0.18f));
+            }
+
+            PlaceKayKit(root.transform, "ForestOverhaulDeepMineMouth", "mine.fbx", new Vector3(-113f, 0f, 14f), Quaternion.Euler(0f, 82f, 0f), Vector3.one * 0.82f);
+            PlaceKayKit(root.transform, "ForestOverhaulWatchBlind", "watchtower.fbx", new Vector3(-87f, 0f, 31f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.68f);
+            CreatePointLight(root.transform, "ForestOverhaulMoonPool", new Vector3(-76f, 1.4f, 12f), new Color(0.32f, 0.46f, 0.72f, 1f), 0.42f, 13f);
+        }
+
+        private static void CreateSwampDepthOverhaul(Transform parent)
+        {
+            var root = new GameObject("SwampDepthOverhaul");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "SwampOverhaulDarkWaterA", new Vector3(23f, 0.069f, -82f), new Vector3(30f, 0.012f, 22f), new Color(0.01f, 0.034f, 0.032f, 1f));
+            CreateSurfacePatch(root.transform, "SwampOverhaulDarkWaterB", new Vector3(-9f, 0.071f, -92f), new Vector3(22f, 0.012f, 28f), new Color(0.012f, 0.04f, 0.034f, 1f));
+            CreateSurfacePatch(root.transform, "SwampOverhaulNestMud", new Vector3(14f, 0.132f, -75f), new Vector3(12f, 0.012f, 9f), new Color(0.024f, 0.052f, 0.037f, 1f));
+
+            for (var i = 0; i < 34; i++)
+            {
+                var x = -12f + (i % 9) * 5.4f;
+                var z = -104f + (i / 9) * 8.2f + (i % 2) * 1.1f;
+                CreateReedCluster(root.transform, $"SwampOverhaulReedMass_{i + 1:00}", new Vector3(x, 0f, z), 1.2f + (i % 5) * 0.13f);
+                if (i % 4 == 0)
+                {
+                    PlaceKenney(root.transform, $"SwampOverhaulDeadTree_{i + 1:00}", "tree-crooked.fbx", new Vector3(x + 1.9f, 0f, z + 2.2f), Quaternion.Euler(0f, i * 31f, 0f), Vector3.one * (1.1f + (i % 3) * 0.15f));
+                }
+            }
+
+            for (var i = 0; i < 14; i++)
+            {
+                PlaceKenney(root.transform, $"SwampOverhaulBrokenBoardwalk_{i + 1:00}", i % 3 == 0 ? "planks-opening.fbx" : "planks-half.fbx", new Vector3(-2f + i * 2.1f, 0.055f, -84f - Mathf.Sin(i * 0.6f) * 3.2f), Quaternion.Euler(0f, 76f + i * 5f, 0f), Vector3.one * 0.82f);
+            }
+
+            var bat = InstantiateModel($"{MonsterPath}/Bat.fbx", "SwampOverhaulBatSwarmMarker", root.transform, new Vector3(21f, 2.4f, -88f), Quaternion.Euler(0f, -120f, 0f), Vector3.one * 0.85f);
+            if (bat != null)
+            {
+                ApplyMaterialToChildRenderers(bat, CreateMaterial("Assets/Materials/SwampOverhaulBatVisual.mat", new Color(0.045f, 0.055f, 0.05f, 1f)));
+            }
+
+            CreatePointLight(root.transform, "SwampOverhaulGreenFogLight", new Vector3(10f, 1.3f, -88f), new Color(0.12f, 0.62f, 0.36f, 1f), 0.55f, 18f);
+        }
+
+        private static void CreateAshRoadDepthOverhaul(Transform parent)
+        {
+            var root = new GameObject("AshRoadDepthOverhaul");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "AshRoadOverhaulCharredStreet", new Vector3(96f, 0.074f, 6f), new Vector3(50f, 0.012f, 8f), new Color(0.082f, 0.066f, 0.055f, 1f));
+            CreateSurfacePatch(root.transform, "AshRoadOverhaulBurntYards", new Vector3(101f, 0.076f, 21f), new Vector3(44f, 0.012f, 19f), new Color(0.105f, 0.08f, 0.064f, 1f));
+
+            for (var i = 0; i < 22; i++)
+            {
+                var x = 80f + (i % 11) * 4.0f;
+                var z = 1.5f + (i / 11) * 19f + (i % 2) * 1.3f;
+                PlaceKenney(root.transform, $"AshRoadOverhaulRuinWall_{i + 1:00}", i % 4 == 0 ? "wall-wood-broken.fbx" : i % 4 == 1 ? "wall-broken.fbx" : i % 4 == 2 ? "wall-wood-half.fbx" : "pillar-wood.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, i * 27f, 0f), Vector3.one * (0.95f + (i % 4) * 0.09f));
+                if (i % 3 == 0)
+                {
+                    CreateNonBlockingMarker(root.transform, $"AshRoadOverhaulBurnMark_{i + 1:00}", new Vector3(x + 0.5f, 0.086f, z - 0.2f), new Vector3(1.8f, 0.025f, 1.1f), new Color(0.032f, 0.027f, 0.024f, 1f));
+                }
+            }
+
+            PlaceKayKit(root.transform, "AshRoadOverhaulFortGate", "wall_gate_closed.fbx", new Vector3(119f, 0f, 5.6f), Quaternion.Euler(0f, 92f, 0f), Vector3.one * 1.18f);
+            PlaceKayKit(root.transform, "AshRoadOverhaulLeftTower", "watchtower.fbx", new Vector3(110f, 0f, 19f), Quaternion.Euler(0f, -24f, 0f), Vector3.one * 0.86f);
+            PlaceKayKit(root.transform, "AshRoadOverhaulRightTower", "watchtower.fbx", new Vector3(126f, 0f, -4f), Quaternion.Euler(0f, 32f, 0f), Vector3.one * 0.86f);
+            CreatePointLight(root.transform, "AshRoadOverhaulFirelineLight", new Vector3(98f, 1.4f, 8f), new Color(1f, 0.28f, 0.08f, 1f), 0.58f, 17f);
+        }
+
+        private static void CreateTowerDepthOverhaul(Transform parent)
+        {
+            var root = new GameObject("TowerDepthOverhaul");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "TowerOverhaulColdCourt", new Vector3(0f, 0.075f, 95f), new Vector3(24f, 0.012f, 42f), new Color(0.058f, 0.058f, 0.068f, 1f));
+            CreateSurfacePatch(root.transform, "TowerOverhaulMirrorScar", new Vector3(0f, 0.086f, 83f), new Vector3(9f, 0.012f, 20f), new Color(0.18f, 0.12f, 0.32f, 1f));
+
+            for (var i = 0; i < 30; i++)
+            {
+                var side = i % 2 == 0 ? -1f : 1f;
+                var z = 78f + i * 1.8f;
+                var x = side * (5.6f + (i % 5) * 1.15f);
+                PlaceKenney(root.transform, $"TowerOverhaulRuinSpine_{i + 1:00}", i % 5 == 0 ? "wall-arch.fbx" : i % 5 == 1 ? "wall-arch-top.fbx" : i % 5 == 2 ? "pillar-stone.fbx" : "wall-broken.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, side * (24f + i * 6f), 0f), Vector3.one * (0.86f + (i % 4) * 0.08f));
+            }
+
+            PlaceKayKit(root.transform, "TowerOverhaulCastleMassBack", "castle.fbx", new Vector3(0f, 0f, 134f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * 1.72f);
+            PlaceKayKit(root.transform, "TowerOverhaulLeftWallMass", "wall_straight.fbx", new Vector3(-18f, 0f, 116f), Quaternion.Euler(0f, 12f, 0f), Vector3.one * 1.7f);
+            PlaceKayKit(root.transform, "TowerOverhaulRightWallMass", "wall_straight.fbx", new Vector3(18f, 0f, 116f), Quaternion.Euler(0f, -12f, 0f), Vector3.one * 1.7f);
+            CreatePointLight(root.transform, "TowerOverhaulMirrorCoreLight", new Vector3(0f, 1.6f, 85f), new Color(0.52f, 0.28f, 0.92f, 1f), 0.85f, 18f);
+        }
+
+        private static void CreateCreatureModelShowcase(Transform parent)
+        {
+            var root = new GameObject("CreatureModelShowcase");
+            root.transform.SetParent(parent, false);
+
+            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", "TowerOverhaulSkeletonDisplay", root.transform, new Vector3(-7.2f, 0f, 86f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 0.95f);
+            if (skeleton != null)
+            {
+                ApplyMaterialToChildRenderers(skeleton, CreateMaterial("Assets/Materials/TowerOverhaulSkeletonDisplay.mat", new Color(0.36f, 0.35f, 0.32f, 1f)));
+            }
+
+            var slime = InstantiateModel($"{MonsterPath}/Slime.fbx", "SwampOverhaulDrownerDisplay", root.transform, new Vector3(18.5f, 0f, -83.5f), Quaternion.Euler(0f, -125f, 0f), Vector3.one * 1.35f);
+            if (slime != null)
+            {
+                ApplyMaterialToChildRenderers(slime, CreateMaterial("Assets/Materials/SwampOverhaulDrownerDisplay.mat", new Color(0.035f, 0.22f, 0.15f, 1f)));
+            }
+
+            var dragon = InstantiateModel($"{MonsterPath}/Dragon.fbx", "SwampOverhaulBossBackdrop", root.transform, new Vector3(36f, 0f, -118f), Quaternion.Euler(0f, -150f, 0f), Vector3.one * 1.45f);
+            if (dragon != null)
+            {
+                ApplyMaterialToChildRenderers(dragon, CreateMaterial("Assets/Materials/SwampOverhaulBossBackdrop.mat", new Color(0.12f, 0.16f, 0.12f, 1f)));
+            }
         }
 
         private static void CreateWorldDressing(Transform parent)
@@ -2597,12 +2769,42 @@ namespace WitcherRightVersion.Editor
             labelObject.transform.localRotation = rotation;
 
             var label = labelObject.AddComponent<TextMesh>();
-            label.text = text;
+            label.text = NormalizeZoneLabelText(name, text);
             label.fontSize = 38;
             label.characterSize = 0.08f;
             label.anchor = TextAnchor.MiddleCenter;
             label.alignment = TextAlignment.Center;
             label.color = new Color(0.9f, 0.78f, 0.48f, 1f);
+        }
+
+        private static string NormalizeZoneLabelText(string objectName, string fallbackText)
+        {
+            if (objectName.Contains("Village"))
+            {
+                return "\u0412\u0435\u0440\u0435\u0441\u043a\u043e\u0432\u044b\u0439 \u0411\u0440\u043e\u0434";
+            }
+
+            if (objectName.Contains("Forest"))
+            {
+                return "\u0421\u0442\u0430\u0440\u044b\u0439 \u041b\u0435\u0441";
+            }
+
+            if (objectName.Contains("Swamp"))
+            {
+                return "\u0427\u0451\u0440\u043d\u043e\u0435 \u0411\u043e\u043b\u043e\u0442\u043e";
+            }
+
+            if (objectName.Contains("AshRoad"))
+            {
+                return "\u041f\u0435\u043f\u0435\u043b\u044c\u043d\u044b\u0439 \u0442\u0440\u0430\u043a\u0442";
+            }
+
+            if (objectName.Contains("Tower"))
+            {
+                return "\u0420\u0443\u0438\u043d\u044b \u0411\u0430\u0448\u043d\u0438";
+            }
+
+            return fallbackText;
         }
 
         private static void CreateMarker(Transform parent, string name, Vector3 position, Vector3 scale, Color color)
