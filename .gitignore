@@ -46,6 +46,8 @@ desktop.ini
 Saves/
 *.tmp
 *.bak
+.env
+.env.*
 PROJECT_MEMORY.md
 ROADMAP.md
 Assets/Art/External/_Downloads/
