@@ -13,6 +13,7 @@ namespace WitcherRightVersion.Inventory
         public IReadOnlyList<string> Weapons => weapons;
         public IReadOnlyList<string> Items => items;
         public string EquippedWeapon { get; private set; }
+        public string EquippedArmor { get; private set; }
 
         private void Awake()
         {
@@ -36,6 +37,7 @@ namespace WitcherRightVersion.Inventory
             items.Add("Leather Witcher Armor");
 
             EquippedWeapon = "Witcher Silver Sword";
+            EquippedArmor = "Leather Witcher Armor";
         }
 
         public bool HasWeapon(string weaponName)
@@ -67,6 +69,10 @@ namespace WitcherRightVersion.Inventory
             }
 
             items.Add(itemName);
+            if (IsArmor(itemName) && string.IsNullOrWhiteSpace(EquippedArmor))
+            {
+                EquippedArmor = itemName;
+            }
             Debug.Log($"Item added: {itemName}", this);
         }
 
@@ -80,6 +86,11 @@ namespace WitcherRightVersion.Inventory
             var removed = items.Remove(itemName);
             if (removed)
             {
+                if (EquippedArmor == itemName)
+                {
+                    EquippedArmor = items.Find(IsArmor) ?? string.Empty;
+                }
+
                 Debug.Log($"Item removed: {itemName}", this);
             }
 
@@ -119,13 +130,67 @@ namespace WitcherRightVersion.Inventory
             Debug.Log($"Equipped weapon: {EquippedWeapon}", this);
         }
 
+        public bool EquipArmor(string armorName)
+        {
+            if (!HasItem(armorName) || !IsArmor(armorName))
+            {
+                return false;
+            }
+
+            EquippedArmor = armorName;
+            Debug.Log($"Equipped armor: {EquippedArmor}", this);
+            return true;
+        }
+
+        public string CycleWeapon()
+        {
+            if (weapons.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            var currentIndex = weapons.IndexOf(EquippedWeapon);
+            EquippedWeapon = weapons[(currentIndex + 1 + weapons.Count) % weapons.Count];
+            return EquippedWeapon;
+        }
+
+        public string CycleArmor()
+        {
+            var armor = new List<string>();
+            for (var i = 0; i < items.Count; i++)
+            {
+                if (IsArmor(items[i]))
+                {
+                    armor.Add(items[i]);
+                }
+            }
+
+            if (armor.Count == 0)
+            {
+                EquippedArmor = string.Empty;
+                return EquippedArmor;
+            }
+
+            var currentIndex = armor.IndexOf(EquippedArmor);
+            EquippedArmor = armor[(currentIndex + 1 + armor.Count) % armor.Count];
+            return EquippedArmor;
+        }
+
+        public static bool IsArmor(string itemName)
+        {
+            return itemName == "Leather Witcher Armor"
+                || itemName == "Reinforced Armor"
+                || itemName == "Swamp Cloak";
+        }
+
         public InventorySnapshot CaptureSnapshot()
         {
             return new InventorySnapshot
             {
                 weapons = weapons.ToArray(),
                 items = items.ToArray(),
-                equippedWeapon = EquippedWeapon
+                equippedWeapon = EquippedWeapon,
+                equippedArmor = EquippedArmor
             };
         }
 
@@ -158,8 +223,11 @@ namespace WitcherRightVersion.Inventory
             EquippedWeapon = !string.IsNullOrWhiteSpace(snapshot?.equippedWeapon) && weapons.Contains(snapshot.equippedWeapon)
                 ? snapshot.equippedWeapon
                 : weapons[0];
+            EquippedArmor = !string.IsNullOrWhiteSpace(snapshot?.equippedArmor) && items.Contains(snapshot.equippedArmor) && IsArmor(snapshot.equippedArmor)
+                ? snapshot.equippedArmor
+                : items.Find(IsArmor) ?? string.Empty;
 
-            Debug.Log($"Inventory restored. Equipped: {EquippedWeapon}", this);
+            Debug.Log($"Inventory restored. Weapon: {EquippedWeapon}, armor: {EquippedArmor}", this);
         }
     }
 
@@ -169,5 +237,6 @@ namespace WitcherRightVersion.Inventory
         public string[] weapons;
         public string[] items;
         public string equippedWeapon;
+        public string equippedArmor;
     }
 }

@@ -11,6 +11,7 @@ namespace WitcherRightVersion.Combat
     {
         [Header("Identity")]
         [SerializeField] private string enemyName = "Enemy";
+        [SerializeField] private EnemyKind enemyKind = EnemyKind.Monster;
         [SerializeField] private bool onlyActiveDuringDrownerStage = true;
         [SerializeField] private string deathFlagToSet = "killedFirstDrowner";
         [SerializeField] private string questActionOnDeath = QuestService.ActionFirstDrownerKilled;
@@ -26,6 +27,9 @@ namespace WitcherRightVersion.Combat
         [Header("Attack")]
         [SerializeField] private float damage = 12f;
         [SerializeField] private float attackCooldown = 1.4f;
+        [SerializeField] private float poisonChance;
+        [SerializeField] private float poisonDuration = 5f;
+        [SerializeField] private float poisonDamagePerTick = 3f;
 
         private Health health;
         private Health targetHealth;
@@ -38,6 +42,7 @@ namespace WitcherRightVersion.Combat
 
         public event Action AttackStarted;
         public event Action<float> Stunned;
+        public EnemyKind Kind => enemyKind;
 
         private void Awake()
         {
@@ -65,6 +70,11 @@ namespace WitcherRightVersion.Combat
                 : newDeathMessage;
         }
 
+        public void ConfigureKind(EnemyKind newEnemyKind)
+        {
+            enemyKind = newEnemyKind;
+        }
+
         public void ConfigureCombat(float newAggroRange, float newAttackRange, float newMoveSpeed, float newDamage, float newAttackCooldown)
         {
             aggroRange = Mathf.Max(0.5f, newAggroRange);
@@ -72,6 +82,13 @@ namespace WitcherRightVersion.Combat
             moveSpeed = Mathf.Max(0.1f, newMoveSpeed);
             damage = Mathf.Max(0f, newDamage);
             attackCooldown = Mathf.Max(0.2f, newAttackCooldown);
+        }
+
+        public void ConfigurePoison(float chance, float duration, float damagePerTick)
+        {
+            poisonChance = Mathf.Clamp01(chance);
+            poisonDuration = Mathf.Max(0f, duration);
+            poisonDamagePerTick = Mathf.Max(0f, damagePerTick);
         }
 
         private void Update()
@@ -132,6 +149,10 @@ namespace WitcherRightVersion.Combat
                 if (targetCombat != null)
                 {
                     targetCombat.ReceiveEnemyAttack(damage, gameObject);
+                    if (poisonChance > 0f && UnityEngine.Random.value <= poisonChance)
+                    {
+                        targetCombat.ApplyPoison(poisonDuration, poisonDamagePerTick);
+                    }
                 }
                 else
                 {

@@ -199,7 +199,8 @@ namespace WitcherRightVersion.UI
             builder.Append(" (").Append(rewards != null ? rewards.ExperienceIntoLevel : 0).Append("/");
             builder.Append(PlayerRewardService.ExperiencePerLevel).Append(")").AppendLine();
             builder.Append(L("Coins")).Append(": ").Append(rewards != null ? rewards.Coins : 0).AppendLine();
-            builder.Append(L("Equipped")).Append(": ").Append(L(inventory != null ? inventory.EquippedWeapon : "None")).AppendLine();
+            builder.Append(L("Equipped weapon")).Append(": ").Append(L(inventory != null ? inventory.EquippedWeapon : "None")).AppendLine();
+            builder.Append(L("Equipped armor")).Append(": ").Append(L(inventory != null ? inventory.EquippedArmor : "None")).AppendLine();
             builder.Append(L("Active quest")).Append(": ").Append(L(quest != null && quest.HasActiveQuest ? quest.ActiveQuestTitle : "None")).AppendLine();
             builder.AppendLine();
 
@@ -212,6 +213,8 @@ namespace WitcherRightVersion.UI
         {
             var inventory = InventoryService.Instance;
             builder.Append(L("Equipped weapon")).Append(": ").Append(L(inventory != null ? inventory.EquippedWeapon : "None")).AppendLine();
+            builder.Append(L("Equipped armor")).Append(": ").Append(L(inventory != null ? inventory.EquippedArmor : "None")).AppendLine();
+            builder.Append(GameLocalization.Select("T switches weapon. X switches armor.", "T меняет меч. X меняет броню.")).AppendLine();
             builder.AppendLine();
             builder.Append(L("Weapons")).AppendLine(":");
 

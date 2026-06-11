@@ -9,7 +9,7 @@ namespace WitcherRightVersion.Save
     [Serializable]
     public sealed class SaveData
     {
-        public string version = "exile-quest-0.20";
+        public string version = "combat-equipment-0.21";
         public string sceneName;
         public SerializableVector3 playerPosition;
         public float playerHealth;

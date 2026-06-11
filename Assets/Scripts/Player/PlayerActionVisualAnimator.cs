@@ -14,6 +14,7 @@ namespace WitcherRightVersion.Player
             HeavyAttack,
             Dodge,
             Aard,
+            Igni,
             Hit
         }
 
@@ -35,6 +36,7 @@ namespace WitcherRightVersion.Player
         [SerializeField] private float heavyAttackDuration = 0.72f;
         [SerializeField] private float dodgePoseDuration = 0.3f;
         [SerializeField] private float aardPoseDuration = 0.55f;
+        [SerializeField] private float igniPoseDuration = 0.58f;
         [SerializeField] private float hitPoseDuration = 0.24f;
 
         private PlayerController movement;
@@ -66,6 +68,7 @@ namespace WitcherRightVersion.Player
             combat.HeavyAttackStarted += HandleHeavyAttack;
             combat.DodgeStarted += HandleDodge;
             combat.AardStarted += HandleAard;
+            combat.IgniStarted += HandleIgni;
 
             if (health != null)
             {
@@ -81,6 +84,7 @@ namespace WitcherRightVersion.Player
                 combat.HeavyAttackStarted -= HandleHeavyAttack;
                 combat.DodgeStarted -= HandleDodge;
                 combat.AardStarted -= HandleAard;
+                combat.IgniStarted -= HandleIgni;
             }
 
             if (health != null)
@@ -222,6 +226,10 @@ namespace WitcherRightVersion.Player
                     rotation *= Quaternion.Euler(-arc * 11f, 0f, arc * 7f);
                     position.z += arc * 0.08f;
                     break;
+                case ActionPose.Igni:
+                    rotation *= Quaternion.Euler(-arc * 8f, arc * 6f, -arc * 12f);
+                    position.z += arc * 0.1f;
+                    break;
                 case ActionPose.Hit:
                     rotation *= Quaternion.Euler(arc * 12f, -arc * 18f, arc * 10f);
                     position.z -= arc * 0.1f;
@@ -266,6 +274,11 @@ namespace WitcherRightVersion.Player
         private void HandleAard()
         {
             BeginPose(ActionPose.Aard, aardPoseDuration);
+        }
+
+        private void HandleIgni()
+        {
+            BeginPose(ActionPose.Igni, igniPoseDuration);
         }
 
         private void HandleDamaged(Health damagedHealth, float amount, GameObject source)

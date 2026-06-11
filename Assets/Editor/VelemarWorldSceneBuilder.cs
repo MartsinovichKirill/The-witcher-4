@@ -2552,9 +2552,11 @@ namespace WitcherRightVersion.Editor
             health.Configure("World drowner", 72f);
             AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
             AddEnemyActionVisual(drowner, slime != null ? slime.transform : null, false);
-            var ai = drowner.AddComponent<EnemyAI>();
+            var ai = drowner.GetComponent<EnemyAI>() ?? drowner.AddComponent<EnemyAI>();
+            ai.ConfigureKind(EnemyKind.Monster);
             ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
             ai.ConfigureCombat(9f, 1.6f, 2.0f, 10f, 1.55f);
+            ai.ConfigurePoison(0.3f, 6f, 3f);
         }
 
         private static void CreateWorldDrownerNestQuest(Transform parent)
@@ -2614,9 +2616,11 @@ namespace WitcherRightVersion.Editor
             health.Configure("Nest drowner", 38f);
             AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
             AddEnemyActionVisual(drowner, slime != null ? slime.transform : null, false);
-            var ai = drowner.AddComponent<EnemyAI>();
+            var ai = drowner.GetComponent<EnemyAI>() ?? drowner.AddComponent<EnemyAI>();
+            ai.ConfigureKind(EnemyKind.Monster);
             ai.Configure("Nest drowner", false, deathFlag, QuestService.ActionDrownerNestEnemyKilled, "drownerNestStarted", "Nest drowner is dead. Keep clearing the den.");
             ai.ConfigureCombat(8f, 1.55f, 2.15f, 9f, 1.6f);
+            ai.ConfigurePoison(0.22f, 5f, 2.5f);
         }
 
         private static void CreateTowerSkeletonGuards(Transform parent)
@@ -2653,7 +2657,8 @@ namespace WitcherRightVersion.Editor
             health.Configure("Forest wolf", 34f);
             AddCombatVisual(wolf, new Color(1f, 0.2f, 0.08f, 1f), new Color(0.09f, 0.07f, 0.055f, 1f));
             AddEnemyActionVisual(wolf, visual != null ? visual.transform : null, true);
-            var ai = wolf.AddComponent<EnemyAI>();
+            var ai = wolf.GetComponent<EnemyAI>() ?? wolf.AddComponent<EnemyAI>();
+            ai.ConfigureKind(EnemyKind.Beast);
             ai.Configure("Forest wolf", false, deathFlag, "", "", "The forest wolf is dead.");
             ai.ConfigureCombat(11f, 1.45f, 3.15f, 8f, 1.15f);
             wolf.AddComponent<EnemyLootDrop>().Configure(
@@ -2681,7 +2686,8 @@ namespace WitcherRightVersion.Editor
             health.Configure("Ash Road bandit", maxHealth);
             AddCombatVisual(bandit, new Color(1f, 0.18f, 0.06f, 1f), new Color(0.1f, 0.05f, 0.035f, 1f));
             AddEnemyActionVisual(bandit, bandit.transform.Find($"{objectName}_Model"), false);
-            var ai = bandit.AddComponent<EnemyAI>();
+            var ai = bandit.GetComponent<EnemyAI>() ?? bandit.AddComponent<EnemyAI>();
+            ai.ConfigureKind(EnemyKind.Human);
             ai.Configure("Ash Road bandit", false, deathFlag, "", "", "The ambusher falls.");
             ai.ConfigureCombat(10.5f, 1.7f, 2.35f, damage, 1.4f);
             bandit.AddComponent<EnemyLootDrop>().Configure(
@@ -2719,7 +2725,8 @@ namespace WitcherRightVersion.Editor
             health.Configure("Tower skeleton guard", 62f);
             AddCombatVisual(guard, new Color(1f, 0.2f, 0.1f, 1f), new Color(0.12f, 0.1f, 0.08f, 1f));
             AddEnemyActionVisual(guard, skeleton != null ? skeleton.transform : null, false);
-            var ai = guard.AddComponent<EnemyAI>();
+            var ai = guard.GetComponent<EnemyAI>() ?? guard.AddComponent<EnemyAI>();
+            ai.ConfigureKind(EnemyKind.Undead);
             ai.Configure("Skeleton guard", false, objectName + "_Defeated", "");
             ai.ConfigureCombat(8.5f, 1.65f, 1.65f, 14f, 1.8f);
             guard.AddComponent<EnemyLootDrop>().Configure(
@@ -2942,7 +2949,8 @@ namespace WitcherRightVersion.Editor
             health.Configure("Voytsekh's enforcer", 55f);
             AddCombatVisual(enforcer, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.1f, 0.055f, 0.04f, 1f));
             AddEnemyActionVisual(enforcer, enforcer.transform.Find($"{objectName}_Model"), false);
-            var ai = enforcer.AddComponent<EnemyAI>();
+            var ai = enforcer.GetComponent<EnemyAI>() ?? enforcer.AddComponent<EnemyAI>();
+            ai.ConfigureKind(EnemyKind.Human);
             ai.Configure(
                 "Voytsekh's enforcer",
                 false,
@@ -3325,6 +3333,26 @@ namespace WitcherRightVersion.Editor
             var hud = canvasObject.AddComponent<HealthHudUI>();
             SetSerializedObjectReference(hud, "healthText", healthText);
             SetSerializedObjectReference(hud, "healthFill", fillImage);
+
+            var statusRoot = CreatePanel(canvasObject.transform, "CombatStatusPanel", new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(520f, 128f), new Vector2(44f, 154f), new Color(0.03f, 0.032f, 0.027f, 0.86f));
+            var statusText = CreateText(statusRoot.transform, "CombatStatusText", Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), new Vector2(-36f, -22f), Vector2.zero, 17, TextAnchor.MiddleLeft, new Color(0.9f, 0.86f, 0.75f, 1f));
+            var combatStatus = canvasObject.AddComponent<CombatStatusHudUI>();
+            combatStatus.Configure(statusText);
+
+            var deathRoot = CreatePanel(canvasObject.transform, "PlayerDeathPanel", Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.015f, 0.012f, 0.012f, 0.94f));
+            var deathCanvas = deathRoot.AddComponent<Canvas>();
+            deathCanvas.overrideSorting = true;
+            deathCanvas.sortingOrder = 100;
+            deathRoot.AddComponent<GraphicRaycaster>();
+            var deathTitle = CreateText(deathRoot.transform, "PlayerDeathTitle", new Vector2(0.25f, 0.6f), new Vector2(0.75f, 0.76f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, 46, TextAnchor.MiddleCenter, new Color(0.72f, 0.12f, 0.08f, 1f));
+            var deathDescription = CreateText(deathRoot.transform, "PlayerDeathDescription", new Vector2(0.25f, 0.48f), new Vector2(0.75f, 0.6f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, 23, TextAnchor.MiddleCenter, new Color(0.88f, 0.84f, 0.75f, 1f));
+            var retryButton = CreateUiButton(deathRoot.transform, "PlayerDeathRetryButton", "Retry", new Vector2(0.35f, 0.32f), new Vector2(0.49f, 0.41f));
+            var menuButton = CreateUiButton(deathRoot.transform, "PlayerDeathMenuButton", "Main Menu", new Vector2(0.51f, 0.32f), new Vector2(0.65f, 0.41f));
+            var deathUi = canvasObject.AddComponent<PlayerDeathUI>();
+            deathUi.Configure(deathRoot, deathTitle, deathDescription, retryButton.GetComponentInChildren<Text>(), menuButton.GetComponentInChildren<Text>());
+            UnityEventTools.AddPersistentListener(retryButton.onClick, deathUi.Retry);
+            UnityEventTools.AddPersistentListener(menuButton.onClick, deathUi.ReturnToMainMenu);
+            deathRoot.SetActive(false);
         }
 
         private static void CreateInventoryCanvas()

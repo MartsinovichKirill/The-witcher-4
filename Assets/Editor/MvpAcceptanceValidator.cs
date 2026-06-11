@@ -493,22 +493,61 @@ namespace WitcherRightVersion.Editor
                 RequireComponent<CombatVisualFeedback>(drowner, failures, "WorldDrowner_Prototype");
                 RequireComponent<EnemyActionVisualAnimator>(drowner, failures, "WorldDrowner_Prototype");
             }
+            RequireEnemyKind("WorldDrowner_Prototype", EnemyKind.Monster, failures);
             RequireObject("WorldDrownerThreatRing", failures);
+            RequireObject<CombatStatusHudUI>("HealthCanvas", failures);
+            RequireObject("CombatStatusPanel", failures);
+            RequireObject("CombatStatusText", failures);
+            RequireObject<PlayerDeathUI>("HealthCanvas", failures);
+            RequireObject("PlayerDeathPanel", failures);
+            RequireObject("PlayerDeathRetryButton", failures);
+            RequireObject("PlayerDeathMenuButton", failures);
 
             ValidateLootEnemy("TowerSkeletonGuard_Left", failures);
             ValidateLootEnemy("TowerSkeletonGuard_Right", failures);
+            RequireEnemyKind("TowerSkeletonGuard_Left", EnemyKind.Undead, failures);
+            RequireEnemyKind("TowerSkeletonGuard_Right", EnemyKind.Undead, failures);
             ValidateEnemy("WorldDrownerNestEnemy_01", failures);
             ValidateEnemy("WorldDrownerNestEnemy_02", failures);
             ValidateEnemy("WorldDrownerNestEnemy_03", failures);
+            RequireEnemyKind("WorldDrownerNestEnemy_01", EnemyKind.Monster, failures);
+            RequireEnemyKind("WorldDrownerNestEnemy_02", EnemyKind.Monster, failures);
+            RequireEnemyKind("WorldDrownerNestEnemy_03", EnemyKind.Monster, failures);
             ValidateLootEnemy("ForestWolf_01", failures);
             ValidateLootEnemy("ForestWolf_02", failures);
             ValidateLootEnemy("ForestWolf_03", failures);
+            RequireEnemyKind("ForestWolf_01", EnemyKind.Beast, failures);
+            RequireEnemyKind("ForestWolf_02", EnemyKind.Beast, failures);
+            RequireEnemyKind("ForestWolf_03", EnemyKind.Beast, failures);
             RequireObject("ForestWolf_01_Model", failures);
             ValidateLootEnemy("AshRoadBandit_01", failures);
             ValidateLootEnemy("AshRoadBandit_02", failures);
             ValidateLootEnemy("AshRoadBandit_03", failures);
+            RequireEnemyKind("AshRoadBandit_01", EnemyKind.Human, failures);
+            RequireEnemyKind("AshRoadBandit_02", EnemyKind.Human, failures);
+            RequireEnemyKind("AshRoadBandit_03", EnemyKind.Human, failures);
             ValidateEnemy("FinalMayorEnforcer_01", failures);
             ValidateEnemy("FinalMayorEnforcer_02", failures);
+            RequireEnemyKind("FinalMayorEnforcer_01", EnemyKind.Human, failures);
+            RequireEnemyKind("FinalMayorEnforcer_02", EnemyKind.Human, failures);
+        }
+
+        private static void RequireEnemyKind(string objectName, EnemyKind expectedKind, List<string> failures)
+        {
+            var enemy = FindSceneObject(objectName);
+            if (enemy == null)
+            {
+                return;
+            }
+
+            var ai = enemy.GetComponent<EnemyAI>();
+            if (ai == null)
+            {
+                return;
+            }
+
+            Require(enemy.GetComponents<EnemyAI>().Length == 1, failures, $"{objectName} must have exactly one EnemyAI component.");
+            Require(ai.Kind == expectedKind, failures, $"{objectName} must be configured as {expectedKind} for sword and oil damage rules.");
         }
 
         private static void ValidateEnemy(string objectName, List<string> failures)

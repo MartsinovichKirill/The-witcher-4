@@ -378,6 +378,7 @@ namespace WitcherRightVersion.Editor
                 Require(crafting.Craft("reinforced_armor"), failures, "Forge crafting must create Reinforced Armor.");
                 Require(inventory.HasItem("Reinforced Armor"), failures, "Forge crafting must add Reinforced Armor.");
                 Require(!inventory.HasItem("Leather Witcher Armor"), failures, "Forge crafting must consume Leather Witcher Armor.");
+                Require(inventory.EquippedArmor == "Reinforced Armor", failures, "Crafted Reinforced Armor must replace consumed equipped armor.");
                 Require(flags.HasFlag("crafted_reinforced_armor"), failures, "Forge crafting must set crafted_reinforced_armor flag.");
 
                 inventory.AddItem("Wolf Fang");
@@ -396,6 +397,8 @@ namespace WitcherRightVersion.Editor
                 Require(crafting.Craft("improved_silver_sword"), failures, "Forge crafting must create Improved Silver Sword.");
                 Require(inventory.HasWeapon("Improved Silver Sword"), failures, "Crafting must add Improved Silver Sword as a weapon.");
                 Require(!inventory.HasWeapon("Witcher Silver Sword"), failures, "Crafting must consume the base silver sword.");
+                Require(inventory.EquippedWeapon == "Old Steel Sword", failures, "Removing the equipped silver sword must select an available weapon.");
+                Require(inventory.CycleWeapon() == "Improved Silver Sword", failures, "Weapon cycling must equip the improved silver sword.");
 
                 var xpAfterSwamp = rewards.Experience;
                 var coinsAfterSwamp = rewards.Coins;

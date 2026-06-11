@@ -134,6 +134,7 @@ namespace WitcherRightVersion.Localization
             { "Smith's Debt", "Долг кузнеца" },
 
             { "Old Steel Sword", "Старый стальной меч" },
+            { "Witcher Silver Sword", "Серебряный меч ведьмака" },
             { "Silver Witcher Sword", "Серебряный меч ведьмака" },
             { "Improved Steel Sword", "Улучшенный стальной меч" },
             { "Improved Silver Sword", "Улучшенный серебряный меч" },
@@ -164,6 +165,7 @@ namespace WitcherRightVersion.Localization
             { "Coins", "Монеты" },
             { "Equipped", "Экипировано" },
             { "Equipped weapon", "Экипированное оружие" },
+            { "Equipped armor", "Экипированная броня" },
             { "Active quest", "Активный квест" },
             { "Weapons", "Оружие" },
             { "Armor", "Броня" },
