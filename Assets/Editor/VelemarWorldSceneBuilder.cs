@@ -181,6 +181,7 @@ namespace WitcherRightVersion.Editor
             CreateVisualAtmospherePolishPass(root.transform);
             CreateCharacterPresentationPolishPass(root.transform);
             CreateDynamicAmbientVfxPass(root.transform);
+            CreateRouteCinematicCompositionPass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -1835,6 +1836,113 @@ namespace WitcherRightVersion.Editor
             var motion = marker.AddComponent<AmbientVisualMotion>();
             motion.Configure(bobAmplitude, rotationSpeed, motionSpeed, scalePulse, 0.24f);
             return marker;
+        }
+
+        private static void CreateRouteCinematicCompositionPass(Transform parent)
+        {
+            var root = new GameObject("RouteCinematicCompositionPass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageCinematicApproach(root.transform);
+            CreateForestCinematicApproach(root.transform);
+            CreateSwampCinematicApproach(root.transform);
+            CreateAshRoadCinematicApproach(root.transform);
+            CreateTowerCinematicApproach(root.transform);
+        }
+
+        private static void CreateVillageCinematicApproach(Transform parent)
+        {
+            var root = new GameObject("VillageCinematicApproach");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "VillageCinematicEntranceDirtFan", new Vector3(0f, 0.181f, -18.8f), new Vector3(18f, 0.012f, 10f), new Color(0.118f, 0.088f, 0.052f, 1f));
+            CreateSurfacePatch(root.transform, "VillageCinematicWheelRutsLeft", new Vector3(-1.7f, 0.188f, -17.4f), new Vector3(0.42f, 0.01f, 9.6f), new Color(0.055f, 0.044f, 0.032f, 1f));
+            CreateSurfacePatch(root.transform, "VillageCinematicWheelRutsRight", new Vector3(1.7f, 0.188f, -17.4f), new Vector3(0.42f, 0.01f, 9.6f), new Color(0.055f, 0.044f, 0.032f, 1f));
+
+            PlaceKenney(root.transform, "VillageCinematicLeftBanner", "banner-red.fbx", new Vector3(-6.8f, 0f, -18.6f), Quaternion.Euler(0f, 58f, 0f), Vector3.one * 1.18f);
+            PlaceKenney(root.transform, "VillageCinematicRightBanner", "banner-green.fbx", new Vector3(6.8f, 0f, -18.6f), Quaternion.Euler(0f, -58f, 0f), Vector3.one * 1.18f);
+            PlaceKenney(root.transform, "VillageCinematicLeftCart", "cart-high.fbx", new Vector3(-8.9f, 0f, -15.3f), Quaternion.Euler(0f, 34f, 0f), Vector3.one * 0.9f);
+            PlaceKenney(root.transform, "VillageCinematicRightSupplyPlanks", "planks.fbx", new Vector3(8.8f, 0f, -15.0f), Quaternion.Euler(0f, -22f, 0f), Vector3.one * 0.95f);
+
+            CreatePointLight(root.transform, "VillageCinematicGateWarmLight", new Vector3(0f, 1.8f, -15.6f), new Color(0.95f, 0.52f, 0.24f, 1f), 0.62f, 11f);
+        }
+
+        private static void CreateForestCinematicApproach(Transform parent)
+        {
+            var root = new GameObject("ForestCinematicApproach");
+            root.transform.SetParent(parent, false);
+
+            for (var i = 0; i < 8; i++)
+            {
+                var z = -6f + i * 3.25f;
+                var leftScale = 1.35f + i * 0.08f;
+                var rightScale = 1.18f + i * 0.07f;
+                PlaceKenney(root.transform, $"ForestCinematicLeftWallTree_{i + 1:00}", i % 2 == 0 ? "tree-high.fbx" : "tree-high-crooked.fbx", new Vector3(-43.5f - i * 3.2f, 0f, z), Quaternion.Euler(0f, 18f + i * 29f, 0f), Vector3.one * leftScale);
+                PlaceKenney(root.transform, $"ForestCinematicRightWallTree_{i + 1:00}", i % 2 == 0 ? "tree.fbx" : "tree-high.fbx", new Vector3(-39.2f - i * 3.0f, 0f, z + 1.3f), Quaternion.Euler(0f, -22f + i * 17f, 0f), Vector3.one * rightScale);
+                CreateSurfacePatch(root.transform, $"ForestCinematicRootShadow_{i + 1:00}", new Vector3(-41.4f - i * 3.1f, 0.184f, z + 0.6f), new Vector3(5.2f, 0.01f, 1.2f), new Color(0.018f, 0.048f, 0.022f, 1f));
+            }
+
+            PlaceKayKit(root.transform, "ForestCinematicFallenArch", "detail_rocks.fbx", new Vector3(-58.6f, 0f, 5.4f), Quaternion.Euler(0f, -8f, 0f), Vector3.one * 1.2f);
+            CreatePointLight(root.transform, "ForestCinematicBlueBackLight", new Vector3(-62.0f, 2.2f, 10.8f), new Color(0.34f, 0.48f, 0.64f, 1f), 0.42f, 13f);
+        }
+
+        private static void CreateSwampCinematicApproach(Transform parent)
+        {
+            var root = new GameObject("SwampCinematicApproach");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "SwampCinematicWaterMirrorLeft", new Vector3(-5.6f, 0.178f, -63f), new Vector3(10.5f, 0.012f, 18f), new Color(0.006f, 0.03f, 0.028f, 1f));
+            CreateSurfacePatch(root.transform, "SwampCinematicWaterMirrorRight", new Vector3(11.4f, 0.179f, -63.8f), new Vector3(12.5f, 0.012f, 19f), new Color(0.007f, 0.035f, 0.03f, 1f));
+            CreateSurfacePatch(root.transform, "SwampCinematicSafeMudSpine", new Vector3(2.2f, 0.19f, -63.2f), new Vector3(4.2f, 0.012f, 21f), new Color(0.032f, 0.064f, 0.045f, 1f));
+
+            for (var i = 0; i < 7; i++)
+            {
+                var z = -54f - i * 3.0f;
+                PlaceKenney(root.transform, $"SwampCinematicReedWallLeft_{i + 1:00}", "tree-crooked.fbx", new Vector3(-7.6f - (i % 2) * 1.3f, 0f, z), Quaternion.Euler(0f, 16f + i * 19f, 0f), new Vector3(0.72f, 0.86f + i * 0.03f, 0.72f));
+                PlaceKenney(root.transform, $"SwampCinematicReedWallRight_{i + 1:00}", "tree-crooked.fbx", new Vector3(11.4f + (i % 2) * 1.5f, 0f, z - 0.8f), Quaternion.Euler(0f, -22f + i * 21f, 0f), new Vector3(0.78f, 0.9f + i * 0.03f, 0.78f));
+                PlaceKenney(root.transform, $"SwampCinematicPlankStep_{i + 1:00}", i % 2 == 0 ? "planks-half.fbx" : "planks-opening.fbx", new Vector3(2.3f + Mathf.Sin(i * 0.7f) * 0.8f, 0.035f, z - 0.6f), Quaternion.Euler(0f, 86f + i * 7f, 0f), Vector3.one * 0.8f);
+            }
+
+            CreatePointLight(root.transform, "SwampCinematicGreenGuideLight", new Vector3(2.4f, 1.1f, -66.2f), new Color(0.08f, 0.54f, 0.34f, 1f), 0.72f, 13f);
+        }
+
+        private static void CreateAshRoadCinematicApproach(Transform parent)
+        {
+            var root = new GameObject("AshRoadCinematicApproach");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "AshRoadCinematicBlackenedSpine", new Vector3(76f, 0.181f, 2.6f), new Vector3(38f, 0.012f, 8.0f), new Color(0.052f, 0.044f, 0.038f, 1f));
+            CreateSurfacePatch(root.transform, "AshRoadCinematicRedAshEdgeNorth", new Vector3(76f, 0.186f, 7.2f), new Vector3(34f, 0.01f, 1.2f), new Color(0.12f, 0.045f, 0.025f, 1f));
+            CreateSurfacePatch(root.transform, "AshRoadCinematicRedAshEdgeSouth", new Vector3(76f, 0.186f, -2.1f), new Vector3(34f, 0.01f, 1.2f), new Color(0.12f, 0.045f, 0.025f, 1f));
+
+            for (var i = 0; i < 8; i++)
+            {
+                var x = 60f + i * 4.5f;
+                PlaceKenney(root.transform, $"AshRoadCinematicBrokenWallNorth_{i + 1:00}", i % 2 == 0 ? "wall-broken.fbx" : "wall-wood-broken.fbx", new Vector3(x, 0f, 8.9f + (i % 2) * 1.8f), Quaternion.Euler(0f, -32f + i * 11f, 0f), Vector3.one * (0.9f + (i % 3) * 0.08f));
+                PlaceKenney(root.transform, $"AshRoadCinematicCharPostSouth_{i + 1:00}", "pillar-wood.fbx", new Vector3(x + 1.4f, 0f, -4.2f - (i % 2) * 1.1f), Quaternion.Euler(0f, 12f + i * 23f, 0f), new Vector3(0.7f, 1.05f + (i % 3) * 0.08f, 0.7f));
+            }
+
+            CreatePointLight(root.transform, "AshRoadCinematicLowFireGuide", new Vector3(82.5f, 0.9f, 4.8f), new Color(0.95f, 0.2f, 0.08f, 1f), 0.62f, 12f);
+        }
+
+        private static void CreateTowerCinematicApproach(Transform parent)
+        {
+            var root = new GameObject("TowerCinematicApproach");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "TowerCinematicCausewayCenter", new Vector3(0f, 0.182f, 118f), new Vector3(10f, 0.012f, 32f), new Color(0.058f, 0.056f, 0.067f, 1f));
+            CreateSurfacePatch(root.transform, "TowerCinematicMirrorScar", new Vector3(0f, 0.191f, 116f), new Vector3(4.6f, 0.01f, 25f), new Color(0.16f, 0.1f, 0.27f, 1f));
+
+            for (var i = 0; i < 7; i++)
+            {
+                var z = 104f + i * 4.2f;
+                var sideOffset = 7.2f + (i % 2) * 1.4f;
+                PlaceKenney(root.transform, $"TowerCinematicLeftPillar_{i + 1:00}", i % 3 == 0 ? "wall-arch.fbx" : "pillar-stone.fbx", new Vector3(-sideOffset, 0f, z), Quaternion.Euler(0f, 16f + i * 9f, 0f), Vector3.one * (0.92f + i * 0.04f));
+                PlaceKenney(root.transform, $"TowerCinematicRightPillar_{i + 1:00}", i % 3 == 1 ? "wall-arch-top.fbx" : "pillar-stone.fbx", new Vector3(sideOffset, 0f, z + 0.8f), Quaternion.Euler(0f, -16f - i * 9f, 0f), Vector3.one * (0.92f + i * 0.04f));
+                CreateNonBlockingMarker(root.transform, $"TowerCinematicVioletDust_{i + 1:00}", new Vector3(0f, 0.205f, z + 1.6f), new Vector3(2.3f, 0.012f, 0.42f), new Color(0.24f, 0.14f, 0.42f, 1f));
+            }
+
+            CreatePointLight(root.transform, "TowerCinematicVioletGuideLight", new Vector3(0f, 2.2f, 121f), new Color(0.48f, 0.28f, 0.86f, 1f), 0.78f, 16f);
         }
 
         private static void CreateWorldDressing(Transform parent)

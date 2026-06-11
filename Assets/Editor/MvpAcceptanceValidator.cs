@@ -294,6 +294,17 @@ namespace WitcherRightVersion.Editor
             RequireObject<AmbientVisualMotion>("AshRoadDynamicEmber_01", failures);
             RequireObject("TowerDynamicVfx", failures);
             RequireObject<AmbientVisualMotion>("TowerDynamicMirrorFragment_01", failures);
+            RequireObject("RouteCinematicCompositionPass", failures);
+            RequireObject("VillageCinematicApproach", failures);
+            RequireObject("VillageCinematicEntranceDirtFan", failures);
+            RequireObject("ForestCinematicApproach", failures);
+            RequireObject("ForestCinematicLeftWallTree_01", failures);
+            RequireObject("SwampCinematicApproach", failures);
+            RequireObject("SwampCinematicSafeMudSpine", failures);
+            RequireObject("AshRoadCinematicApproach", failures);
+            RequireObject("AshRoadCinematicBlackenedSpine", failures);
+            RequireObject("TowerCinematicApproach", failures);
+            RequireObject("TowerCinematicCausewayCenter", failures);
             RequireObject("OuterVillageLumbermill", failures);
             RequireObject("OuterVillageWindmill", failures);
             RequireObject("DeepForestRangerOutpost", failures);
