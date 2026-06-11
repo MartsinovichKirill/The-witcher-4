@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.UI;
@@ -54,6 +55,11 @@ namespace WitcherRightVersion.Combat
         public bool IsBlocking { get; private set; }
         public bool IsDodging { get; private set; }
 
+        public event Action LightAttackStarted;
+        public event Action HeavyAttackStarted;
+        public event Action DodgeStarted;
+        public event Action AardStarted;
+
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
@@ -106,6 +112,7 @@ namespace WitcherRightVersion.Combat
 
             if (Input.GetKeyDown(lightAttackKey) && Time.time >= nextLightAttackTime)
             {
+                LightAttackStarted?.Invoke();
                 Attack(lightAttackDamage, lightAttackRange, lightAttackRadius, "Light attack missed.");
                 nextLightAttackTime = Time.time + lightAttackCooldown;
                 return;
@@ -113,6 +120,7 @@ namespace WitcherRightVersion.Combat
 
             if (Input.GetKeyDown(heavyAttackKey) && Time.time >= nextHeavyAttackTime)
             {
+                HeavyAttackStarted?.Invoke();
                 Attack(heavyAttackDamage, heavyAttackRange, heavyAttackRadius, "Heavy attack missed.");
                 nextHeavyAttackTime = Time.time + heavyAttackCooldown;
                 return;
@@ -120,6 +128,7 @@ namespace WitcherRightVersion.Combat
 
             if (Input.GetKeyDown(aardKey) && Time.time >= nextAardTime)
             {
+                AardStarted?.Invoke();
                 CastAard();
                 nextAardTime = Time.time + aardCooldown;
             }
@@ -194,6 +203,7 @@ namespace WitcherRightVersion.Combat
             nextDodgeTime = Time.time + dodgeCooldown;
             IsBlocking = false;
             IsDodging = true;
+            DodgeStarted?.Invoke();
             InteractionPromptUI.Instance?.ShowMessage("Dodge.");
         }
 

@@ -293,6 +293,7 @@ namespace WitcherRightVersion.Editor
             RequireObject("TowerRitualCircle_World", failures);
             RequireObject("AshRoadSurvivorCamp_World", failures);
             RequireObject<CombatVisualFeedback>("Reynard_Player", failures);
+            RequireObject<PlayerActionVisualAnimator>("Reynard_Player", failures);
             RequireObject("ReynardCombatReadabilityRing", failures);
             RequireObject("ReynardAardFocusRing", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);

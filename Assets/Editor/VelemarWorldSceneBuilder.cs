@@ -2513,13 +2513,15 @@ namespace WitcherRightVersion.Editor
             health.Configure("Reynard", 120f);
             AddCombatVisual(player, new Color(0.85f, 0.14f, 0.08f, 1f), new Color(0.16f, 0.12f, 0.1f, 1f));
             player.AddComponent<CombatController>();
-            CreatePlayerVisual(player.transform);
+            var playerVisuals = CreatePlayerVisual(player.transform);
+            var actionAnimator = player.AddComponent<PlayerActionVisualAnimator>();
+            actionAnimator.Configure(playerVisuals.visualRoot, playerVisuals.steelSword, playerVisuals.silverSword);
             CreateCharacterGroundRing(player, "ReynardCombatReadabilityRing", new Color(0.78f, 0.58f, 0.24f, 1f), 0.95f);
             CreateCharacterGroundRing(player, "ReynardAardFocusRing", new Color(0.22f, 0.42f, 0.82f, 1f), 0.62f);
             return player;
         }
 
-        private static void CreatePlayerVisual(Transform player)
+        private static (Transform visualRoot, Transform steelSword, Transform silverSword) CreatePlayerVisual(Transform player)
         {
             var knight = InstantiateModel($"{KnightPath}/KnightCharacter.fbx", "ReynardKnightModel", player, new Vector3(0f, -0.02f, 0f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * PlayerVisualScale);
             if (knight == null)
@@ -2530,11 +2532,12 @@ namespace WitcherRightVersion.Editor
                 fallback.transform.localPosition = new Vector3(0f, 1.05f, 0f);
                 fallback.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/ReynardPlaceholder.mat", new Color(0.22f, 0.25f, 0.23f, 1f));
                 Object.DestroyImmediate(fallback.GetComponent<Collider>());
-                return;
+                return (fallback.transform, null, null);
             }
 
-            InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.22f, 1.05f, -0.14f), Quaternion.Euler(65f, 0f, 25f), Vector3.one * 0.3f);
-            InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.22f, 1.0f, -0.14f), Quaternion.Euler(65f, 0f, -25f), Vector3.one * 0.3f);
+            var steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.22f, 1.05f, -0.14f), Quaternion.Euler(65f, 0f, 25f), Vector3.one * 0.3f);
+            var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.22f, 1.0f, -0.14f), Quaternion.Euler(65f, 0f, -25f), Vector3.one * 0.3f);
+            return (knight.transform, steelSword != null ? steelSword.transform : null, silverSword != null ? silverSword.transform : null);
         }
 
         private static void CreateCamera(Transform target)
