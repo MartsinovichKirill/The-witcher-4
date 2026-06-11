@@ -14,6 +14,7 @@ namespace WitcherRightVersion.UI
     {
         [SerializeField] private KeyCode toggleKey = KeyCode.I;
         [SerializeField] private KeyCode nextPageKey = KeyCode.Tab;
+        [SerializeField] private KeyCode craftSelectedKey = KeyCode.Return;
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private Text contentText;
 
@@ -53,6 +54,7 @@ namespace WitcherRightVersion.UI
 
         private readonly StringBuilder builder = new StringBuilder(1024);
         private InventoryPage currentPage;
+        private int selectedRecipeIndex;
 
         public static bool IsOpen { get; private set; }
 
@@ -82,6 +84,11 @@ namespace WitcherRightVersion.UI
                 else if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
                     CyclePage(-1);
+                }
+
+                if (currentPage == InventoryPage.Crafting)
+                {
+                    HandleCraftingInput();
                 }
 
                 Refresh();
@@ -114,6 +121,34 @@ namespace WitcherRightVersion.UI
             }
 
             currentPage = (InventoryPage)next;
+            selectedRecipeIndex = 0;
+        }
+
+        private void HandleCraftingInput()
+        {
+            var crafting = CraftingService.Instance;
+            if (crafting == null || crafting.Recipes.Count == 0)
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                selectedRecipeIndex = (selectedRecipeIndex + 1) % crafting.Recipes.Count;
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                selectedRecipeIndex--;
+                if (selectedRecipeIndex < 0)
+                {
+                    selectedRecipeIndex = crafting.Recipes.Count - 1;
+                }
+            }
+            else if (Input.GetKeyDown(craftSelectedKey) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                selectedRecipeIndex = Mathf.Clamp(selectedRecipeIndex, 0, crafting.Recipes.Count - 1);
+                crafting.Craft(crafting.Recipes[selectedRecipeIndex].Id);
+            }
         }
 
         private void Refresh()
@@ -218,11 +253,14 @@ namespace WitcherRightVersion.UI
                 return;
             }
 
+            selectedRecipeIndex = Mathf.Clamp(selectedRecipeIndex, 0, crafting.Recipes.Count - 1);
+
             for (var i = 0; i < crafting.Recipes.Count; i++)
             {
                 var recipe = crafting.Recipes[i];
                 var canCraft = crafting.CanCraft(recipe.Id, out var reason);
 
+                builder.Append(i == selectedRecipeIndex ? "> " : "  ");
                 builder.Append(canCraft ? L("[READY] ") : L("[LOCKED] "));
                 builder.Append(L(recipe.DisplayName)).Append(" -> ").Append(L(recipe.ResultItem)).AppendLine();
                 builder.Append("  ").Append(L("Needs")).Append(": ");
@@ -248,6 +286,9 @@ namespace WitcherRightVersion.UI
                     builder.AppendLine();
                 }
             }
+
+            builder.AppendLine();
+            builder.Append(L("Use Up/Down to select. Enter crafts selected recipe.")).AppendLine();
         }
 
         private void AppendFilteredItems(System.Func<string, bool> predicate, string emptyText)

@@ -86,6 +86,28 @@ namespace WitcherRightVersion.Inventory
             return removed;
         }
 
+        public bool RemoveWeapon(string weaponName)
+        {
+            if (string.IsNullOrWhiteSpace(weaponName) || weapons.Count <= 1)
+            {
+                return false;
+            }
+
+            var removed = weapons.Remove(weaponName);
+            if (!removed)
+            {
+                return false;
+            }
+
+            if (EquippedWeapon == weaponName)
+            {
+                EquippedWeapon = weapons[0];
+            }
+
+            Debug.Log($"Weapon removed: {weaponName}", this);
+            return true;
+        }
+
         public void EquipWeapon(string weaponName)
         {
             if (!HasWeapon(weaponName))

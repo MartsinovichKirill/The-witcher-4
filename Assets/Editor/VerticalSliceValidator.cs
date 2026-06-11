@@ -320,7 +320,7 @@ namespace WitcherRightVersion.Editor
                 PlayerPrefs.Save();
                 Require(!endings.CanCompleteTruthEnding(), failures, "Truth ending must lock again after clearing temporary route unlock.");
 
-                Require(crafting.Recipes.Count == 3, failures, "Crafting must expose three MVP recipes.");
+                Require(crafting.Recipes.Count >= 12, failures, "Crafting must expose the expanded recipe set.");
 
                 flags.SetFlag("acceptedSwampContract");
                 Require(quest.RunAction(QuestService.ActionStartSwampContract), failures, "Quest flow must start swamp contract.");
@@ -379,6 +379,23 @@ namespace WitcherRightVersion.Editor
                 Require(inventory.HasItem("Reinforced Armor"), failures, "Forge crafting must add Reinforced Armor.");
                 Require(!inventory.HasItem("Leather Witcher Armor"), failures, "Forge crafting must consume Leather Witcher Armor.");
                 Require(flags.HasFlag("crafted_reinforced_armor"), failures, "Forge crafting must set crafted_reinforced_armor flag.");
+
+                inventory.AddItem("Wolf Fang");
+                inventory.AddItem("Ash Salt");
+                Require(crafting.Craft("thunder"), failures, "Alchemy crafting must create Thunder.");
+                Require(inventory.HasItem("Thunder"), failures, "Crafting must add Thunder.");
+                Require(flags.HasFlag("crafted_thunder"), failures, "Crafting must set crafted_thunder flag.");
+
+                inventory.AddItem("Ash Salt");
+                inventory.AddItem("Undead Bone");
+                Require(crafting.Craft("light_bomb"), failures, "Alchemy crafting must create Light Bomb.");
+                Require(inventory.HasItem("Light Bomb"), failures, "Crafting must add Light Bomb.");
+
+                inventory.AddItem("Mirror Shard");
+                inventory.AddItem("Undead Bone");
+                Require(crafting.Craft("improved_silver_sword"), failures, "Forge crafting must create Improved Silver Sword.");
+                Require(inventory.HasWeapon("Improved Silver Sword"), failures, "Crafting must add Improved Silver Sword as a weapon.");
+                Require(!inventory.HasWeapon("Witcher Silver Sword"), failures, "Crafting must consume the base silver sword.");
 
                 var xpAfterSwamp = rewards.Experience;
                 var coinsAfterSwamp = rewards.Coins;

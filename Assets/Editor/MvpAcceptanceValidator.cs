@@ -495,8 +495,8 @@ namespace WitcherRightVersion.Editor
             }
             RequireObject("WorldDrownerThreatRing", failures);
 
-            ValidateEnemy("TowerSkeletonGuard_Left", failures);
-            ValidateEnemy("TowerSkeletonGuard_Right", failures);
+            ValidateLootEnemy("TowerSkeletonGuard_Left", failures);
+            ValidateLootEnemy("TowerSkeletonGuard_Right", failures);
             ValidateEnemy("WorldDrownerNestEnemy_01", failures);
             ValidateEnemy("WorldDrownerNestEnemy_02", failures);
             ValidateEnemy("WorldDrownerNestEnemy_03", failures);

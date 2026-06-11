@@ -136,6 +136,7 @@ namespace WitcherRightVersion.Localization
             { "Old Steel Sword", "Старый стальной меч" },
             { "Silver Witcher Sword", "Серебряный меч ведьмака" },
             { "Improved Steel Sword", "Улучшенный стальной меч" },
+            { "Improved Silver Sword", "Улучшенный серебряный меч" },
             { "Leather Witcher Armor", "Кожаная ведьмачья броня" },
             { "Reinforced Armor", "Укреплённая броня" },
             { "Swamp Cloak", "Болотный плащ" },
@@ -150,6 +151,7 @@ namespace WitcherRightVersion.Localization
             { "Wolf Pelt", "Шкура волка" },
             { "Wolf Fang", "Клык волка" },
             { "Drowner Slime", "Слизь утопца" },
+            { "Undead Bone", "Кость нежити" },
             { "None", "Нет" },
             { "Inventory", "Инвентарь" },
             { "Overview", "Обзор" },
@@ -173,6 +175,7 @@ namespace WitcherRightVersion.Localization
             { "[READY] ", "[ГОТОВО] " },
             { "[LOCKED] ", "[ЗАКРЫТО] " },
             { "Needs", "Нужно" },
+            { "Use Up/Down to select. Enter crafts selected recipe.", "Выбор: Up/Down. Enter создаёт выбранный рецепт." },
 
             { "Thunder", "Гром" },
             { "Cat", "Кошка" },

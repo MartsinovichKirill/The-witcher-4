@@ -2722,6 +2722,13 @@ namespace WitcherRightVersion.Editor
             var ai = guard.AddComponent<EnemyAI>();
             ai.Configure("Skeleton guard", false, objectName + "_Defeated", "");
             ai.ConfigureCombat(8.5f, 1.65f, 1.65f, 14f, 1.8f);
+            guard.AddComponent<EnemyLootDrop>().Configure(
+                objectName + "_LootClaimed",
+                new[] { "Undead Bone" },
+                0,
+                12,
+                "Loot: Undead Bone, 12 XP.",
+                "Добыча: кость нежити, 12 опыта.");
         }
 
         private static void CreateWorldCraftingObjects(Transform parent)

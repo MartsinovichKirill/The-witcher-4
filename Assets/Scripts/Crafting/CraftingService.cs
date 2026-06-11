@@ -62,7 +62,7 @@ namespace WitcherRightVersion.Crafting
 
             for (var i = 0; i < recipe.Ingredients.Length; i++)
             {
-                if (!inventory.HasItem(recipe.Ingredients[i]))
+                if (!inventory.HasItem(recipe.Ingredients[i]) && !inventory.HasWeapon(recipe.Ingredients[i]))
                 {
                     reason = GameLocalization.Select($"Missing ingredient: {recipe.Ingredients[i]}.", $"Не хватает ингредиента: {GameLocalization.Text(recipe.Ingredients[i])}.");
                     return false;
@@ -85,7 +85,10 @@ namespace WitcherRightVersion.Crafting
             var inventory = InventoryService.Instance;
             for (var i = 0; i < recipe.Ingredients.Length; i++)
             {
-                inventory.RemoveItem(recipe.Ingredients[i]);
+                if (!inventory.RemoveItem(recipe.Ingredients[i]))
+                {
+                    inventory.RemoveWeapon(recipe.Ingredients[i]);
+                }
             }
 
             if (recipe.ResultIsWeapon)
@@ -133,6 +136,69 @@ namespace WitcherRightVersion.Crafting
                 false,
                 string.Empty,
                 new[] { "Leather Witcher Armor", "Wolf Pelt", "Iron Ore" }));
+            Register(new CraftingRecipe(
+                "thunder",
+                "Thunder",
+                "Thunder",
+                false,
+                string.Empty,
+                new[] { "Wolf Fang", "Ash Salt" }));
+            Register(new CraftingRecipe(
+                "cat",
+                "Cat",
+                "Cat",
+                false,
+                string.Empty,
+                new[] { "Bogweed", "Mirror Shard" }));
+            Register(new CraftingRecipe(
+                "ash_bomb",
+                "Ash Bomb",
+                "Ash Bomb",
+                false,
+                string.Empty,
+                new[] { "Ash Salt", "Iron Ore" }));
+            Register(new CraftingRecipe(
+                "light_bomb",
+                "Light Bomb",
+                "Light Bomb",
+                false,
+                string.Empty,
+                new[] { "Ash Salt", "Undead Bone" }));
+            Register(new CraftingRecipe(
+                "undead_oil",
+                "Undead Oil",
+                "Undead Oil",
+                false,
+                string.Empty,
+                new[] { "Undead Bone", "Bogweed" }));
+            Register(new CraftingRecipe(
+                "swamp_oil",
+                "Bog Creature Oil",
+                "Bog Creature Oil",
+                false,
+                "swamp_oil",
+                new[] { "Drowner Slime", "Bogweed" }));
+            Register(new CraftingRecipe(
+                "hanged_man_oil",
+                "Hanged Man Oil",
+                "Hanged Man Oil",
+                false,
+                string.Empty,
+                new[] { "Wolf Fang", "Iron Ore" }));
+            Register(new CraftingRecipe(
+                "swamp_cloak",
+                "Swamp Cloak",
+                "Swamp Cloak",
+                false,
+                string.Empty,
+                new[] { "Wolf Pelt", "Bogweed", "Drowner Slime" }));
+            Register(new CraftingRecipe(
+                "improved_silver_sword",
+                "Improved Silver Sword",
+                "Improved Silver Sword",
+                true,
+                string.Empty,
+                new[] { "Witcher Silver Sword", "Mirror Shard", "Undead Bone" }));
         }
 
         private void Register(CraftingRecipe recipe)
