@@ -68,6 +68,18 @@ namespace WitcherRightVersion.Combat
             Debug.Log($"{displayName} health restored: {currentHealth:0}/{maxHealth:0}", this);
         }
 
+        public void SetMaxHealth(float value, bool healAddedHealth)
+        {
+            var previousMax = maxHealth;
+            maxHealth = Mathf.Max(1f, value);
+            if (healAddedHealth && maxHealth > previousMax)
+            {
+                currentHealth += maxHealth - previousMax;
+            }
+
+            currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        }
+
         private void Die(GameObject source)
         {
             if (isDead)

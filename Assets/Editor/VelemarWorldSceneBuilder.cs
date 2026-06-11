@@ -1,7 +1,9 @@
 using System.IO;
 using UnityEditor;
+using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using WitcherRightVersion.Combat;
 using WitcherRightVersion.Core;
@@ -55,6 +57,8 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("EndingCanvas");
             RemoveIfExists("WorldDirectionCanvas");
             RemoveIfExists("ZoneDiscoveryCanvas");
+            RemoveIfExists("GameplayMenuCanvas");
+            RemoveIfExists("GameplayMenuEventSystem");
 
             CreateRuntimeServices();
             CreateLighting();
@@ -69,6 +73,7 @@ namespace WitcherRightVersion.Editor
             CreateEndingCanvas();
             CreateWorldDirectionCanvas();
             CreateZoneDiscoveryCanvas();
+            CreateGameplayMenuCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -3313,6 +3318,62 @@ namespace WitcherRightVersion.Editor
             var hud = canvasObject.AddComponent<InventoryHudUI>();
             SetSerializedObjectReference(hud, "panelRoot", panel);
             SetSerializedObjectReference(hud, "contentText", content);
+        }
+
+        private static void CreateGameplayMenuCanvas()
+        {
+            var canvasObject = new GameObject("GameplayMenuCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 75;
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+            canvasObject.AddComponent<GraphicRaycaster>();
+
+            var eventSystem = new GameObject("GameplayMenuEventSystem");
+            eventSystem.AddComponent<EventSystem>();
+            eventSystem.AddComponent<StandaloneInputModule>();
+
+            var root = CreatePanel(canvasObject.transform, "GameplayMenuRoot", Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.008f, 0.01f, 0.012f, 0.88f));
+            var frame = CreatePanel(root.transform, "GameplayMenuFrame", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1240f, 760f), Vector2.zero, new Color(0.035f, 0.032f, 0.027f, 0.98f));
+            var title = CreateText(frame.transform, "GameplayMenuTitle", new Vector2(0.06f, 0.84f), new Vector2(0.94f, 0.96f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, 36, TextAnchor.MiddleCenter, new Color(0.94f, 0.78f, 0.42f, 1f));
+
+            var mapPanel = CreatePanel(frame.transform, "WorldMapPanel", new Vector2(0.06f, 0.13f), new Vector2(0.94f, 0.83f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.02f, 0.032f, 0.026f, 0.92f));
+            var mapText = CreateText(mapPanel.transform, "WorldMapText", new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.95f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, 25, TextAnchor.MiddleCenter, new Color(0.9f, 0.86f, 0.72f, 1f));
+
+            var characterPanel = CreatePanel(frame.transform, "CharacterStatsPanel", new Vector2(0.06f, 0.13f), new Vector2(0.94f, 0.83f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.03f, 0.028f, 0.025f, 0.96f));
+            var characterText = CreateText(characterPanel.transform, "CharacterStatsText", new Vector2(0.06f, 0.2f), new Vector2(0.62f, 0.94f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, 25, TextAnchor.UpperLeft, new Color(0.92f, 0.88f, 0.78f, 1f));
+
+            var strengthButton = CreateUiButton(characterPanel.transform, "UpgradeStrengthButton", "Upgrade Strength", new Vector2(0.66f, 0.65f), new Vector2(0.94f, 0.78f));
+            var resilienceButton = CreateUiButton(characterPanel.transform, "UpgradeResilienceButton", "Upgrade Resilience", new Vector2(0.66f, 0.45f), new Vector2(0.94f, 0.58f));
+            var vitalityButton = CreateUiButton(characterPanel.transform, "UpgradeVitalityButton", "Upgrade Vitality", new Vector2(0.66f, 0.25f), new Vector2(0.94f, 0.38f));
+
+            var menu = canvasObject.AddComponent<GameplayMenuUI>();
+            SetSerializedObjectReference(menu, "root", root);
+            SetSerializedObjectReference(menu, "mapPanel", mapPanel);
+            SetSerializedObjectReference(menu, "characterPanel", characterPanel);
+            SetSerializedObjectReference(menu, "titleText", title);
+            SetSerializedObjectReference(menu, "mapText", mapText);
+            SetSerializedObjectReference(menu, "characterText", characterText);
+            SetSerializedObjectReference(menu, "strengthButtonText", strengthButton.GetComponentInChildren<Text>());
+            SetSerializedObjectReference(menu, "resilienceButtonText", resilienceButton.GetComponentInChildren<Text>());
+            SetSerializedObjectReference(menu, "vitalityButtonText", vitalityButton.GetComponentInChildren<Text>());
+
+            UnityEventTools.AddPersistentListener(strengthButton.onClick, menu.UpgradeStrength);
+            UnityEventTools.AddPersistentListener(resilienceButton.onClick, menu.UpgradeResilience);
+            UnityEventTools.AddPersistentListener(vitalityButton.onClick, menu.UpgradeVitality);
+            root.SetActive(false);
+        }
+
+        private static Button CreateUiButton(Transform parent, string name, string label, Vector2 anchorMin, Vector2 anchorMax)
+        {
+            var buttonObject = CreatePanel(parent, name, anchorMin, anchorMax, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, new Color(0.14f, 0.11f, 0.07f, 0.98f));
+            var button = buttonObject.AddComponent<Button>();
+            button.targetGraphic = buttonObject.GetComponent<Image>();
+            CreateText(buttonObject.transform, "Label", Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), new Vector2(-24f, -12f), Vector2.zero, 20, TextAnchor.MiddleCenter, new Color(0.95f, 0.9f, 0.78f, 1f)).text = label;
+            return button;
         }
 
         private static void CreateEndingCanvas()

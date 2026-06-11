@@ -76,6 +76,16 @@ namespace WitcherRightVersion.Editor
             RequireObject("ContinueButton", failures);
             RequireObject("SettingsButton", failures);
             RequireObject("LanguageDropdown", failures);
+            RequireObject("ConfirmationPanel", failures);
+            RequireObject("ConfirmActionButton", failures);
+            RequireObject("CancelActionButton", failures);
+            RequireObject("EffectsTabButton", failures);
+            RequireObject("SoundTabButton", failures);
+            RequireObject("ResolutionTabButton", failures);
+            RequireObject("GraphicsTabButton", failures);
+            RequireObject("SharpnessToggle", failures);
+            RequireObject("BlurToggle", failures);
+            RequireObject("ScreenModeDropdown", failures);
             ValidateLanguageSelection(failures);
         }
 
@@ -177,6 +187,7 @@ namespace WitcherRightVersion.Editor
 
             ValidatePlayer("Reynard_Player", failures);
             ValidateRuntimeServices("RuntimeServices", failures);
+            ValidateCharacterProgression(failures);
             Require(File.ReadAllText(VelemarWorldScenePath).Contains(QuestService.ActionStartExile), failures, "Elsa dialogue must start the Exile quest.");
             RequireObject("VelemarWorldRoot", failures);
             RequireObject("VelemarWorldTerrain", failures);
@@ -405,6 +416,13 @@ namespace WitcherRightVersion.Editor
             RequireObject<ZoneDiscoveryTrigger>("SwampZoneDiscovery", failures);
             RequireObject<ZoneDiscoveryTrigger>("AshRoadZoneDiscovery", failures);
             RequireObject<ZoneDiscoveryTrigger>("TowerZoneDiscovery", failures);
+            RequireObject<GameplayMenuUI>("GameplayMenuCanvas", failures);
+            RequireObject("WorldMapPanel", failures);
+            RequireObject("WorldMapText", failures);
+            RequireObject("CharacterStatsPanel", failures);
+            RequireObject("UpgradeStrengthButton", failures);
+            RequireObject("UpgradeResilienceButton", failures);
+            RequireObject("UpgradeVitalityButton", failures);
             RequireObject("WorldGameplayRoot", failures);
             RequireObject("VillageKayKitMarket_World", failures);
             RequireObject("VillageKayKitWell_World", failures);
@@ -503,6 +521,32 @@ namespace WitcherRightVersion.Editor
         private static void ValidateEditorBuildPipeline(List<string> failures)
         {
             Require(typeof(WindowsBuildBuilder) != null, failures, "WindowsBuildBuilder must exist.");
+        }
+
+        private static void ValidateCharacterProgression(List<string> failures)
+        {
+            var services = GameObject.Find("RuntimeServices");
+            var rewards = services != null ? services.GetComponent<PlayerRewardService>() : null;
+            if (rewards == null)
+            {
+                failures.Add("PlayerRewardService must exist for character progression.");
+                return;
+            }
+
+            var snapshot = rewards.CaptureSnapshot();
+            try
+            {
+                var experienceNeeded = Mathf.Max(100, PlayerRewardService.ExperiencePerLevel - rewards.ExperienceIntoLevel);
+                rewards.AddExperience(experienceNeeded);
+                var previousMultiplier = rewards.DamageMultiplier;
+                Require(rewards.SkillPoints > 0, failures, "Level gain must award a spendable skill point.");
+                Require(rewards.TryUpgradeStrength(), failures, "Strength upgrade must spend an available skill point.");
+                Require(rewards.DamageMultiplier > previousMultiplier, failures, "Strength upgrade must increase player damage.");
+            }
+            finally
+            {
+                rewards.RestoreSnapshot(snapshot);
+            }
         }
 
         private static void ValidatePlayer(string objectName, List<string> failures)

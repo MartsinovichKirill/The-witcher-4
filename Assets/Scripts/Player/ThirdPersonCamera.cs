@@ -155,7 +155,7 @@ namespace WitcherRightVersion.Player
 
         private bool IsCameraInputBlocked()
         {
-            return (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen) || InventoryHudUI.IsOpen;
+            return (DialogueService.Instance != null && DialogueService.Instance.IsDialogueOpen) || InventoryHudUI.IsOpen || GameplayMenuUI.IsOpen;
         }
 
         private void UpdateFieldOfView()

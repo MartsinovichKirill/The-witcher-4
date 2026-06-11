@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using WitcherRightVersion.Core;
 using WitcherRightVersion.Localization;
 using WitcherRightVersion.Save;
 
@@ -11,6 +12,11 @@ namespace WitcherRightVersion.UI
         [Header("Panels")]
         public GameObject mainPanel;
         public GameObject settingsPanel;
+        public GameObject confirmationPanel;
+        public GameObject effectsSettingsPanel;
+        public GameObject soundSettingsPanel;
+        public GameObject resolutionSettingsPanel;
+        public GameObject graphicsSettingsPanel;
 
         [Header("Feedback")]
         public Text titleText;
@@ -28,6 +34,16 @@ namespace WitcherRightVersion.UI
         public Text languageLabelText;
         public Text applyButtonText;
         public Text backButtonText;
+        public Text confirmationText;
+        public Text confirmButtonText;
+        public Text cancelButtonText;
+        public Text effectsTabText;
+        public Text soundTabText;
+        public Text resolutionTabText;
+        public Text graphicsTabText;
+        public Text sharpnessLabelText;
+        public Text blurLabelText;
+        public Text screenModeLabelText;
 
         [Header("Settings")]
         public Slider volumeSlider;
@@ -35,12 +51,20 @@ namespace WitcherRightVersion.UI
         public Dropdown resolutionDropdown;
         public Dropdown graphicsDropdown;
         public Dropdown languageDropdown;
+        public Dropdown screenModeDropdown;
+        public Toggle sharpnessToggle;
+        public Toggle blurToggle;
 
         private const string FirstGameScene = "VelemarWorldScene";
-        private const string VolumeKey = "settings.volume";
-        private const string MusicKey = "settings.music";
-        private const string ResolutionKey = "settings.resolution";
-        private const string GraphicsKey = "settings.graphics";
+        private ConfirmationAction pendingConfirmation;
+
+        private enum ConfirmationAction
+        {
+            None,
+            NewGame,
+            Continue
+        }
+
         private void Awake()
         {
             LoadSettings();
@@ -76,7 +100,7 @@ namespace WitcherRightVersion.UI
 
         public void StartNewGame()
         {
-            SceneManager.LoadScene(FirstGameScene);
+            ShowConfirmation(ConfirmationAction.NewGame);
         }
 
         public void ContinueGame()
@@ -87,14 +111,36 @@ namespace WitcherRightVersion.UI
                 return;
             }
 
-            SaveService.RequestAutosaveLoadOnNextScene();
-            SceneManager.LoadScene(FirstGameScene);
+            ShowConfirmation(ConfirmationAction.Continue);
+        }
+
+        public void ConfirmAction()
+        {
+            var action = pendingConfirmation;
+            HideConfirmation();
+
+            if (action == ConfirmationAction.Continue)
+            {
+                SaveService.RequestAutosaveLoadOnNextScene();
+            }
+
+            if (action != ConfirmationAction.None)
+            {
+                SceneManager.LoadScene(FirstGameScene);
+            }
+        }
+
+        public void HideConfirmation()
+        {
+            pendingConfirmation = ConfirmationAction.None;
+            SetActive(confirmationPanel, false);
         }
 
         public void ShowSettingsPanel()
         {
             SetActive(mainPanel, false);
             SetActive(settingsPanel, true);
+            ShowEffectsSettings();
             SetStatus(GetText("Settings opened.", "Настройки открыты."));
         }
 
@@ -102,6 +148,27 @@ namespace WitcherRightVersion.UI
         {
             SetActive(mainPanel, true);
             SetActive(settingsPanel, false);
+            HideConfirmation();
+        }
+
+        public void ShowEffectsSettings()
+        {
+            ShowSettingsPage(effectsSettingsPanel);
+        }
+
+        public void ShowSoundSettings()
+        {
+            ShowSettingsPage(soundSettingsPanel);
+        }
+
+        public void ShowResolutionSettings()
+        {
+            ShowSettingsPage(resolutionSettingsPanel);
+        }
+
+        public void ShowGraphicsSettings()
+        {
+            ShowSettingsPage(graphicsSettingsPanel);
         }
 
         public void ApplySettings()
@@ -111,14 +178,12 @@ namespace WitcherRightVersion.UI
             var resolutionIndex = resolutionDropdown != null ? resolutionDropdown.value : 0;
             var graphicsIndex = graphicsDropdown != null ? graphicsDropdown.value : 0;
             var languageIndex = languageDropdown != null ? languageDropdown.value : 0;
+            var screenModeIndex = screenModeDropdown != null ? screenModeDropdown.value : 1;
+            var sharpnessEnabled = sharpnessToggle == null || sharpnessToggle.isOn;
+            var blurEnabled = blurToggle != null && blurToggle.isOn;
 
-            AudioListener.volume = volume;
-            PlayerPrefs.SetFloat(VolumeKey, volume);
-            PlayerPrefs.SetInt(MusicKey, musicEnabled ? 1 : 0);
-            PlayerPrefs.SetInt(ResolutionKey, resolutionIndex);
-            PlayerPrefs.SetInt(GraphicsKey, graphicsIndex);
+            RuntimeSettingsService.Apply(volume, musicEnabled, resolutionIndex, graphicsIndex, screenModeIndex, sharpnessEnabled, blurEnabled);
             GameLocalization.SetLanguage(languageIndex);
-            PlayerPrefs.Save();
 
             ApplyLanguage();
             SetStatus(GetText("Settings saved.", "Настройки сохранены."));
@@ -136,10 +201,13 @@ namespace WitcherRightVersion.UI
 
         private void LoadSettings()
         {
-            var volume = PlayerPrefs.GetFloat(VolumeKey, 0.8f);
-            var musicEnabled = PlayerPrefs.GetInt(MusicKey, 1) == 1;
-            var resolutionIndex = PlayerPrefs.GetInt(ResolutionKey, 0);
-            var graphicsIndex = PlayerPrefs.GetInt(GraphicsKey, 1);
+            var volume = PlayerPrefs.GetFloat(RuntimeSettingsService.VolumeKey, 0.8f);
+            var musicEnabled = PlayerPrefs.GetInt(RuntimeSettingsService.MusicKey, 1) == 1;
+            var resolutionIndex = PlayerPrefs.GetInt(RuntimeSettingsService.ResolutionKey, 2);
+            var graphicsIndex = PlayerPrefs.GetInt(RuntimeSettingsService.GraphicsKey, Mathf.Min(2, QualitySettings.names.Length - 1));
+            var screenModeIndex = PlayerPrefs.GetInt(RuntimeSettingsService.ScreenModeKey, 1);
+            var sharpnessEnabled = PlayerPrefs.GetInt(RuntimeSettingsService.SharpnessKey, 1) == 1;
+            var blurEnabled = PlayerPrefs.GetInt(RuntimeSettingsService.BlurKey, 0) == 1;
             var languageIndex = GameLocalization.CurrentLanguage;
 
             if (volumeSlider != null)
@@ -168,6 +236,22 @@ namespace WitcherRightVersion.UI
                 languageDropdown.RefreshShownValue();
             }
 
+            if (screenModeDropdown != null)
+            {
+                screenModeDropdown.SetValueWithoutNotify(Mathf.Clamp(screenModeIndex, 0, screenModeDropdown.options.Count - 1));
+                screenModeDropdown.RefreshShownValue();
+            }
+
+            if (sharpnessToggle != null)
+            {
+                sharpnessToggle.isOn = sharpnessEnabled;
+            }
+
+            if (blurToggle != null)
+            {
+                blurToggle.isOn = blurEnabled;
+            }
+
             AudioListener.volume = volume;
         }
 
@@ -189,6 +273,15 @@ namespace WitcherRightVersion.UI
             SetText(languageLabelText, "Language", "Язык");
             SetText(applyButtonText, "Apply", "Применить");
             SetText(backButtonText, "Back", "Назад");
+            SetText(confirmButtonText, "Confirm", "Подтвердить");
+            SetText(cancelButtonText, "Cancel", "Отмена");
+            SetText(effectsTabText, "Effects", "Эффекты");
+            SetText(soundTabText, "Sound", "Звук");
+            SetText(resolutionTabText, "Resolution", "Разрешение");
+            SetText(graphicsTabText, "Graphics", "Графика");
+            SetText(sharpnessLabelText, "Sharpness", "Резкость");
+            SetText(blurLabelText, "Soft edges", "Смягчение");
+            SetText(screenModeLabelText, "Screen mode", "Режим экрана");
 
             if (languageDropdown != null && languageDropdown.options.Count >= 2)
             {
@@ -204,6 +297,43 @@ namespace WitcherRightVersion.UI
                 graphicsDropdown.options[2].text = russian ? "Высокое" : "High";
                 graphicsDropdown.RefreshShownValue();
             }
+
+            if (screenModeDropdown != null && screenModeDropdown.options.Count >= 3)
+            {
+                screenModeDropdown.options[0].text = russian ? "Полный экран" : "Fullscreen";
+                screenModeDropdown.options[1].text = russian ? "Без рамки" : "Borderless";
+                screenModeDropdown.options[2].text = russian ? "Оконный" : "Windowed";
+                screenModeDropdown.RefreshShownValue();
+            }
+
+            RefreshConfirmationText();
+        }
+
+        private void ShowConfirmation(ConfirmationAction action)
+        {
+            pendingConfirmation = action;
+            SetActive(confirmationPanel, true);
+            RefreshConfirmationText();
+        }
+
+        private void RefreshConfirmationText()
+        {
+            if (confirmationText == null || pendingConfirmation == ConfirmationAction.None)
+            {
+                return;
+            }
+
+            confirmationText.text = pendingConfirmation == ConfirmationAction.NewGame
+                ? GetText("Start a new game?", "Начать новую игру?")
+                : GetText("Load the latest save?", "Загрузить последнее сохранение?");
+        }
+
+        private void ShowSettingsPage(GameObject target)
+        {
+            SetActive(effectsSettingsPanel, target == effectsSettingsPanel);
+            SetActive(soundSettingsPanel, target == soundSettingsPanel);
+            SetActive(resolutionSettingsPanel, target == resolutionSettingsPanel);
+            SetActive(graphicsSettingsPanel, target == graphicsSettingsPanel);
         }
 
         private bool IsRussian()

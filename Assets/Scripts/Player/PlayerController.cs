@@ -55,7 +55,7 @@ namespace WitcherRightVersion.Player
                 return;
             }
 
-            if (InventoryHudUI.IsOpen)
+            if (InventoryHudUI.IsOpen || GameplayMenuUI.IsOpen)
             {
                 StopHorizontalMovement();
                 return;

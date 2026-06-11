@@ -18,6 +18,12 @@ namespace WitcherRightVersion.Core
         public int Coins { get; private set; }
         public int Level { get; private set; } = 1;
         public int SkillPoints { get; private set; }
+        public int StrengthRank { get; private set; }
+        public int ResilienceRank { get; private set; }
+        public int VitalityRank { get; private set; }
+        public float DamageMultiplier => 1f + StrengthRank * 0.1f;
+        public float IncomingDamageMultiplier => Mathf.Max(0.55f, 1f - ResilienceRank * 0.08f);
+        public float PlayerMaxHealth => 120f + VitalityRank * 20f;
         public int ExperienceIntoLevel => Experience % ExperiencePerLevel;
         public int ExperienceToNextLevel => ExperiencePerLevel - ExperienceIntoLevel;
 
@@ -91,6 +97,46 @@ namespace WitcherRightVersion.Core
             return !string.IsNullOrWhiteSpace(recipeId) && unlockedRecipes.Contains(recipeId);
         }
 
+        public bool TryUpgradeStrength()
+        {
+            if (!TrySpendSkillPoint())
+            {
+                return false;
+            }
+
+            StrengthRank++;
+            RecalculateLevel();
+            Debug.Log($"Strength upgraded to rank {StrengthRank}.", this);
+            return true;
+        }
+
+        public bool TryUpgradeResilience()
+        {
+            if (!TrySpendSkillPoint())
+            {
+                return false;
+            }
+
+            ResilienceRank++;
+            RecalculateLevel();
+            Debug.Log($"Resilience upgraded to rank {ResilienceRank}.", this);
+            return true;
+        }
+
+        public bool TryUpgradeVitality()
+        {
+            if (!TrySpendSkillPoint())
+            {
+                return false;
+            }
+
+            VitalityRank++;
+            RecalculateLevel();
+            Debug.Log($"Vitality upgraded to rank {VitalityRank}.", this);
+            ApplyVitalityToPlayer(true);
+            return true;
+        }
+
         public void GrantSwampContractReward()
         {
             AddExperience(50);
@@ -157,6 +203,9 @@ namespace WitcherRightVersion.Core
                 coins = Coins,
                 level = Level,
                 skillPoints = SkillPoints,
+                strengthRank = StrengthRank,
+                resilienceRank = ResilienceRank,
+                vitalityRank = VitalityRank,
                 unlockedRecipes = new List<string>(unlockedRecipes).ToArray()
             };
         }
@@ -165,7 +214,11 @@ namespace WitcherRightVersion.Core
         {
             Experience = snapshot != null ? Mathf.Max(0, snapshot.experience) : 0;
             Coins = snapshot != null ? Mathf.Max(0, snapshot.coins) : 0;
+            StrengthRank = snapshot != null ? Mathf.Max(0, snapshot.strengthRank) : 0;
+            ResilienceRank = snapshot != null ? Mathf.Max(0, snapshot.resilienceRank) : 0;
+            VitalityRank = snapshot != null ? Mathf.Max(0, snapshot.vitalityRank) : 0;
             RecalculateLevel();
+            ApplyVitalityToPlayer(false);
 
             unlockedRecipes.Clear();
             if (snapshot?.unlockedRecipes != null)
@@ -185,7 +238,24 @@ namespace WitcherRightVersion.Core
         private void RecalculateLevel()
         {
             Level = Mathf.Max(1, Experience / ExperiencePerLevel + 1);
-            SkillPoints = Mathf.Max(0, Level - 1);
+            SkillPoints = Mathf.Max(0, Level - 1 - StrengthRank - ResilienceRank - VitalityRank);
+        }
+
+        private bool TrySpendSkillPoint()
+        {
+            if (SkillPoints <= 0)
+            {
+                InteractionPromptUI.Instance?.ShowMessage(GameLocalization.Select("No skill points available.", "Нет свободных очков навыков."));
+                return false;
+            }
+
+            return true;
+        }
+
+        private void ApplyVitalityToPlayer(bool healAddedHealth)
+        {
+            var player = GameObject.FindGameObjectWithTag("Player");
+            player?.GetComponent<WitcherRightVersion.Combat.Health>()?.SetMaxHealth(PlayerMaxHealth, healAddedHealth);
         }
     }
 
@@ -196,6 +266,9 @@ namespace WitcherRightVersion.Core
         public int coins;
         public int level;
         public int skillPoints;
+        public int strengthRank;
+        public int resilienceRank;
+        public int vitalityRank;
         public string[] unlockedRecipes;
     }
 }

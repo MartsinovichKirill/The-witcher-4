@@ -85,7 +85,7 @@ namespace WitcherRightVersion.Combat
                 return;
             }
 
-            if (InventoryHudUI.IsOpen)
+            if (InventoryHudUI.IsOpen || GameplayMenuUI.IsOpen)
             {
                 IsBlocking = false;
                 return;
@@ -141,7 +141,10 @@ namespace WitcherRightVersion.Combat
                 return;
             }
 
-            var finalDamage = IsBlocking ? amount * blockDamageMultiplier : amount;
+            var progressionMultiplier = WitcherRightVersion.Core.PlayerRewardService.Instance != null
+                ? WitcherRightVersion.Core.PlayerRewardService.Instance.IncomingDamageMultiplier
+                : 1f;
+            var finalDamage = (IsBlocking ? amount * blockDamageMultiplier : amount) * progressionMultiplier;
             ownHealth.TakeDamage(finalDamage, source);
 
             var message = IsBlocking
@@ -160,8 +163,12 @@ namespace WitcherRightVersion.Combat
                 return;
             }
 
-            bestTarget.TakeDamage(damage, gameObject);
-            InteractionPromptUI.Instance?.ShowMessage($"Hit {bestTarget.DisplayName}: {damage:0} damage.");
+            var progressionMultiplier = WitcherRightVersion.Core.PlayerRewardService.Instance != null
+                ? WitcherRightVersion.Core.PlayerRewardService.Instance.DamageMultiplier
+                : 1f;
+            var finalDamage = damage * progressionMultiplier;
+            bestTarget.TakeDamage(finalDamage, gameObject);
+            InteractionPromptUI.Instance?.ShowMessage($"Hit {bestTarget.DisplayName}: {finalDamage:0} damage.");
         }
 
         private Health FindBestTarget(float range, float radius)
