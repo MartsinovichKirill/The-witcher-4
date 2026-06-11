@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.Save;
 
 namespace WitcherRightVersion.UI
@@ -40,8 +41,6 @@ namespace WitcherRightVersion.UI
         private const string MusicKey = "settings.music";
         private const string ResolutionKey = "settings.resolution";
         private const string GraphicsKey = "settings.graphics";
-        private const string LanguageKey = "settings.language";
-
         private void Awake()
         {
             LoadSettings();
@@ -64,8 +63,13 @@ namespace WitcherRightVersion.UI
 
         public void OnLanguageChanged(int languageIndex)
         {
-            PlayerPrefs.SetInt(LanguageKey, languageIndex);
-            PlayerPrefs.Save();
+            var normalizedLanguage = Mathf.Clamp(languageIndex, GameLocalization.EnglishLanguage, GameLocalization.RussianLanguage);
+            if (languageDropdown != null)
+            {
+                languageDropdown.SetValueWithoutNotify(normalizedLanguage);
+            }
+
+            GameLocalization.SetLanguage(normalizedLanguage);
             ApplyLanguage();
             SetStatus(GetText("Language changed.", "Язык изменён."));
         }
@@ -113,7 +117,7 @@ namespace WitcherRightVersion.UI
             PlayerPrefs.SetInt(MusicKey, musicEnabled ? 1 : 0);
             PlayerPrefs.SetInt(ResolutionKey, resolutionIndex);
             PlayerPrefs.SetInt(GraphicsKey, graphicsIndex);
-            PlayerPrefs.SetInt(LanguageKey, languageIndex);
+            GameLocalization.SetLanguage(languageIndex);
             PlayerPrefs.Save();
 
             ApplyLanguage();
@@ -136,7 +140,7 @@ namespace WitcherRightVersion.UI
             var musicEnabled = PlayerPrefs.GetInt(MusicKey, 1) == 1;
             var resolutionIndex = PlayerPrefs.GetInt(ResolutionKey, 0);
             var graphicsIndex = PlayerPrefs.GetInt(GraphicsKey, 1);
-            var languageIndex = PlayerPrefs.GetInt(LanguageKey, 0);
+            var languageIndex = GameLocalization.CurrentLanguage;
 
             if (volumeSlider != null)
             {
@@ -160,7 +164,7 @@ namespace WitcherRightVersion.UI
 
             if (languageDropdown != null)
             {
-                languageDropdown.value = Mathf.Clamp(languageIndex, 0, languageDropdown.options.Count - 1);
+                languageDropdown.SetValueWithoutNotify(Mathf.Clamp(languageIndex, 0, languageDropdown.options.Count - 1));
                 languageDropdown.RefreshShownValue();
             }
 
@@ -169,7 +173,7 @@ namespace WitcherRightVersion.UI
 
         private void ApplyLanguage()
         {
-            var russian = IsRussian();
+            var russian = GameLocalization.IsRussian;
 
             SetText(titleText, "The Witcher 4", "Ведьмак 4");
             SetText(subtitleText, "Right Version", "Правильная версия");
@@ -192,11 +196,19 @@ namespace WitcherRightVersion.UI
                 languageDropdown.options[1].text = russian ? "Русский" : "Russian";
                 languageDropdown.RefreshShownValue();
             }
+
+            if (graphicsDropdown != null && graphicsDropdown.options.Count >= 3)
+            {
+                graphicsDropdown.options[0].text = russian ? "Низкое" : "Low";
+                graphicsDropdown.options[1].text = russian ? "Среднее" : "Medium";
+                graphicsDropdown.options[2].text = russian ? "Высокое" : "High";
+                graphicsDropdown.RefreshShownValue();
+            }
         }
 
         private bool IsRussian()
         {
-            return languageDropdown != null && languageDropdown.value == 1;
+            return GameLocalization.IsRussian;
         }
 
         private string GetText(string english, string russian)

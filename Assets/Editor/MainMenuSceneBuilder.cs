@@ -272,17 +272,32 @@ namespace WitcherRightVersion.Editor
             SetRect(arrow.gameObject, new Vector2(0.86f, 0f), new Vector2(0.98f, 1f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
             var template = CreatePanel("Template", root.transform, new Color(0.1f, 0.12f, 0.1f, 0.98f));
-            SetRect(template, new Vector2(0f, -3f), new Vector2(1f, 0f), new Vector2(0.5f, 1f), Vector2.zero, new Vector2(0f, 120f));
+            var templateRect = template.GetComponent<RectTransform>();
+            templateRect.anchorMin = new Vector2(0f, 0f);
+            templateRect.anchorMax = new Vector2(1f, 0f);
+            templateRect.pivot = new Vector2(0.5f, 1f);
+            templateRect.anchoredPosition = new Vector2(0f, -4f);
+            templateRect.sizeDelta = new Vector2(0f, 104f);
 
             var viewport = CreatePanel("Viewport", template.transform, new Color(0f, 0f, 0f, 0f));
             Stretch(viewport);
             viewport.AddComponent<Mask>().showMaskGraphic = false;
 
             var content = CreateUiObject("Content", viewport.transform);
-            Stretch(content);
+            var contentRect = content.GetComponent<RectTransform>();
+            contentRect.anchorMin = new Vector2(0f, 1f);
+            contentRect.anchorMax = new Vector2(1f, 1f);
+            contentRect.pivot = new Vector2(0.5f, 1f);
+            contentRect.anchoredPosition = Vector2.zero;
+            contentRect.sizeDelta = new Vector2(0f, 96f);
 
             var item = CreateToggle("Item", content.transform, font, "Option");
-            Stretch(item.gameObject);
+            var itemRect = item.GetComponent<RectTransform>();
+            itemRect.anchorMin = new Vector2(0f, 1f);
+            itemRect.anchorMax = new Vector2(1f, 1f);
+            itemRect.pivot = new Vector2(0.5f, 1f);
+            itemRect.anchoredPosition = Vector2.zero;
+            itemRect.sizeDelta = new Vector2(0f, 44f);
 
             template.SetActive(false);
 

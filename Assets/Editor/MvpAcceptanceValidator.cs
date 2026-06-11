@@ -10,6 +10,7 @@ using WitcherRightVersion.Crafting;
 using WitcherRightVersion.Dialogue;
 using WitcherRightVersion.Interaction;
 using WitcherRightVersion.Inventory;
+using WitcherRightVersion.Localization;
 using WitcherRightVersion.Player;
 using WitcherRightVersion.Quest;
 using WitcherRightVersion.Save;
@@ -75,6 +76,42 @@ namespace WitcherRightVersion.Editor
             RequireObject("ContinueButton", failures);
             RequireObject("SettingsButton", failures);
             RequireObject("LanguageDropdown", failures);
+            ValidateLanguageSelection(failures);
+        }
+
+        private static void ValidateLanguageSelection(List<string> failures)
+        {
+            var controllerObject = RequireObject("MainMenuController", failures);
+            var controller = controllerObject != null ? controllerObject.GetComponent<MainMenuController>() : null;
+            if (controller == null)
+            {
+                failures.Add("MainMenuController must expose the language selection workflow.");
+                return;
+            }
+
+            var hadLanguageSetting = PlayerPrefs.HasKey(GameLocalization.LanguageKey);
+            var previousLanguage = GameLocalization.CurrentLanguage;
+
+            try
+            {
+                controller.OnLanguageChanged(GameLocalization.RussianLanguage);
+                Require(GameLocalization.IsRussian, failures, "Russian language selection must persist immediately.");
+                Require(controller.titleText != null && controller.titleText.text == "Ведьмак 4", failures, "Russian language selection must update the main-menu title.");
+                Require(controller.settingsButtonText != null && controller.settingsButtonText.text == "Настройки", failures, "Russian language selection must update menu controls.");
+                Require(controller.languageDropdown != null && controller.languageDropdown.value == GameLocalization.RussianLanguage, failures, "Language dropdown must show the persisted Russian selection.");
+            }
+            finally
+            {
+                if (hadLanguageSetting)
+                {
+                    GameLocalization.SetLanguage(previousLanguage);
+                }
+                else
+                {
+                    PlayerPrefs.DeleteKey(GameLocalization.LanguageKey);
+                    PlayerPrefs.Save();
+                }
+            }
         }
 
         private static void ValidateVillageAcceptance(List<string> failures)
@@ -360,6 +397,14 @@ namespace WitcherRightVersion.Editor
             RequireObject<InventoryHudUI>("InventoryCanvas", failures);
             RequireObject<EndingHudUI>("EndingCanvas", failures);
             RequireObject("WorldDirectionCanvas", failures);
+            RequireObject<LocalizedStaticText>("WorldDirectionText", failures);
+            RequireObject<ZoneDiscoveryUI>("ZoneDiscoveryCanvas", failures);
+            RequireObject("ZoneDiscoveryTriggers", failures);
+            RequireObject<ZoneDiscoveryTrigger>("VillageZoneDiscovery", failures);
+            RequireObject<ZoneDiscoveryTrigger>("ForestZoneDiscovery", failures);
+            RequireObject<ZoneDiscoveryTrigger>("SwampZoneDiscovery", failures);
+            RequireObject<ZoneDiscoveryTrigger>("AshRoadZoneDiscovery", failures);
+            RequireObject<ZoneDiscoveryTrigger>("TowerZoneDiscovery", failures);
             RequireObject("WorldGameplayRoot", failures);
             RequireObject("VillageKayKitMarket_World", failures);
             RequireObject("VillageKayKitWell_World", failures);

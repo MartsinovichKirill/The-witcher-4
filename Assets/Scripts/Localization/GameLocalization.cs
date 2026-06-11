@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,10 @@ namespace WitcherRightVersion.Localization
     public static class GameLocalization
     {
         public const string LanguageKey = "settings.language";
+        public const int EnglishLanguage = 0;
+        public const int RussianLanguage = 1;
+
+        public static event Action LanguageChanged;
 
         private static readonly Dictionary<string, string> Russian = new Dictionary<string, string>
         {
@@ -265,7 +270,22 @@ namespace WitcherRightVersion.Localization
             { "Radek has no more packed supplies today.", "Сегодня у Радека больше нет готовых наборов." }
         };
 
-        public static bool IsRussian => PlayerPrefs.GetInt(LanguageKey, 0) == 1;
+        public static int CurrentLanguage => Mathf.Clamp(PlayerPrefs.GetInt(LanguageKey, EnglishLanguage), EnglishLanguage, RussianLanguage);
+        public static bool IsRussian => CurrentLanguage == RussianLanguage;
+
+        public static void SetLanguage(int languageIndex)
+        {
+            var normalizedLanguage = Mathf.Clamp(languageIndex, EnglishLanguage, RussianLanguage);
+            var changed = CurrentLanguage != normalizedLanguage;
+
+            PlayerPrefs.SetInt(LanguageKey, normalizedLanguage);
+            PlayerPrefs.Save();
+
+            if (changed)
+            {
+                LanguageChanged?.Invoke();
+            }
+        }
 
         public static string Text(string english)
         {

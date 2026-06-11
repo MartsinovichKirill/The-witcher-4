@@ -54,6 +54,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("InventoryCanvas");
             RemoveIfExists("EndingCanvas");
             RemoveIfExists("WorldDirectionCanvas");
+            RemoveIfExists("ZoneDiscoveryCanvas");
 
             CreateRuntimeServices();
             CreateLighting();
@@ -67,6 +68,7 @@ namespace WitcherRightVersion.Editor
             CreateInventoryCanvas();
             CreateEndingCanvas();
             CreateWorldDirectionCanvas();
+            CreateZoneDiscoveryCanvas();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -182,6 +184,7 @@ namespace WitcherRightVersion.Editor
             CreateCharacterPresentationPolishPass(root.transform);
             CreateDynamicAmbientVfxPass(root.transform);
             CreateRouteCinematicCompositionPass(root.transform);
+            CreateZoneDiscoveryTriggers(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -3162,8 +3165,56 @@ namespace WitcherRightVersion.Editor
             scaler.matchWidthOrHeight = 0.5f;
 
             var panel = CreatePanel(canvasObject.transform, "WorldDirectionPanel", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(620f, 110f), new Vector2(44f, -44f), new Color(0.04f, 0.037f, 0.03f, 0.82f));
-            CreateText(panel.transform, "WorldDirectionText", new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(0.5f, 0.5f), new Vector2(-42f, -24f), Vector2.zero, 19, TextAnchor.MiddleLeft, new Color(0.93f, 0.88f, 0.74f, 1f))
-                .text = "Велемар: деревня в центре, Старый Лес на западе, Чёрное Болото на юге, Пепельный тракт на востоке, руины башни на севере.";
+            var directionText = CreateText(panel.transform, "WorldDirectionText", new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(0.5f, 0.5f), new Vector2(-42f, -24f), Vector2.zero, 19, TextAnchor.MiddleLeft, new Color(0.93f, 0.88f, 0.74f, 1f));
+            directionText.gameObject.AddComponent<LocalizedStaticText>().Configure(
+                "Velemar: village center, Old Forest west, Black Swamp south, Ash Road east, tower ruins north.",
+                "Велемар: деревня в центре, Старый Лес на западе, Чёрное Болото на юге, Пепельный тракт на востоке, руины башни на севере.");
+        }
+
+        private static void CreateZoneDiscoveryCanvas()
+        {
+            var canvasObject = new GameObject("ZoneDiscoveryCanvas");
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 35;
+
+            var scaler = canvasObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            var group = canvasObject.AddComponent<CanvasGroup>();
+            var panel = CreatePanel(canvasObject.transform, "ZoneDiscoveryPanel", new Vector2(0.5f, 0.72f), new Vector2(0.5f, 0.72f), new Vector2(0.5f, 0.5f), new Vector2(720f, 90f), Vector2.zero, new Color(0.025f, 0.022f, 0.018f, 0.72f));
+            var title = CreateText(panel.transform, "ZoneDiscoveryTitle", Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), new Vector2(-70f, -20f), Vector2.zero, 34, TextAnchor.MiddleCenter, new Color(0.94f, 0.78f, 0.42f, 1f));
+
+            var discovery = canvasObject.AddComponent<ZoneDiscoveryUI>();
+            SetSerializedObjectReference(discovery, "canvasGroup", group);
+            SetSerializedObjectReference(discovery, "zoneText", title);
+        }
+
+        private static void CreateZoneDiscoveryTriggers(Transform parent)
+        {
+            var root = new GameObject("ZoneDiscoveryTriggers");
+            root.transform.SetParent(parent, false);
+
+            CreateZoneDiscoveryTrigger(root.transform, "VillageZoneDiscovery", "Heather Ford", "Вересковый Брод", new Vector3(0f, 1.5f, -10f), new Vector3(18f, 3f, 8f));
+            CreateZoneDiscoveryTrigger(root.transform, "ForestZoneDiscovery", "Old Forest", "Старый Лес", new Vector3(-45f, 1.5f, 2f), new Vector3(10f, 3f, 22f));
+            CreateZoneDiscoveryTrigger(root.transform, "SwampZoneDiscovery", "Black Swamp", "Чёрное Болото", new Vector3(2f, 1.5f, -49f), new Vector3(20f, 3f, 10f));
+            CreateZoneDiscoveryTrigger(root.transform, "AshRoadZoneDiscovery", "Ash Road", "Пепельный тракт", new Vector3(48f, 1.5f, 2f), new Vector3(10f, 3f, 20f));
+            CreateZoneDiscoveryTrigger(root.transform, "TowerZoneDiscovery", "Tower Ruins", "Руины Башни", new Vector3(0f, 1.5f, 49f), new Vector3(20f, 3f, 10f));
+        }
+
+        private static void CreateZoneDiscoveryTrigger(Transform parent, string name, string englishName, string russianName, Vector3 position, Vector3 size)
+        {
+            var triggerObject = new GameObject(name);
+            triggerObject.transform.SetParent(parent, false);
+            triggerObject.transform.localPosition = position;
+
+            var collider = triggerObject.AddComponent<BoxCollider>();
+            collider.isTrigger = true;
+            collider.size = size;
+
+            triggerObject.AddComponent<ZoneDiscoveryTrigger>().Configure(englishName, russianName);
         }
 
         private static void CreateDialogueCanvas()

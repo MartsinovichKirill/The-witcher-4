@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using WitcherRightVersion.Combat;
+using WitcherRightVersion.Localization;
 
 namespace WitcherRightVersion.UI
 {
@@ -45,7 +46,9 @@ namespace WitcherRightVersion.UI
 
             if (healthText != null)
             {
-                healthText.text = $"Reynard HP {current:0}/{safeMax:0}";
+                healthText.text = GameLocalization.Select(
+                    $"Reynard HP {current:0}/{safeMax:0}",
+                    $"Рейнард: здоровье {current:0}/{safeMax:0}");
             }
         }
     }
