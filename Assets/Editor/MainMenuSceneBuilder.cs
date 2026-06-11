@@ -13,6 +13,7 @@ namespace WitcherRightVersion.Editor
     public static class MainMenuSceneBuilder
     {
         private const string ScenePath = "Assets/Scenes/MainMenuScene.unity";
+        private const string MenuBackgroundImagePath = "Assets/Art/Menu/MainMenuBackground.jpg";
 
         [MenuItem("Tools/Witcher Right Version/Build Main Menu Scene")]
         public static void Create()
@@ -22,31 +23,44 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("MainMenuCanvas");
             RemoveIfExists("MainMenuEventSystem");
             RemoveIfExists("MainMenuController");
+            RemoveIfExists("MainMenuDiorama");
 
             EnsureCamera();
+            var backgroundSprite = EnsureMenuBackgroundSprite();
             var font = GetDefaultFont();
             var controllerHost = new GameObject("MainMenuController");
             var controller = controllerHost.AddComponent<MainMenuController>();
 
             var canvas = CreateCanvas();
-            var background = CreatePanel("Background", canvas.transform, new Color(0.035f, 0.055f, 0.045f, 1f));
+            var background = CreatePanel("Background", canvas.transform, new Color(0.012f, 0.016f, 0.022f, 0.34f));
             Stretch(background);
+            var backgroundImage = background.GetComponent<Image>();
+            backgroundImage.sprite = backgroundSprite;
+            backgroundImage.type = Image.Type.Simple;
+            backgroundImage.preserveAspect = false;
+            backgroundImage.color = Color.white;
 
-            var accent = CreatePanel("LeftAccent", background.transform, new Color(0.56f, 0.12f, 0.11f, 0.85f));
-            SetRect(accent, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(14f, 0f), new Vector2(14f, 0f));
+            var leftShade = CreatePanel("MainMenuLeftShadow", background.transform, new Color(0.005f, 0.007f, 0.01f, 0.68f));
+            SetRect(leftShade, new Vector2(0f, 0f), new Vector2(0.45f, 1f), new Vector2(0f, 0.5f), Vector2.zero, Vector2.zero);
+
+            var bottomShade = CreatePanel("MainMenuBottomShadow", background.transform, new Color(0.005f, 0.006f, 0.008f, 0.72f));
+            SetRect(bottomShade, new Vector2(0f, 0f), new Vector2(1f, 0.32f), new Vector2(0.5f, 0f), Vector2.zero, Vector2.zero);
+
+            var accent = CreatePanel("LeftAccent", background.transform, new Color(0.72f, 0.16f, 0.1f, 0.82f));
+            SetRect(accent, new Vector2(0f, 0.15f), new Vector2(0f, 0.82f), new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(20f, 0f));
 
             var title = CreateText("Title", background.transform, font, "The Witcher 4", 58, FontStyle.Bold, new Color(0.87f, 0.72f, 0.35f, 1f));
-            SetRect(title.gameObject, new Vector2(0.08f, 0.72f), new Vector2(0.92f, 0.92f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            SetRect(title.gameObject, new Vector2(0.08f, 0.62f), new Vector2(0.92f, 0.82f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             title.alignment = TextAnchor.MiddleLeft;
 
             var subtitle = CreateText("Subtitle", background.transform, font, "Right Version", 30, FontStyle.Normal, new Color(0.75f, 0.78f, 0.72f, 1f));
-            SetRect(subtitle.gameObject, new Vector2(0.08f, 0.66f), new Vector2(0.92f, 0.75f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            SetRect(subtitle.gameObject, new Vector2(0.08f, 0.56f), new Vector2(0.92f, 0.65f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             subtitle.alignment = TextAnchor.MiddleLeft;
 
             var mainPanel = CreatePanel("MainPanel", background.transform, new Color(0f, 0f, 0f, 0f));
-            SetRect(mainPanel, new Vector2(0.08f, 0.18f), new Vector2(0.38f, 0.62f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            SetRect(mainPanel, new Vector2(0.08f, 0.15f), new Vector2(0.38f, 0.54f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var settingsPanel = CreatePanel("SettingsPanel", background.transform, new Color(0.08f, 0.095f, 0.085f, 0.94f));
+            var settingsPanel = CreatePanel("SettingsPanel", background.transform, new Color(0.035f, 0.04f, 0.04f, 0.9f));
             SetRect(settingsPanel, new Vector2(0.56f, 0.16f), new Vector2(0.9f, 0.66f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
             var status = CreateText("StatusText", background.transform, font, "Ready for a new contract.", 18, FontStyle.Normal, new Color(0.76f, 0.78f, 0.73f, 1f));
@@ -159,6 +173,27 @@ namespace WitcherRightVersion.Editor
             return canvas;
         }
 
+        private static Sprite EnsureMenuBackgroundSprite()
+        {
+            if (!System.IO.File.Exists(MenuBackgroundImagePath))
+            {
+                Debug.LogWarning($"Main menu background image is missing: {MenuBackgroundImagePath}");
+                return null;
+            }
+
+            var importer = AssetImporter.GetAtPath(MenuBackgroundImagePath) as TextureImporter;
+            if (importer != null)
+            {
+                importer.textureType = TextureImporterType.Sprite;
+                importer.spriteImportMode = SpriteImportMode.Single;
+                importer.mipmapEnabled = false;
+                importer.alphaSource = TextureImporterAlphaSource.None;
+                importer.SaveAndReimport();
+            }
+
+            return AssetDatabase.LoadAssetAtPath<Sprite>(MenuBackgroundImagePath);
+        }
+
         private static void EnsureCamera()
         {
             var camera = Camera.main;
@@ -170,7 +205,174 @@ namespace WitcherRightVersion.Editor
             }
 
             camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color(0.035f, 0.055f, 0.045f, 1f);
+            camera.backgroundColor = new Color(0.011f, 0.015f, 0.025f, 1f);
+            camera.transform.position = new Vector3(0f, 2.1f, -11.6f);
+            camera.transform.rotation = Quaternion.Euler(8f, 0f, 0f);
+            camera.fieldOfView = 47f;
+        }
+
+        private static void CreateMenuDiorama()
+        {
+            var root = new GameObject("MainMenuDiorama");
+
+            var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            ground.name = "MenuForestWetGround";
+            ground.transform.SetParent(root.transform, false);
+            ground.transform.position = new Vector3(0f, -0.03f, 5f);
+            ground.transform.localScale = new Vector3(3.7f, 1f, 4.8f);
+            ground.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/MenuForestWetGround.mat", new Color(0.018f, 0.025f, 0.027f, 1f));
+
+            var moon = new GameObject("MenuColdMoonLight");
+            moon.transform.SetParent(root.transform, false);
+            moon.transform.rotation = Quaternion.Euler(38f, -32f, 0f);
+            var moonLight = moon.AddComponent<Light>();
+            moonLight.type = LightType.Directional;
+            moonLight.color = new Color(0.42f, 0.52f, 0.72f, 1f);
+            moonLight.intensity = 0.85f;
+            moonLight.shadows = LightShadows.Soft;
+
+            CreateMenuPointLight(root.transform, "MenuFarCampfireLight", new Vector3(0f, 1.05f, 7.7f), new Color(1f, 0.42f, 0.12f, 1f), 3.1f, 13.5f);
+            CreateMenuPointLight(root.transform, "MenuLeftTorchLight", new Vector3(-2.7f, 0.85f, 6.8f), new Color(1f, 0.36f, 0.1f, 1f), 1.2f, 7.5f);
+            CreateMenuPointLight(root.transform, "MenuRightTorchLight", new Vector3(2.4f, 0.8f, 6.9f), new Color(1f, 0.34f, 0.09f, 1f), 1.05f, 7f);
+            CreateMenuPointLight(root.transform, "MenuWitcherRimLight", new Vector3(0.05f, 2.2f, 5.2f), new Color(0.34f, 0.46f, 0.68f, 1f), 1.25f, 5f);
+
+            for (var i = 0; i < 46; i++)
+            {
+                var side = i % 2 == 0 ? -1f : 1f;
+                var row = i / 2;
+                var x = side * (1.8f + (row % 8) * 0.62f + (i % 5) * 0.07f);
+                var z = 0.6f + row * 0.62f;
+                var height = 4.6f + (i % 7) * 0.42f;
+                var radius = 0.09f + (i % 4) * 0.018f;
+                CreateMenuTree(root.transform, $"MenuForestTree_{i + 1:00}", new Vector3(x, height * 0.5f, z), radius, height, i * 17f);
+            }
+
+            for (var i = 0; i < 16; i++)
+            {
+                var x = -5.5f + i * 0.75f;
+                CreateMenuTree(root.transform, $"MenuBackgroundPine_{i + 1:00}", new Vector3(x, 2.8f + (i % 3) * 0.2f, 9.4f + (i % 2) * 0.35f), 0.06f, 5.6f + (i % 4) * 0.35f, i * 11f);
+            }
+
+            CreateMenuWitcherSilhouette(root.transform);
+            CreateMenuFireCluster(root.transform, "MenuCampfireCore", new Vector3(0f, 0.22f, 7.65f), 1.0f);
+            CreateMenuFireCluster(root.transform, "MenuLeftFire", new Vector3(-2.7f, 0.16f, 6.85f), 0.58f);
+            CreateMenuFireCluster(root.transform, "MenuRightFire", new Vector3(2.4f, 0.16f, 6.95f), 0.5f);
+
+            for (var i = 0; i < 10; i++)
+            {
+                var mist = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                mist.name = $"MenuGroundMist_{i + 1:00}";
+                mist.transform.SetParent(root.transform, false);
+                mist.transform.position = new Vector3(-4.5f + i * 1.0f, 0.08f, 3.0f + (i % 3) * 1.3f);
+                mist.transform.localScale = new Vector3(1.5f + (i % 4) * 0.3f, 0.025f, 0.34f);
+                mist.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/MenuGroundMist_{i + 1:00}.mat", new Color(0.12f, 0.16f, 0.18f, 0.34f));
+                Object.DestroyImmediate(mist.GetComponent<Collider>());
+            }
+        }
+
+        private static void CreateMenuTree(Transform parent, string name, Vector3 position, float radius, float height, float yaw)
+        {
+            var trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            trunk.name = name;
+            trunk.transform.SetParent(parent, false);
+            trunk.transform.position = position;
+            trunk.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+            trunk.transform.localScale = new Vector3(radius, height * 0.5f, radius);
+            trunk.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/MenuTreeTrunk.mat", new Color(0.025f, 0.022f, 0.021f, 1f));
+            Object.DestroyImmediate(trunk.GetComponent<Collider>());
+
+            var canopy = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            canopy.name = $"{name}_Canopy";
+            canopy.transform.SetParent(parent, false);
+            canopy.transform.position = position + new Vector3(0f, height * 0.42f, 0f);
+            canopy.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+            canopy.transform.localScale = new Vector3(radius * 8.5f, height * 0.34f, radius * 8.5f);
+            canopy.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/MenuPineCanopy.mat", new Color(0.012f, 0.029f, 0.031f, 1f));
+            Object.DestroyImmediate(canopy.GetComponent<Collider>());
+        }
+
+        private static void CreateMenuWitcherSilhouette(Transform parent)
+        {
+            var root = new GameObject("MenuReynardSilhouette");
+            root.transform.SetParent(parent, false);
+            root.transform.position = new Vector3(0f, 0f, 4.75f);
+            root.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+
+            var dark = CreateMaterial("Assets/Materials/MenuReynardSilhouette.mat", new Color(0.02f, 0.024f, 0.026f, 1f));
+            CreateMenuBodyPart(root.transform, "Body", PrimitiveType.Capsule, new Vector3(0f, 1.05f, 0f), new Vector3(0.38f, 0.72f, 0.28f), Quaternion.identity, dark);
+            CreateMenuBodyPart(root.transform, "Head", PrimitiveType.Sphere, new Vector3(0f, 1.82f, 0f), new Vector3(0.26f, 0.28f, 0.26f), Quaternion.identity, dark);
+            CreateMenuBodyPart(root.transform, "LeftLeg", PrimitiveType.Capsule, new Vector3(-0.13f, 0.42f, 0f), new Vector3(0.12f, 0.48f, 0.12f), Quaternion.Euler(6f, 0f, -5f), dark);
+            CreateMenuBodyPart(root.transform, "RightLeg", PrimitiveType.Capsule, new Vector3(0.13f, 0.42f, 0f), new Vector3(0.12f, 0.48f, 0.12f), Quaternion.Euler(-4f, 0f, 5f), dark);
+            CreateMenuBodyPart(root.transform, "LeftArm", PrimitiveType.Capsule, new Vector3(-0.36f, 1.08f, 0f), new Vector3(0.1f, 0.46f, 0.1f), Quaternion.Euler(0f, 0f, -18f), dark);
+            CreateMenuBodyPart(root.transform, "RightArm", PrimitiveType.Capsule, new Vector3(0.36f, 1.08f, 0f), new Vector3(0.1f, 0.46f, 0.1f), Quaternion.Euler(0f, 0f, 18f), dark);
+            CreateMenuBodyPart(root.transform, "SteelSword", PrimitiveType.Cube, new Vector3(-0.22f, 1.55f, -0.14f), new Vector3(0.055f, 1.45f, 0.035f), Quaternion.Euler(0f, 0f, -36f), dark);
+            CreateMenuBodyPart(root.transform, "SilverSword", PrimitiveType.Cube, new Vector3(0.24f, 1.52f, -0.14f), new Vector3(0.055f, 1.38f, 0.035f), Quaternion.Euler(0f, 0f, 34f), dark);
+        }
+
+        private static void CreateMenuBodyPart(Transform parent, string name, PrimitiveType primitiveType, Vector3 localPosition, Vector3 localScale, Quaternion localRotation, Material material)
+        {
+            var part = GameObject.CreatePrimitive(primitiveType);
+            part.name = name;
+            part.transform.SetParent(parent, false);
+            part.transform.localPosition = localPosition;
+            part.transform.localScale = localScale;
+            part.transform.localRotation = localRotation;
+            part.GetComponent<Renderer>().sharedMaterial = material;
+            Object.DestroyImmediate(part.GetComponent<Collider>());
+        }
+
+        private static void CreateMenuFireCluster(Transform parent, string name, Vector3 position, float scale)
+        {
+            var core = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            core.name = name;
+            core.transform.SetParent(parent, false);
+            core.transform.position = position;
+            core.transform.localScale = Vector3.one * scale;
+            core.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", new Color(1f, 0.42f, 0.08f, 1f));
+            Object.DestroyImmediate(core.GetComponent<Collider>());
+
+            for (var i = 0; i < 5; i++)
+            {
+                var ember = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                ember.name = $"{name}_Ember_{i + 1:00}";
+                ember.transform.SetParent(parent, false);
+                ember.transform.position = position + new Vector3(-0.32f + i * 0.16f, 0.18f + (i % 2) * 0.15f, 0.12f + (i % 3) * 0.1f) * scale;
+                ember.transform.localScale = Vector3.one * (0.08f * scale);
+                ember.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{name}_Ember.mat", new Color(1f, 0.68f, 0.22f, 1f));
+                Object.DestroyImmediate(ember.GetComponent<Collider>());
+            }
+        }
+
+        private static void CreateMenuPointLight(Transform parent, string name, Vector3 position, Color color, float intensity, float range)
+        {
+            var lightObject = new GameObject(name);
+            lightObject.transform.SetParent(parent, false);
+            lightObject.transform.position = position;
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+            light.shadows = LightShadows.None;
+        }
+
+        private static Material CreateMaterial(string path, Color color)
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
+                AssetDatabase.CreateAsset(material, path);
+            }
+
+            material.color = color;
+            if (material.HasProperty("_BaseColor"))
+            {
+                material.SetColor("_BaseColor", color);
+            }
+
+            EditorUtility.SetDirty(material);
+            return material;
         }
 
         private static GameObject CreatePanel(string name, Transform parent, Color color)
