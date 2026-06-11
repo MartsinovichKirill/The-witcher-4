@@ -1407,6 +1407,7 @@ namespace WitcherRightVersion.Editor
             CreateSwampWaterAndReedPolish(root.transform);
             CreateAshRoadSmokeAndRuinPolish(root.transform);
             CreateTowerRitualSkylinePolish(root.transform);
+            CreateTowerPlayableRuinRebuild(root.transform);
         }
 
         private static void CreateVillageCameraCompositionPolish(Transform parent)
@@ -1556,6 +1557,36 @@ namespace WitcherRightVersion.Editor
             PlaceKayKit(root.transform, "TowerPolishLeftMountainBacker", "mountain.fbx", new Vector3(-31f, 0f, 142f), Quaternion.Euler(0f, 26f, 0f), new Vector3(1.8f, 0.65f, 1.8f));
             PlaceKayKit(root.transform, "TowerPolishRightMountainBacker", "mountain.fbx", new Vector3(31f, 0f, 142f), Quaternion.Euler(0f, -26f, 0f), new Vector3(1.8f, 0.65f, 1.8f));
             CreatePointLight(root.transform, "TowerPolishMirrorCoreGlow", new Vector3(0f, 2.8f, 78f), new Color(0.58f, 0.32f, 1f, 1f), 0.9f, 17f);
+        }
+
+        private static void CreateTowerPlayableRuinRebuild(Transform parent)
+        {
+            var root = new GameObject("TowerPlayableRuinRebuild");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "TowerRebuildStoneCourt", new Vector3(0f, 0.151f, 76f), new Vector3(17f, 0.012f, 21f), new Color(0.055f, 0.054f, 0.062f, 1f));
+            CreateSurfacePatch(root.transform, "TowerRebuildCentralPath", new Vector3(0f, 0.163f, 76f), new Vector3(4.8f, 0.012f, 21f), new Color(0.09f, 0.085f, 0.095f, 1f));
+
+            PlaceKenney(root.transform, "TowerRebuildEntranceArch", "wall-arch.fbx", new Vector3(0f, 0f, 66.3f), Quaternion.identity, Vector3.one * 1.45f);
+            PlaceKenney(root.transform, "TowerRebuildRearBrokenArch", "wall-arch-top.fbx", new Vector3(0f, 0f, 84.7f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * 1.35f);
+            PlaceKenney(root.transform, "TowerRebuildLeftWallA", "wall-broken.fbx", new Vector3(-7.3f, 0f, 69.2f), Quaternion.Euler(0f, 82f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "TowerRebuildLeftWallB", "wall-block-half.fbx", new Vector3(-7.6f, 0f, 77.2f), Quaternion.Euler(0f, 94f, 0f), Vector3.one * 1.18f);
+            PlaceKenney(root.transform, "TowerRebuildRightWallA", "wall-broken.fbx", new Vector3(7.3f, 0f, 69.7f), Quaternion.Euler(0f, -82f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "TowerRebuildRightWallB", "wall-block-half.fbx", new Vector3(7.6f, 0f, 77.7f), Quaternion.Euler(0f, -94f, 0f), Vector3.one * 1.18f);
+            PlaceKenney(root.transform, "TowerRebuildLeftPillar", "pillar-stone.fbx", new Vector3(-4.5f, 0f, 82.2f), Quaternion.Euler(0f, 12f, 0f), Vector3.one * 1.3f);
+            PlaceKenney(root.transform, "TowerRebuildRightPillar", "pillar-stone.fbx", new Vector3(4.5f, 0f, 82.2f), Quaternion.Euler(0f, -12f, 0f), Vector3.one * 1.3f);
+            PlaceKenney(root.transform, "TowerRebuildInnerStairs", "stairs-wide-stone.fbx", new Vector3(0f, 0f, 82.1f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * 1.15f);
+
+            for (var i = 0; i < 10; i++)
+            {
+                var side = i % 2 == 0 ? -1f : 1f;
+                var x = side * (4.8f + (i % 3) * 0.85f);
+                var z = 67.5f + i * 1.65f;
+                PlaceKenney(root.transform, $"TowerRebuildRubble_{i + 1:00}", i % 3 == 0 ? "rock-small.fbx" : i % 3 == 1 ? "wall-block-half.fbx" : "pillar-stone.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, i * 37f, i % 3 == 0 ? 0f : 78f), Vector3.one * (0.42f + (i % 3) * 0.12f));
+            }
+
+            CreatePointLight(root.transform, "TowerRebuildColdCourtLight", new Vector3(0f, 2.4f, 72f), new Color(0.32f, 0.38f, 0.66f, 1f), 0.7f, 15f);
+            CreatePointLight(root.transform, "TowerRebuildMirrorHallLight", new Vector3(0f, 2.1f, 82f), new Color(0.52f, 0.28f, 0.84f, 1f), 0.8f, 13f);
         }
 
         private static void CreateCharacterPresentationPolishPass(Transform parent)
@@ -3142,6 +3173,8 @@ namespace WitcherRightVersion.Editor
 
             var steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.22f, 1.05f, -0.14f), Quaternion.Euler(65f, 0f, 25f), Vector3.one * 0.3f);
             var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.22f, 1.0f, -0.14f), Quaternion.Euler(65f, 0f, -25f), Vector3.one * 0.3f);
+            InstantiateModel($"{KnightPath}/ShoulderPads.fbx", "ReynardShoulderPads_Visual", player, new Vector3(0f, -0.02f, 0f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * PlayerVisualScale);
+            InstantiateModel($"{KnightPath}/Helmet2.fbx", "ReynardHelmet_Visual", player, new Vector3(0f, -0.02f, 0f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * PlayerVisualScale);
             return (knight.transform, steelSword != null ? steelSword.transform : null, silverSword != null ? silverSword.transform : null);
         }
 
@@ -3162,6 +3195,7 @@ namespace WitcherRightVersion.Editor
             cameraObject.AddComponent<AudioListener>();
             var follow = cameraObject.AddComponent<ThirdPersonCamera>();
             follow.Target = target;
+            target.GetComponent<PlayerController>()?.SetCameraTransform(cameraObject.transform);
         }
 
         private static void CreateInteractionCanvas()

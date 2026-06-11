@@ -75,7 +75,6 @@ namespace WitcherRightVersion.Editor
             RequireObject("NewGameButton", failures);
             RequireObject("ContinueButton", failures);
             RequireObject("SettingsButton", failures);
-            RequireObject("LanguageDropdown", failures);
             RequireObject("ConfirmationPanel", failures);
             RequireObject("ConfirmActionButton", failures);
             RequireObject("CancelActionButton", failures);
@@ -86,42 +85,24 @@ namespace WitcherRightVersion.Editor
             RequireObject("SharpnessToggle", failures);
             RequireObject("BlurToggle", failures);
             RequireObject("ScreenModeDropdown", failures);
-            ValidateLanguageSelection(failures);
+            ValidateRussianOnlyMenu(failures);
         }
 
-        private static void ValidateLanguageSelection(List<string> failures)
+        private static void ValidateRussianOnlyMenu(List<string> failures)
         {
             var controllerObject = RequireObject("MainMenuController", failures);
             var controller = controllerObject != null ? controllerObject.GetComponent<MainMenuController>() : null;
             if (controller == null)
             {
-                failures.Add("MainMenuController must expose the language selection workflow.");
+                failures.Add("MainMenuController must exist for Russian-only menu validation.");
                 return;
             }
 
-            var hadLanguageSetting = PlayerPrefs.HasKey(GameLocalization.LanguageKey);
-            var previousLanguage = GameLocalization.CurrentLanguage;
-
-            try
-            {
-                controller.OnLanguageChanged(GameLocalization.RussianLanguage);
-                Require(GameLocalization.IsRussian, failures, "Russian language selection must persist immediately.");
-                Require(controller.titleText != null && controller.titleText.text == "Ведьмак 4", failures, "Russian language selection must update the main-menu title.");
-                Require(controller.settingsButtonText != null && controller.settingsButtonText.text == "Настройки", failures, "Russian language selection must update menu controls.");
-                Require(controller.languageDropdown != null && controller.languageDropdown.value == GameLocalization.RussianLanguage, failures, "Language dropdown must show the persisted Russian selection.");
-            }
-            finally
-            {
-                if (hadLanguageSetting)
-                {
-                    GameLocalization.SetLanguage(previousLanguage);
-                }
-                else
-                {
-                    PlayerPrefs.DeleteKey(GameLocalization.LanguageKey);
-                    PlayerPrefs.Save();
-                }
-            }
+            controller.OnLanguageChanged(GameLocalization.EnglishLanguage);
+            Require(GameLocalization.IsRussian, failures, "Localization must stay Russian even if English is requested.");
+            Require(FindSceneObject("LanguageDropdown") == null, failures, "Language dropdown must be removed in Russian-only build.");
+            Require(controller.titleText != null && controller.titleText.text == "Ведьмак 4", failures, "Russian-only menu must show Russian title.");
+            Require(controller.settingsButtonText != null && controller.settingsButtonText.text == "Настройки", failures, "Russian-only menu controls must stay Russian.");
         }
 
         private static void ValidateVillageAcceptance(List<string> failures)
@@ -313,6 +294,11 @@ namespace WitcherRightVersion.Editor
             RequireObject("TowerRitualSkylinePolish", failures);
             RequireObject("TowerPolishFloatingMirrorShard_01", failures);
             RequireObject("TowerPolishFarCastleSilhouette", failures);
+            RequireObject("TowerPlayableRuinRebuild", failures);
+            RequireObject("TowerRebuildEntranceArch", failures);
+            RequireObject("TowerRebuildRearBrokenArch", failures);
+            RequireObject("TowerRebuildInnerStairs", failures);
+            RequireObject("TowerRebuildRubble_01", failures);
             RequireObject("CharacterPresentationPolishPass", failures);
             RequireObject("VillageNpcPresentationPolish", failures);
             RequireObject("ElderPresentationAuthorityMat", failures);
@@ -360,6 +346,21 @@ namespace WitcherRightVersion.Editor
             RequireObject("FarAshRoadGateFort", failures);
             RequireObject("FarTowerCastleBackdrop", failures);
             RequireObject("VillageDistrict_VereskovyBrod", failures);
+            RequireObject("ReynardKnightModel", failures);
+            RequireObject("ReynardShoulderPads_Visual", failures);
+            RequireObject("ReynardHelmet_Visual", failures);
+            RequireObject("ReynardSteelSword_Visual", failures);
+            RequireObject("ReynardSilverSword_Visual", failures);
+            RequireObject("ElderVoytsekh_World_Model", failures);
+            RequireObject("MartaLozovaya_World_Model", failures);
+            RequireObject("BorisSmith_World_Model", failures);
+            RequireObject("RadekTrader_World_Model", failures);
+            RequireObject("ElsaCherntravka_World_Model", failures);
+            RequireObject("IvarSedoy_World_Model", failures);
+            RequireObject("GhostGirl_World_Model", failures);
+            RequireObject("OrtenMirrorMage_World_Model", failures);
+            RequireObject("TowerSkeletonGuard_Left_Model", failures);
+            RequireObject("TowerSkeletonGuard_Right_Model", failures);
             var forestDistrict = RequireObject("ForestDistrict_OldForest", failures);
             var swampDistrict = RequireObject("SwampDistrict_BlackSwamp", failures);
             var ashRoadDistrict = RequireObject("AshRoadDistrict_PepelnyTrakt", failures);

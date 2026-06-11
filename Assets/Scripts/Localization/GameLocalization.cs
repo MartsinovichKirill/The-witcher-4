@@ -275,26 +275,19 @@ namespace WitcherRightVersion.Localization
             { "Radek has no more packed supplies today.", "Сегодня у Радека больше нет готовых наборов." }
         };
 
-        public static int CurrentLanguage => Mathf.Clamp(PlayerPrefs.GetInt(LanguageKey, EnglishLanguage), EnglishLanguage, RussianLanguage);
-        public static bool IsRussian => CurrentLanguage == RussianLanguage;
+        public static int CurrentLanguage => RussianLanguage;
+        public static bool IsRussian => true;
 
         public static void SetLanguage(int languageIndex)
         {
-            var normalizedLanguage = Mathf.Clamp(languageIndex, EnglishLanguage, RussianLanguage);
-            var changed = CurrentLanguage != normalizedLanguage;
-
-            PlayerPrefs.SetInt(LanguageKey, normalizedLanguage);
+            PlayerPrefs.SetInt(LanguageKey, RussianLanguage);
             PlayerPrefs.Save();
-
-            if (changed)
-            {
-                LanguageChanged?.Invoke();
-            }
+            LanguageChanged?.Invoke();
         }
 
         public static string Text(string english)
         {
-            if (!IsRussian || string.IsNullOrEmpty(english))
+            if (string.IsNullOrEmpty(english))
             {
                 return english;
             }
@@ -304,7 +297,7 @@ namespace WitcherRightVersion.Localization
 
         public static string Select(string english, string russian)
         {
-            return IsRussian ? russian : english;
+            return russian;
         }
     }
 }

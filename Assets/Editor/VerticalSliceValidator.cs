@@ -85,8 +85,8 @@ namespace WitcherRightVersion.Editor
             RequireObject("SettingsButton", failures);
             RequireObject("ExitButton", failures);
             RequireObject("StatusText", failures);
-            RequireObject("LanguageLabel", failures);
-            RequireObject("LanguageDropdown", failures);
+            Require(FindSceneObject("LanguageLabel") == null, failures, "Russian-only build must not show LanguageLabel.");
+            Require(FindSceneObject("LanguageDropdown") == null, failures, "Russian-only build must not show LanguageDropdown.");
         }
 
         private static void ValidateVillageScene(List<string> failures)

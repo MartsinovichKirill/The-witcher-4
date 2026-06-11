@@ -34,11 +34,7 @@ namespace WitcherRightVersion.Player
             characterController = GetComponent<CharacterController>();
             health = GetComponent<Health>();
             combat = GetComponent<CombatController>();
-
-            if (cameraTransform == null && Camera.main != null)
-            {
-                cameraTransform = Camera.main.transform;
-            }
+            ResolveCameraTransform();
         }
 
         private void Update()
@@ -72,6 +68,8 @@ namespace WitcherRightVersion.Player
 
         private void Move()
         {
+            ResolveCameraTransform();
+
             var horizontal = Input.GetAxisRaw("Horizontal");
             var vertical = Input.GetAxisRaw("Vertical");
             var input = new Vector3(horizontal, 0f, vertical);
@@ -105,6 +103,11 @@ namespace WitcherRightVersion.Player
             characterController.Move(velocity * Time.deltaTime);
         }
 
+        public void SetCameraTransform(Transform value)
+        {
+            cameraTransform = value;
+        }
+
         private void StopHorizontalMovement()
         {
             IsMoving = false;
@@ -134,6 +137,17 @@ namespace WitcherRightVersion.Player
             right.Normalize();
 
             return (forward * input.z + right * input.x).normalized;
+        }
+
+        private void ResolveCameraTransform()
+        {
+            if (cameraTransform != null && cameraTransform.gameObject.activeInHierarchy)
+            {
+                return;
+            }
+
+            var mainCamera = Camera.main;
+            cameraTransform = mainCamera != null ? mainCamera.transform : null;
         }
     }
 }

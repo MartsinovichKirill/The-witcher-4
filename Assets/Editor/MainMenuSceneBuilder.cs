@@ -53,7 +53,7 @@ namespace WitcherRightVersion.Editor
             SetRect(title.gameObject, new Vector2(0.08f, 0.62f), new Vector2(0.92f, 0.82f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             title.alignment = TextAnchor.MiddleLeft;
 
-            var subtitle = CreateText("Subtitle", background.transform, font, "Right Version", 30, FontStyle.Normal, new Color(0.75f, 0.78f, 0.72f, 1f));
+            var subtitle = CreateText("Subtitle", background.transform, font, "Правильная версия", 30, FontStyle.Normal, new Color(0.75f, 0.78f, 0.72f, 1f));
             SetRect(subtitle.gameObject, new Vector2(0.08f, 0.56f), new Vector2(0.92f, 0.65f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             subtitle.alignment = TextAnchor.MiddleLeft;
 
@@ -63,14 +63,14 @@ namespace WitcherRightVersion.Editor
             var settingsPanel = CreatePanel("SettingsPanel", background.transform, new Color(0.035f, 0.04f, 0.04f, 0.94f));
             SetRect(settingsPanel, new Vector2(0.48f, 0.12f), new Vector2(0.92f, 0.76f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var status = CreateText("StatusText", background.transform, font, "Ready for a new contract.", 18, FontStyle.Normal, new Color(0.76f, 0.78f, 0.73f, 1f));
+            var status = CreateText("StatusText", background.transform, font, "Готов к новому контракту.", 18, FontStyle.Normal, new Color(0.76f, 0.78f, 0.73f, 1f));
             SetRect(status.gameObject, new Vector2(0.08f, 0.07f), new Vector2(0.88f, 0.14f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             status.alignment = TextAnchor.MiddleLeft;
 
-            var newGameButton = CreateButton("NewGameButton", mainPanel.transform, font, "New Game");
-            var continueButton = CreateButton("ContinueButton", mainPanel.transform, font, "Continue");
-            var settingsButton = CreateButton("SettingsButton", mainPanel.transform, font, "Settings");
-            var exitButton = CreateButton("ExitButton", mainPanel.transform, font, "Exit");
+            var newGameButton = CreateButton("NewGameButton", mainPanel.transform, font, "Новая игра");
+            var continueButton = CreateButton("ContinueButton", mainPanel.transform, font, "Продолжить");
+            var settingsButton = CreateButton("SettingsButton", mainPanel.transform, font, "Настройки");
+            var exitButton = CreateButton("ExitButton", mainPanel.transform, font, "Выйти");
 
             SetStackedButtonRect(newGameButton.gameObject, 0);
             SetStackedButtonRect(continueButton.gameObject, 1);
@@ -84,23 +84,23 @@ namespace WitcherRightVersion.Editor
 
             var confirmationPanel = CreatePanel("ConfirmationPanel", background.transform, new Color(0.025f, 0.028f, 0.03f, 0.98f));
             SetRect(confirmationPanel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-300f, -125f), new Vector2(300f, 125f));
-            var confirmationText = CreateText("ConfirmationText", confirmationPanel.transform, font, "Start a new game?", 28, FontStyle.Bold, new Color(0.94f, 0.88f, 0.75f, 1f));
+            var confirmationText = CreateText("ConfirmationText", confirmationPanel.transform, font, "Начать новую игру?", 28, FontStyle.Bold, new Color(0.94f, 0.88f, 0.75f, 1f));
             SetRect(confirmationText.gameObject, new Vector2(0.08f, 0.48f), new Vector2(0.92f, 0.88f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            var confirmButton = CreateButton("ConfirmActionButton", confirmationPanel.transform, font, "Confirm");
+            var confirmButton = CreateButton("ConfirmActionButton", confirmationPanel.transform, font, "Подтвердить");
             SetRect(confirmButton.gameObject, new Vector2(0.08f, 0.12f), new Vector2(0.46f, 0.4f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            var cancelButton = CreateButton("CancelActionButton", confirmationPanel.transform, font, "Cancel");
+            var cancelButton = CreateButton("CancelActionButton", confirmationPanel.transform, font, "Отмена");
             SetRect(cancelButton.gameObject, new Vector2(0.54f, 0.12f), new Vector2(0.92f, 0.4f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             UnityEventTools.AddPersistentListener(confirmButton.onClick, controller.ConfirmAction);
             UnityEventTools.AddPersistentListener(cancelButton.onClick, controller.HideConfirmation);
 
-            var settingsTitle = CreateText("SettingsTitle", settingsPanel.transform, font, "Settings", 30, FontStyle.Bold, new Color(0.87f, 0.72f, 0.35f, 1f));
+            var settingsTitle = CreateText("SettingsTitle", settingsPanel.transform, font, "Настройки", 30, FontStyle.Bold, new Color(0.87f, 0.72f, 0.35f, 1f));
             SetRect(settingsTitle.gameObject, new Vector2(0.06f, 0.86f), new Vector2(0.94f, 0.98f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             settingsTitle.alignment = TextAnchor.MiddleLeft;
 
-            var effectsTab = CreateButton("EffectsTabButton", settingsPanel.transform, font, "Effects");
-            var soundTab = CreateButton("SoundTabButton", settingsPanel.transform, font, "Sound");
-            var resolutionTab = CreateButton("ResolutionTabButton", settingsPanel.transform, font, "Resolution");
-            var graphicsTab = CreateButton("GraphicsTabButton", settingsPanel.transform, font, "Graphics");
+            var effectsTab = CreateButton("EffectsTabButton", settingsPanel.transform, font, "Эффекты");
+            var soundTab = CreateButton("SoundTabButton", settingsPanel.transform, font, "Звук");
+            var resolutionTab = CreateButton("ResolutionTabButton", settingsPanel.transform, font, "Разрешение");
+            var graphicsTab = CreateButton("GraphicsTabButton", settingsPanel.transform, font, "Графика");
             SetRect(effectsTab.gameObject, new Vector2(0.05f, 0.75f), new Vector2(0.27f, 0.84f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             SetRect(soundTab.gameObject, new Vector2(0.28f, 0.75f), new Vector2(0.49f, 0.84f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             SetRect(resolutionTab.gameObject, new Vector2(0.5f, 0.75f), new Vector2(0.72f, 0.84f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
@@ -119,51 +119,44 @@ namespace WitcherRightVersion.Editor
             SetRect(resolutionPage, new Vector2(0.06f, 0.2f), new Vector2(0.94f, 0.72f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             SetRect(graphicsPage, new Vector2(0.06f, 0.2f), new Vector2(0.94f, 0.72f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var sharpnessToggle = CreateToggle("SharpnessToggle", effectsPage.transform, font, "Sharpness");
+            var sharpnessToggle = CreateToggle("SharpnessToggle", effectsPage.transform, font, "Резкость");
             SetRect(sharpnessToggle.gameObject, new Vector2(0.08f, 0.6f), new Vector2(0.92f, 0.78f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            var blurToggle = CreateToggle("BlurToggle", effectsPage.transform, font, "Soft edges");
+            var blurToggle = CreateToggle("BlurToggle", effectsPage.transform, font, "Мягкие края");
             SetRect(blurToggle.gameObject, new Vector2(0.08f, 0.34f), new Vector2(0.92f, 0.52f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var volumeLabel = CreateText("VolumeLabel", soundPage.transform, font, "Volume", 18, FontStyle.Normal, Color.white);
+            var volumeLabel = CreateText("VolumeLabel", soundPage.transform, font, "Громкость", 18, FontStyle.Normal, Color.white);
             SetRect(volumeLabel.gameObject, new Vector2(0.08f, 0.62f), new Vector2(0.42f, 0.78f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             volumeLabel.alignment = TextAnchor.MiddleLeft;
 
             var volumeSlider = CreateSlider("VolumeSlider", soundPage.transform);
             SetRect(volumeSlider.gameObject, new Vector2(0.42f, 0.62f), new Vector2(0.9f, 0.78f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var musicToggle = CreateToggle("MusicToggle", soundPage.transform, font, "Music");
+            var musicToggle = CreateToggle("MusicToggle", soundPage.transform, font, "Музыка");
             SetRect(musicToggle.gameObject, new Vector2(0.08f, 0.34f), new Vector2(0.9f, 0.52f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var resolutionLabel = CreateText("ResolutionLabel", resolutionPage.transform, font, "Resolution", 18, FontStyle.Normal, Color.white);
+            var resolutionLabel = CreateText("ResolutionLabel", resolutionPage.transform, font, "Разрешение", 18, FontStyle.Normal, Color.white);
             SetRect(resolutionLabel.gameObject, new Vector2(0.08f, 0.62f), new Vector2(0.42f, 0.78f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             resolutionLabel.alignment = TextAnchor.MiddleLeft;
 
             var resolutionDropdown = CreateDropdown("ResolutionDropdown", resolutionPage.transform, font, new[] { "1280 x 720", "1600 x 900", "1920 x 1080" });
             SetRect(resolutionDropdown.gameObject, new Vector2(0.42f, 0.62f), new Vector2(0.9f, 0.78f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            var screenModeLabel = CreateText("ScreenModeLabel", resolutionPage.transform, font, "Screen mode", 18, FontStyle.Normal, Color.white);
+            var screenModeLabel = CreateText("ScreenModeLabel", resolutionPage.transform, font, "Режим экрана", 18, FontStyle.Normal, Color.white);
             SetRect(screenModeLabel.gameObject, new Vector2(0.08f, 0.34f), new Vector2(0.42f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             screenModeLabel.alignment = TextAnchor.MiddleLeft;
-            var screenModeDropdown = CreateDropdown("ScreenModeDropdown", resolutionPage.transform, font, new[] { "Fullscreen", "Borderless", "Windowed" });
+            var screenModeDropdown = CreateDropdown("ScreenModeDropdown", resolutionPage.transform, font, new[] { "Полный экран", "Без рамки", "Окно" });
             SetRect(screenModeDropdown.gameObject, new Vector2(0.42f, 0.34f), new Vector2(0.9f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var graphicsLabel = CreateText("GraphicsLabel", graphicsPage.transform, font, "Graphics preset", 18, FontStyle.Normal, Color.white);
-            SetRect(graphicsLabel.gameObject, new Vector2(0.08f, 0.58f), new Vector2(0.42f, 0.76f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            var graphicsLabel = CreateText("GraphicsLabel", graphicsPage.transform, font, "Шаблон графики", 18, FontStyle.Normal, Color.white);
+            SetRect(graphicsLabel.gameObject, new Vector2(0.08f, 0.54f), new Vector2(0.42f, 0.72f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             graphicsLabel.alignment = TextAnchor.MiddleLeft;
 
-            var graphicsDropdown = CreateDropdown("GraphicsDropdown", graphicsPage.transform, font, new[] { "Low", "Medium", "High" });
-            SetRect(graphicsDropdown.gameObject, new Vector2(0.42f, 0.58f), new Vector2(0.9f, 0.76f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            var graphicsDropdown = CreateDropdown("GraphicsDropdown", graphicsPage.transform, font, new[] { "Низкое", "Среднее", "Высокое" });
+            SetRect(graphicsDropdown.gameObject, new Vector2(0.42f, 0.54f), new Vector2(0.9f, 0.72f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var languageLabel = CreateText("LanguageLabel", graphicsPage.transform, font, "Language", 18, FontStyle.Normal, Color.white);
-            SetRect(languageLabel.gameObject, new Vector2(0.08f, 0.3f), new Vector2(0.42f, 0.48f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            languageLabel.alignment = TextAnchor.MiddleLeft;
-
-            var languageDropdown = CreateDropdown("LanguageDropdown", graphicsPage.transform, font, new[] { "English", "Русский" });
-            SetRect(languageDropdown.gameObject, new Vector2(0.42f, 0.3f), new Vector2(0.9f, 0.48f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-
-            var applyButton = CreateButton("ApplySettingsButton", settingsPanel.transform, font, "Apply");
+            var applyButton = CreateButton("ApplySettingsButton", settingsPanel.transform, font, "Применить");
             SetRect(applyButton.gameObject, new Vector2(0.06f, 0.05f), new Vector2(0.46f, 0.15f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var backButton = CreateButton("BackButton", settingsPanel.transform, font, "Back");
+            var backButton = CreateButton("BackButton", settingsPanel.transform, font, "Назад");
             SetRect(backButton.gameObject, new Vector2(0.54f, 0.05f), new Vector2(0.94f, 0.15f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
             UnityEventTools.AddPersistentListener(applyButton.onClick, controller.ApplySettings);
@@ -188,7 +181,6 @@ namespace WitcherRightVersion.Editor
             controller.musicLabelText = musicToggle.GetComponentInChildren<Text>();
             controller.resolutionLabelText = resolutionLabel;
             controller.graphicsLabelText = graphicsLabel;
-            controller.languageLabelText = languageLabel;
             controller.applyButtonText = GetButtonLabel(applyButton);
             controller.backButtonText = GetButtonLabel(backButton);
             controller.confirmationText = confirmationText;
@@ -205,7 +197,6 @@ namespace WitcherRightVersion.Editor
             controller.musicToggle = musicToggle;
             controller.resolutionDropdown = resolutionDropdown;
             controller.graphicsDropdown = graphicsDropdown;
-            controller.languageDropdown = languageDropdown;
             controller.screenModeDropdown = screenModeDropdown;
             controller.sharpnessToggle = sharpnessToggle;
             controller.blurToggle = blurToggle;

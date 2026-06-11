@@ -31,7 +31,6 @@ namespace WitcherRightVersion.UI
         public Text musicLabelText;
         public Text resolutionLabelText;
         public Text graphicsLabelText;
-        public Text languageLabelText;
         public Text applyButtonText;
         public Text backButtonText;
         public Text confirmationText;
@@ -50,7 +49,6 @@ namespace WitcherRightVersion.UI
         public Toggle musicToggle;
         public Dropdown resolutionDropdown;
         public Dropdown graphicsDropdown;
-        public Dropdown languageDropdown;
         public Dropdown screenModeDropdown;
         public Toggle sharpnessToggle;
         public Toggle blurToggle;
@@ -68,10 +66,6 @@ namespace WitcherRightVersion.UI
         private void Awake()
         {
             LoadSettings();
-            if (languageDropdown != null)
-            {
-                languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
-            }
             ShowMainPanel();
             ApplyLanguage();
             SetStatus(GetText("Ready for a new contract.", "Готов к новому контракту."));
@@ -79,23 +73,13 @@ namespace WitcherRightVersion.UI
 
         private void OnDestroy()
         {
-            if (languageDropdown != null)
-            {
-                languageDropdown.onValueChanged.RemoveListener(OnLanguageChanged);
-            }
         }
 
         public void OnLanguageChanged(int languageIndex)
         {
-            var normalizedLanguage = Mathf.Clamp(languageIndex, GameLocalization.EnglishLanguage, GameLocalization.RussianLanguage);
-            if (languageDropdown != null)
-            {
-                languageDropdown.SetValueWithoutNotify(normalizedLanguage);
-            }
-
-            GameLocalization.SetLanguage(normalizedLanguage);
+            GameLocalization.SetLanguage(GameLocalization.RussianLanguage);
             ApplyLanguage();
-            SetStatus(GetText("Language changed.", "Язык изменён."));
+            SetStatus("Русский язык закреплён.");
         }
 
         public void StartNewGame()
@@ -177,13 +161,12 @@ namespace WitcherRightVersion.UI
             var musicEnabled = musicToggle == null || musicToggle.isOn;
             var resolutionIndex = resolutionDropdown != null ? resolutionDropdown.value : 0;
             var graphicsIndex = graphicsDropdown != null ? graphicsDropdown.value : 0;
-            var languageIndex = languageDropdown != null ? languageDropdown.value : 0;
             var screenModeIndex = screenModeDropdown != null ? screenModeDropdown.value : 1;
             var sharpnessEnabled = sharpnessToggle == null || sharpnessToggle.isOn;
             var blurEnabled = blurToggle != null && blurToggle.isOn;
 
             RuntimeSettingsService.Apply(volume, musicEnabled, resolutionIndex, graphicsIndex, screenModeIndex, sharpnessEnabled, blurEnabled);
-            GameLocalization.SetLanguage(languageIndex);
+            GameLocalization.SetLanguage(GameLocalization.RussianLanguage);
 
             ApplyLanguage();
             SetStatus(GetText("Settings saved.", "Настройки сохранены."));
@@ -208,7 +191,6 @@ namespace WitcherRightVersion.UI
             var screenModeIndex = PlayerPrefs.GetInt(RuntimeSettingsService.ScreenModeKey, 1);
             var sharpnessEnabled = PlayerPrefs.GetInt(RuntimeSettingsService.SharpnessKey, 1) == 1;
             var blurEnabled = PlayerPrefs.GetInt(RuntimeSettingsService.BlurKey, 0) == 1;
-            var languageIndex = GameLocalization.CurrentLanguage;
 
             if (volumeSlider != null)
             {
@@ -228,12 +210,6 @@ namespace WitcherRightVersion.UI
             if (graphicsDropdown != null)
             {
                 graphicsDropdown.value = Mathf.Clamp(graphicsIndex, 0, graphicsDropdown.options.Count - 1);
-            }
-
-            if (languageDropdown != null)
-            {
-                languageDropdown.SetValueWithoutNotify(Mathf.Clamp(languageIndex, 0, languageDropdown.options.Count - 1));
-                languageDropdown.RefreshShownValue();
             }
 
             if (screenModeDropdown != null)
@@ -257,8 +233,6 @@ namespace WitcherRightVersion.UI
 
         private void ApplyLanguage()
         {
-            var russian = GameLocalization.IsRussian;
-
             SetText(titleText, "The Witcher 4", "Ведьмак 4");
             SetText(subtitleText, "Right Version", "Правильная версия");
             SetText(newGameButtonText, "New Game", "Новая игра");
@@ -270,7 +244,6 @@ namespace WitcherRightVersion.UI
             SetText(musicLabelText, "Music", "Музыка");
             SetText(resolutionLabelText, "Resolution", "Разрешение");
             SetText(graphicsLabelText, "Graphics", "Графика");
-            SetText(languageLabelText, "Language", "Язык");
             SetText(applyButtonText, "Apply", "Применить");
             SetText(backButtonText, "Back", "Назад");
             SetText(confirmButtonText, "Confirm", "Подтвердить");
@@ -283,26 +256,19 @@ namespace WitcherRightVersion.UI
             SetText(blurLabelText, "Soft edges", "Смягчение");
             SetText(screenModeLabelText, "Screen mode", "Режим экрана");
 
-            if (languageDropdown != null && languageDropdown.options.Count >= 2)
-            {
-                languageDropdown.options[0].text = russian ? "Английский" : "English";
-                languageDropdown.options[1].text = russian ? "Русский" : "Russian";
-                languageDropdown.RefreshShownValue();
-            }
-
             if (graphicsDropdown != null && graphicsDropdown.options.Count >= 3)
             {
-                graphicsDropdown.options[0].text = russian ? "Низкое" : "Low";
-                graphicsDropdown.options[1].text = russian ? "Среднее" : "Medium";
-                graphicsDropdown.options[2].text = russian ? "Высокое" : "High";
+                graphicsDropdown.options[0].text = "Низкое";
+                graphicsDropdown.options[1].text = "Среднее";
+                graphicsDropdown.options[2].text = "Высокое";
                 graphicsDropdown.RefreshShownValue();
             }
 
             if (screenModeDropdown != null && screenModeDropdown.options.Count >= 3)
             {
-                screenModeDropdown.options[0].text = russian ? "Полный экран" : "Fullscreen";
-                screenModeDropdown.options[1].text = russian ? "Без рамки" : "Borderless";
-                screenModeDropdown.options[2].text = russian ? "Оконный" : "Windowed";
+                screenModeDropdown.options[0].text = "Полный экран";
+                screenModeDropdown.options[1].text = "Без рамки";
+                screenModeDropdown.options[2].text = "Оконный";
                 screenModeDropdown.RefreshShownValue();
             }
 
@@ -338,7 +304,7 @@ namespace WitcherRightVersion.UI
 
         private bool IsRussian()
         {
-            return GameLocalization.IsRussian;
+            return true;
         }
 
         private string GetText(string english, string russian)
