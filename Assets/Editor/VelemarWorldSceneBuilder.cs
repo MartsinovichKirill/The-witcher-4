@@ -25,6 +25,7 @@ namespace WitcherRightVersion.Editor
         private const string KenneyPath = "Assets/Art/External/Kenney_FantasyTownKit/Models/FBX format";
         private const string KnightPath = "Assets/Art/External/Quaternius_Knight/Knight Character by @Quaternius/FBX";
         private const string RpgCharacterPath = "Assets/Art/External/OpenGameArt_RPGCharacters/FBX";
+        private const string RpgWeaponPath = "Assets/Art/External/OpenGameArt_RPGCharacters/FBX/Only Weapons";
         private const string MonsterPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX";
         private const string KayKitMedievalPath = "Assets/Art/External/KayKit_MedievalBuilder/FBX";
         private const string WolfPath = "Assets/Art/External/OpenGameArt_CC0_Wolf";
@@ -2156,6 +2157,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateElderDialogue(Transform parent)
         {
             var elder = CreateRpgCharacterAnchor(parent, "ElderVoytsekh_World", "Monk.fbx", new Vector3(-4.1f, 1f, -3.4f), Quaternion.Euler(0f, 145f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.22f, 0.18f, 0.13f, 1f));
+            AddNpcEquipment(elder, "ElderVoytsekhSealStaff", "Cleric_Staff.fbx", new Vector3(0.36f, -0.45f, 0.18f), Quaternion.Euler(12f, -18f, 8f), Vector3.one * 0.5f);
             CreateCharacterGroundRing(elder, "ElderRoleRing", new Color(0.62f, 0.42f, 0.12f, 1f), 0.82f);
             var dialogue = elder.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -2241,6 +2243,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateMartaDialogue(Transform parent)
         {
             var marta = CreateRpgCharacterAnchor(parent, "MartaLozovaya_World", "Cleric.fbx", new Vector3(4.2f, 1f, -3.6f), Quaternion.Euler(0f, -145f, 0f), new Vector3(0.86f, 0.86f, 0.86f), new Color(0.16f, 0.24f, 0.17f, 1f));
+            AddNpcEquipment(marta, "MartaHerbalistStaff", "Cleric_Staff.fbx", new Vector3(-0.34f, -0.46f, 0.18f), Quaternion.Euler(8f, 20f, -10f), Vector3.one * 0.48f);
             CreateCharacterGroundRing(marta, "MartaRoleRing", new Color(0.22f, 0.56f, 0.24f, 1f), 0.78f);
             var dialogue = marta.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -2283,6 +2286,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateBorisDialogue(Transform parent)
         {
             var boris = CreateRpgCharacterAnchor(parent, "BorisSmith_World", "Warrior.fbx", new Vector3(-4.2f, 1f, -0.4f), Quaternion.Euler(0f, 35f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.18f, 0.14f, 0.1f, 1f));
+            AddNpcEquipment(boris, "BorisSmithSwordProp", "Warrior_Sword.fbx", new Vector3(0.38f, -0.48f, 0.12f), Quaternion.Euler(58f, 0f, -18f), Vector3.one * 0.42f);
             CreateCharacterGroundRing(boris, "BorisRoleRing", new Color(0.62f, 0.31f, 0.12f, 1f), 0.78f);
             var dialogue = boris.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -2323,6 +2327,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateRadekMerchant(Transform parent)
         {
             var radek = CreateRpgCharacterAnchor(parent, "RadekTrader_World", "Rogue.fbx", new Vector3(3.1f, 1f, -0.7f), Quaternion.Euler(0f, -135f, 0f), new Vector3(0.82f, 0.82f, 0.82f), new Color(0.2f, 0.16f, 0.09f, 1f));
+            AddNpcEquipment(radek, "RadekTraderDaggerProp", "Rogue_Dagger.fbx", new Vector3(-0.28f, -0.48f, 0.14f), Quaternion.Euler(72f, 0f, 24f), Vector3.one * 0.34f);
             CreateCharacterGroundRing(radek, "RadekRoleRing", new Color(0.66f, 0.5f, 0.18f, 1f), 0.76f);
             var merchant = radek.AddComponent<MerchantInteractable>();
             merchant.Configure(
@@ -2339,6 +2344,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateElsaDialogue(Transform parent)
         {
             var elsa = CreateRpgCharacterAnchor(parent, "ElsaCherntravka_World", "Wizard.fbx", new Vector3(16.6f, 1f, -72.6f), Quaternion.Euler(0f, -35f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            AddNpcEquipment(elsa, "ElsaWitchStaffProp", "Wizard_Staff.fbx", new Vector3(-0.42f, -0.5f, 0.16f), Quaternion.Euler(7f, 18f, -8f), Vector3.one * 0.5f);
             CreateCharacterGroundRing(elsa, "ElsaRoleRing", new Color(0.16f, 0.48f, 0.4f, 1f), 0.82f);
             var dialogue = elsa.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -2389,6 +2395,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateOrtenDialogue(Transform parent)
         {
             var orten = CreateRpgCharacterAnchor(parent, "OrtenMirrorMage_World", "Wizard.fbx", new Vector3(0f, 1f, 78.2f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.24f, 0.18f, 0.32f, 1f));
+            AddNpcEquipment(orten, "OrtenMirrorStaffProp", "Wizard_Staff.fbx", new Vector3(0.42f, -0.48f, 0.14f), Quaternion.Euler(8f, -22f, 8f), Vector3.one * 0.54f);
             CreateCharacterGroundRing(orten, "OrtenRoleRing", new Color(0.42f, 0.22f, 0.72f, 1f), 0.86f);
             var dialogue = orten.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -2438,6 +2445,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateIvarDialogue(Transform parent)
         {
             var ivar = CreateRpgCharacterAnchor(parent, "IvarSedoy_World", "Ranger.fbx", new Vector3(-67.7f, 1f, 7.2f), Quaternion.Euler(0f, 60f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
+            AddNpcEquipment(ivar, "IvarHunterBowProp", "Ranger_Bow.fbx", new Vector3(-0.36f, -0.46f, 0.12f), Quaternion.Euler(16f, 12f, 86f), Vector3.one * 0.45f);
             CreateCharacterGroundRing(ivar, "IvarRoleRing", new Color(0.28f, 0.48f, 0.2f, 1f), 0.78f);
             var dialogue = ivar.AddComponent<DialogueInteractable>();
             dialogue.Configure(
@@ -2667,6 +2675,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateAshRoadBandit(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, string deathFlag, float maxHealth, float damage)
         {
             var bandit = CreateRpgCharacterAnchor(parent, objectName, modelName, position, rotation, new Vector3(0.84f, 0.84f, 0.84f), new Color(0.22f, 0.12f, 0.08f, 1f));
+            AddNpcEquipment(bandit, $"{objectName}_WeaponProp", modelName.Contains("Warrior") ? "Warrior_Sword.fbx" : "Rogue_Dagger.fbx", new Vector3(0.34f, -0.48f, 0.12f), Quaternion.Euler(64f, 0f, -18f), Vector3.one * 0.38f);
             CreateCharacterGroundRing(bandit, $"{objectName}_ThreatRing", new Color(0.62f, 0.07f, 0.035f, 1f), 0.86f);
             var health = bandit.AddComponent<Health>();
             health.Configure("Ash Road bandit", maxHealth);
@@ -2869,6 +2878,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateWorldFinalConsequences(Transform parent)
         {
             var elsa = CreateRpgCharacterAnchor(parent, "FinalElsaAlly_World", "Wizard.fbx", new Vector3(69.0f, 1f, 10.9f), Quaternion.Euler(0f, 45f, 0f), new Vector3(0.78f, 0.78f, 0.78f), new Color(0.12f, 0.1f, 0.16f, 1f));
+            AddNpcEquipment(elsa, "FinalElsaStaffProp", "Wizard_Staff.fbx", new Vector3(-0.42f, -0.5f, 0.16f), Quaternion.Euler(7f, 18f, -8f), Vector3.one * 0.5f);
             CreateCharacterGroundRing(elsa, "FinalElsaRoleRing", new Color(0.16f, 0.48f, 0.4f, 1f), 0.82f);
             elsa.AddComponent<FlagConditionalObject>().Configure("ElsaProtected");
             elsa.AddComponent<DialogueInteractable>().Configure(
@@ -2889,6 +2899,7 @@ namespace WitcherRightVersion.Editor
             CreateConditionalMarker(parent, "FinalElsaWardCircle", "Elsa's ward", "Inspect", "ElsaProtected", new Vector3(69.0f, 0.08f, 10.9f), new Vector3(1.1f, 0.04f, 1.1f), new Color(0.12f, 0.38f, 0.25f, 1f), "Elsa has marked a safer path through the ash.");
 
             var ivar = CreateRpgCharacterAnchor(parent, "FinalIvarAlly_World", "Ranger.fbx", new Vector3(74.1f, 1f, 10.5f), Quaternion.Euler(0f, -62f, 0f), new Vector3(0.84f, 0.84f, 0.84f), new Color(0.19f, 0.2f, 0.14f, 1f));
+            AddNpcEquipment(ivar, "FinalIvarBowProp", "Ranger_Bow.fbx", new Vector3(-0.36f, -0.46f, 0.12f), Quaternion.Euler(16f, 12f, 86f), Vector3.one * 0.45f);
             CreateCharacterGroundRing(ivar, "FinalIvarRoleRing", new Color(0.28f, 0.48f, 0.2f, 1f), 0.78f);
             ivar.AddComponent<FlagConditionalObject>().Configure("IvarSaved");
             ivar.AddComponent<DialogueInteractable>().Configure(
@@ -2918,6 +2929,7 @@ namespace WitcherRightVersion.Editor
         private static void CreateFinalEnforcer(Transform parent, string objectName, Vector3 position, Quaternion rotation, string deathFlag)
         {
             var enforcer = CreateRpgCharacterAnchor(parent, objectName, "Warrior.fbx", position, rotation, new Vector3(0.86f, 0.86f, 0.86f), new Color(0.24f, 0.12f, 0.08f, 1f));
+            AddNpcEquipment(enforcer, $"{objectName}_SwordProp", "Warrior_Sword.fbx", new Vector3(0.36f, -0.48f, 0.12f), Quaternion.Euler(58f, 0f, -18f), Vector3.one * 0.4f);
             CreateCharacterGroundRing(enforcer, $"{objectName}_ThreatRing", new Color(0.62f, 0.08f, 0.04f, 1f), 0.88f);
             var health = enforcer.AddComponent<Health>();
             health.Configure("Voytsekh's enforcer", 55f);
@@ -2951,6 +2963,7 @@ namespace WitcherRightVersion.Editor
             marker.transform.localPosition = position;
             marker.transform.localScale = scale;
             marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+            AddInteractablePropVisual(marker, objectName);
             marker.AddComponent<FlagConditionalObject>().Configure(requiredFlag);
             marker.AddComponent<SimpleInteractable>().Configure(displayName, prompt, message);
         }
@@ -2973,6 +2986,7 @@ namespace WitcherRightVersion.Editor
             marker.transform.localPosition = position;
             marker.transform.localScale = scale;
             marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+            AddInteractablePropVisual(marker, objectName);
             var interactable = marker.AddComponent<DecisionFlagInteractable>();
             interactable.Configure(displayName, prompt, flagToSet, message, false, questAction);
         }
@@ -3486,6 +3500,83 @@ namespace WitcherRightVersion.Editor
             animator.Configure(visualRoot, quadruped);
         }
 
+        private static void AddNpcEquipment(GameObject anchor, string objectName, string modelName, Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
+        {
+            if (anchor == null)
+            {
+                return;
+            }
+
+            InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, anchor.transform, localPosition, localRotation, localScale);
+        }
+
+        private static void AddInteractablePropVisual(GameObject marker, string objectName)
+        {
+            if (marker == null)
+            {
+                return;
+            }
+
+            var renderer = marker.GetComponent<Renderer>();
+            switch (objectName)
+            {
+                case "WorldGirlMedallion":
+                case "FinalTruthEvidenceShrine":
+                    if (renderer != null)
+                    {
+                        renderer.enabled = false;
+                    }
+                    PlaceKenney(marker.transform, $"{objectName}_MedallionProp", "wheel.fbx", Vector3.up * 0.18f, Quaternion.Euler(90f, 0f, 0f), Vector3.one * 0.16f);
+                    break;
+                case "WorldOrtenDiary":
+                case "FinalSacrificeDiaryShrine":
+                    if (renderer != null)
+                    {
+                        renderer.enabled = false;
+                    }
+                    PlaceKenney(marker.transform, $"{objectName}_DiaryTableProp", "stall-bench.fbx", Vector3.down * 0.18f, Quaternion.identity, Vector3.one * 0.34f);
+                    CreateNonBlockingMarker(marker.transform, $"{objectName}_OpenPagesProp", new Vector3(0f, 0.16f, 0f), new Vector3(0.34f, 0.018f, 0.22f), new Color(0.72f, 0.64f, 0.46f, 1f));
+                    break;
+                case "WorldMirrorShardCache":
+                    if (renderer != null)
+                    {
+                        renderer.enabled = false;
+                    }
+                    CreateNonBlockingMarker(marker.transform, $"{objectName}_ShardA", new Vector3(-0.12f, 0.16f, 0.02f), new Vector3(0.06f, 0.34f, 0.16f), new Color(0.5f, 0.34f, 0.9f, 1f));
+                    CreateNonBlockingMarker(marker.transform, $"{objectName}_ShardB", new Vector3(0.14f, 0.21f, -0.04f), new Vector3(0.055f, 0.28f, 0.18f), new Color(0.42f, 0.7f, 0.95f, 1f));
+                    break;
+                case "WorldElderSealProof":
+                case "FinalMayorControlPost":
+                    PlaceKenney(marker.transform, $"{objectName}_BannerProp", "banner-red.fbx", new Vector3(0f, 0.2f, 0f), Quaternion.identity, Vector3.one * 0.28f);
+                    break;
+                case "WorldHunterClue_BrokenKnife":
+                    if (renderer != null)
+                    {
+                        renderer.enabled = false;
+                    }
+                    InstantiateModel($"{RpgWeaponPath}/Rogue_Dagger.fbx", $"{objectName}_DaggerProp", marker.transform, Vector3.up * 0.12f, Quaternion.Euler(78f, 0f, 36f), Vector3.one * 0.24f);
+                    break;
+                case "WorldHunterCamp_RewardPouch":
+                case "WorldDrownerNestRewardCache":
+                    PlaceKenney(marker.transform, $"{objectName}_CacheCartProp", "cart.fbx", Vector3.down * 0.1f, Quaternion.Euler(0f, 35f, 0f), Vector3.one * 0.28f);
+                    break;
+                case "WorldMartaHerbBasket":
+                    PlaceKenney(marker.transform, $"{objectName}_HerbStallProp", "stall-green.fbx", Vector3.down * 0.12f, Quaternion.identity, Vector3.one * 0.32f);
+                    break;
+                case "WorldForgeSupplies":
+                    PlaceKenney(marker.transform, $"{objectName}_OreCartProp", "cart-high.fbx", Vector3.down * 0.08f, Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.34f);
+                    break;
+                case "WorldAlchemyTable_Swallow":
+                case "WorldAlchemyTable_Antitoxin":
+                    PlaceKenney(marker.transform, $"{objectName}_AlchemyTableProp", "stall-bench.fbx", Vector3.down * 0.08f, Quaternion.identity, Vector3.one * 0.34f);
+                    CreateNonBlockingMarker(marker.transform, $"{objectName}_BottleGlowProp", new Vector3(0.12f, 0.18f, 0.02f), new Vector3(0.08f, 0.12f, 0.08f), new Color(0.08f, 0.62f, 0.36f, 1f));
+                    break;
+                case "WorldForge_ReinforcedArmor":
+                    PlaceKenney(marker.transform, $"{objectName}_ForgeBladeProp", "blade.fbx", new Vector3(0.06f, 0.2f, 0f), Quaternion.Euler(78f, 0f, 24f), Vector3.one * 0.42f);
+                    break;
+            }
+        }
+
         private static void CreateCharacterGroundRing(GameObject anchor, string ringName, Color color, float radius)
         {
             if (anchor == null)
@@ -3510,6 +3601,7 @@ namespace WitcherRightVersion.Editor
             marker.transform.localPosition = position;
             marker.transform.localScale = scale;
             marker.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+            AddInteractablePropVisual(marker, objectName);
 
             var interactable = marker.AddComponent<QuestProgressInteractable>();
             interactable.Configure(displayName, prompt, questAction, successMessage, blockedMessage, canRepeat);
@@ -3523,6 +3615,7 @@ namespace WitcherRightVersion.Editor
             crate.transform.localPosition = position;
             crate.transform.localScale = scale;
             crate.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+            AddInteractablePropVisual(crate, objectName);
 
             var interactable = crate.AddComponent<InventoryGrantInteractable>();
             interactable.Configure(displayName, prompt, itemsToGrant, message);
@@ -3536,6 +3629,7 @@ namespace WitcherRightVersion.Editor
             station.transform.localPosition = position;
             station.transform.localScale = scale;
             station.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+            AddInteractablePropVisual(station, objectName);
 
             var interactable = station.AddComponent<CraftingInteractable>();
             interactable.Configure(displayName, prompt, recipeId);
