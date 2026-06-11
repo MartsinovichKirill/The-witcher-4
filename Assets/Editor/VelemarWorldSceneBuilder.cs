@@ -178,6 +178,7 @@ namespace WitcherRightVersion.Editor
             CreateTerrainDepthAndSilhouettePass(root.transform);
             CreateAmbientCharacterPopulationPass(root.transform);
             CreateVisualAtmospherePolishPass(root.transform);
+            CreateCharacterPresentationPolishPass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -1543,6 +1544,103 @@ namespace WitcherRightVersion.Editor
             PlaceKayKit(root.transform, "TowerPolishLeftMountainBacker", "mountain.fbx", new Vector3(-31f, 0f, 142f), Quaternion.Euler(0f, 26f, 0f), new Vector3(1.8f, 0.65f, 1.8f));
             PlaceKayKit(root.transform, "TowerPolishRightMountainBacker", "mountain.fbx", new Vector3(31f, 0f, 142f), Quaternion.Euler(0f, -26f, 0f), new Vector3(1.8f, 0.65f, 1.8f));
             CreatePointLight(root.transform, "TowerPolishMirrorCoreGlow", new Vector3(0f, 2.8f, 78f), new Color(0.58f, 0.32f, 1f, 1f), 0.9f, 17f);
+        }
+
+        private static void CreateCharacterPresentationPolishPass(Transform parent)
+        {
+            var root = new GameObject("CharacterPresentationPolishPass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageNpcPresentationPolish(root.transform);
+            CreateSwampCharacterPresentationPolish(root.transform);
+            CreateForestCharacterPresentationPolish(root.transform);
+            CreateTowerCharacterPresentationPolish(root.transform);
+            CreateEnemyPresentationPolish(root.transform);
+        }
+
+        private static void CreateVillageNpcPresentationPolish(Transform parent)
+        {
+            var root = new GameObject("VillageNpcPresentationPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ElderPresentationAuthorityMat", new Vector3(-4.1f, 0.165f, -3.4f), new Vector3(2.9f, 0.012f, 2.2f), new Color(0.12f, 0.078f, 0.043f, 1f));
+            PlaceKenney(root.transform, "ElderPresentationLedgerBench", "stall-bench.fbx", new Vector3(-5.35f, 0f, -4.55f), Quaternion.Euler(0f, 31f, 0f), Vector3.one * 0.72f);
+            PlaceKenney(root.transform, "ElderPresentationRedBanner", "banner-red.fbx", new Vector3(-2.78f, 0f, -4.72f), Quaternion.Euler(0f, 82f, 0f), Vector3.one * 0.78f);
+            CreateNonBlockingMarker(root.transform, "ElderPresentationSealGlow", new Vector3(-4.7f, 0.92f, -4.12f), new Vector3(0.22f, 0.42f, 0.05f), new Color(0.78f, 0.52f, 0.16f, 1f));
+
+            CreateSurfacePatch(root.transform, "MartaPresentationHerbCircle", new Vector3(4.2f, 0.166f, -3.6f), new Vector3(3f, 0.012f, 2.3f), new Color(0.045f, 0.105f, 0.048f, 1f));
+            PlaceKenney(root.transform, "MartaPresentationGreenBanner", "banner-green.fbx", new Vector3(5.78f, 0f, -4.72f), Quaternion.Euler(0f, -78f, 0f), Vector3.one * 0.76f);
+            PlaceKenney(root.transform, "MartaPresentationStool", "stall-stool.fbx", new Vector3(3.1f, 0f, -4.86f), Quaternion.Euler(0f, -30f, 0f), Vector3.one * 0.74f);
+            CreateReedCluster(root.transform, "MartaPresentationDryHerbs", new Vector3(5.2f, 0.08f, -2.42f), 0.78f);
+
+            CreateSurfacePatch(root.transform, "BorisPresentationForgeAsh", new Vector3(-4.2f, 0.167f, -0.4f), new Vector3(3.2f, 0.012f, 2.5f), new Color(0.12f, 0.072f, 0.042f, 1f));
+            PlaceKenney(root.transform, "BorisPresentationOreCart", "cart.fbx", new Vector3(-5.72f, 0f, 0.65f), Quaternion.Euler(0f, -24f, 0f), Vector3.one * 0.72f);
+            PlaceKenney(root.transform, "BorisPresentationBladeDisplay", "blade.fbx", new Vector3(-3.08f, 0.22f, 0.58f), Quaternion.Euler(72f, 0f, -30f), Vector3.one * 0.72f);
+            CreatePointLight(root.transform, "BorisPresentationForgeGlow", new Vector3(-4.5f, 1.25f, 0.6f), new Color(1f, 0.28f, 0.08f, 1f), 0.55f, 5.2f);
+
+            CreateSurfacePatch(root.transform, "RadekPresentationTradeMat", new Vector3(3.1f, 0.168f, -0.7f), new Vector3(3.1f, 0.012f, 2.4f), new Color(0.13f, 0.101f, 0.052f, 1f));
+            PlaceKenney(root.transform, "RadekPresentationCrateBench", "stall-bench.fbx", new Vector3(4.45f, 0f, -1.72f), Quaternion.Euler(0f, 22f, 0f), Vector3.one * 0.7f);
+            PlaceKenney(root.transform, "RadekPresentationSupplyCart", "cart-high.fbx", new Vector3(2.0f, 0f, 0.62f), Quaternion.Euler(0f, -58f, 0f), Vector3.one * 0.68f);
+            CreateNonBlockingMarker(root.transform, "RadekPresentationCoinGlimmer", new Vector3(3.32f, 0.58f, -1.42f), new Vector3(0.16f, 0.08f, 0.16f), new Color(0.9f, 0.68f, 0.18f, 1f));
+        }
+
+        private static void CreateSwampCharacterPresentationPolish(Transform parent)
+        {
+            var root = new GameObject("SwampCharacterPresentationPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ElsaPresentationWardMat", new Vector3(16.6f, 0.165f, -72.6f), new Vector3(3.8f, 0.012f, 3.0f), new Color(0.024f, 0.075f, 0.058f, 1f));
+            PlaceKenney(root.transform, "ElsaPresentationCrookedFence", "fence-curved.fbx", new Vector3(18.62f, 0f, -71.8f), Quaternion.Euler(0f, -54f, 0f), Vector3.one * 0.82f);
+            PlaceKenney(root.transform, "ElsaPresentationDryingPole", "poles-horizontal.fbx", new Vector3(15.0f, 0f, -70.92f), Quaternion.Euler(0f, 28f, 0f), Vector3.one * 0.8f);
+            CreateNonBlockingMarker(root.transform, "ElsaPresentationRuneGlowA", new Vector3(15.65f, 0.22f, -73.52f), new Vector3(0.18f, 0.06f, 0.18f), new Color(0.08f, 0.72f, 0.48f, 1f));
+            CreateNonBlockingMarker(root.transform, "ElsaPresentationRuneGlowB", new Vector3(17.52f, 0.22f, -72.18f), new Vector3(0.18f, 0.06f, 0.18f), new Color(0.08f, 0.72f, 0.48f, 1f));
+
+            CreateSurfacePatch(root.transform, "GhostPresentationMemoryPool", new Vector3(-2.7f, 0.166f, 75.0f), new Vector3(3.6f, 0.012f, 3.0f), new Color(0.075f, 0.07f, 0.13f, 1f));
+            CreateNonBlockingMarker(root.transform, "GhostPresentationColdAura", new Vector3(-2.7f, 0.55f, 75.0f), new Vector3(1.7f, 0.42f, 1.7f), new Color(0.22f, 0.34f, 0.78f, 0.9f));
+            PlaceKenney(root.transform, "GhostPresentationFallenStone", "wall-arch-top.fbx", new Vector3(-4.2f, 0f, 76.4f), Quaternion.Euler(0f, 32f, 0f), Vector3.one * 0.62f);
+        }
+
+        private static void CreateForestCharacterPresentationPolish(Transform parent)
+        {
+            var root = new GameObject("ForestCharacterPresentationPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "IvarPresentationHunterMat", new Vector3(-67.7f, 0.165f, 7.2f), new Vector3(3.4f, 0.012f, 2.8f), new Color(0.043f, 0.08f, 0.04f, 1f));
+            PlaceKenney(root.transform, "IvarPresentationBrokenCart", "cart.fbx", new Vector3(-69.45f, 0f, 8.92f), Quaternion.Euler(0f, 36f, 0f), Vector3.one * 0.68f);
+            PlaceKenney(root.transform, "IvarPresentationBowMarker", "blade.fbx", new Vector3(-66.42f, 0.1f, 8.55f), Quaternion.Euler(80f, 0f, 38f), Vector3.one * 0.58f);
+            CreateNonBlockingMarker(root.transform, "IvarPresentationTrackMarks", new Vector3(-66.8f, 0.18f, 6.2f), new Vector3(1.1f, 0.03f, 0.22f), new Color(0.12f, 0.065f, 0.035f, 1f));
+        }
+
+        private static void CreateTowerCharacterPresentationPolish(Transform parent)
+        {
+            var root = new GameObject("TowerCharacterPresentationPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "OrtenPresentationMirrorStage", new Vector3(0f, 0.166f, 78.2f), new Vector3(4.2f, 0.012f, 3.2f), new Color(0.13f, 0.085f, 0.22f, 1f));
+            PlaceKenney(root.transform, "OrtenPresentationLeftShardFrame", "wall-arch.fbx", new Vector3(-2.4f, 0f, 79.0f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.7f);
+            PlaceKenney(root.transform, "OrtenPresentationRightShardFrame", "wall-arch.fbx", new Vector3(2.4f, 0f, 79.0f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 0.7f);
+            CreateNonBlockingMarker(root.transform, "OrtenPresentationMirrorColumn", new Vector3(0f, 1.2f, 79.45f), new Vector3(0.18f, 1.8f, 0.08f), new Color(0.55f, 0.34f, 1f, 1f));
+            CreatePointLight(root.transform, "OrtenPresentationFaceLight", new Vector3(0f, 2.1f, 77.3f), new Color(0.52f, 0.32f, 0.92f, 1f), 0.45f, 6.0f);
+        }
+
+        private static void CreateEnemyPresentationPolish(Transform parent)
+        {
+            var root = new GameObject("EnemyPresentationPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "DrownerPresentationThreatWater", new Vector3(12.5f, 0.17f, -75.4f), new Vector3(4.4f, 0.012f, 3.2f), new Color(0.01f, 0.045f, 0.035f, 1f));
+            CreateNonBlockingMarker(root.transform, "DrownerPresentationSplashA", new Vector3(11.65f, 0.36f, -74.85f), new Vector3(0.16f, 0.55f, 0.16f), new Color(0.06f, 0.38f, 0.28f, 1f));
+            CreateNonBlockingMarker(root.transform, "DrownerPresentationSplashB", new Vector3(13.28f, 0.31f, -76.1f), new Vector3(0.14f, 0.48f, 0.14f), new Color(0.06f, 0.34f, 0.25f, 1f));
+
+            CreateSurfacePatch(root.transform, "SkeletonPresentationGraveDust", new Vector3(0f, 0.17f, 75.5f), new Vector3(10.2f, 0.012f, 3.4f), new Color(0.068f, 0.063f, 0.055f, 1f));
+            PlaceKenney(root.transform, "SkeletonPresentationLeftBrokenPillar", "pillar-stone.fbx", new Vector3(-6.0f, 0f, 74.2f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 0.76f);
+            PlaceKenney(root.transform, "SkeletonPresentationRightBrokenPillar", "pillar-stone.fbx", new Vector3(6.0f, 0f, 74.2f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.76f);
+
+            CreateSurfacePatch(root.transform, "BanditPresentationAmbushDirt", new Vector3(55.5f, 0.17f, 2.2f), new Vector3(12.8f, 0.012f, 8.8f), new Color(0.105f, 0.073f, 0.052f, 1f));
+            PlaceKenney(root.transform, "BanditPresentationRoadBlockCart", "cart-high.fbx", new Vector3(57.8f, 0f, 1.2f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.72f);
+            PlaceKenney(root.transform, "BanditPresentationSpikeFenceA", "fence-broken.fbx", new Vector3(52.4f, 0f, 2.2f), Quaternion.Euler(0f, 72f, 0f), Vector3.one * 0.92f);
+            PlaceKenney(root.transform, "BanditPresentationSpikeFenceB", "fence-broken.fbx", new Vector3(60.7f, 0f, -1.6f), Quaternion.Euler(0f, -56f, 0f), Vector3.one * 0.92f);
+            CreateNonBlockingMarker(root.transform, "BanditPresentationFreshAsh", new Vector3(55.4f, 0.21f, 0.2f), new Vector3(2.2f, 0.04f, 0.85f), new Color(0.18f, 0.16f, 0.13f, 1f));
         }
 
         private static void CreateWorldDressing(Transform parent)
