@@ -2543,6 +2543,7 @@ namespace WitcherRightVersion.Editor
             var health = drowner.AddComponent<Health>();
             health.Configure("World drowner", 72f);
             AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
+            AddEnemyActionVisual(drowner, slime != null ? slime.transform : null, false);
             var ai = drowner.AddComponent<EnemyAI>();
             ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
             ai.ConfigureCombat(9f, 1.6f, 2.0f, 10f, 1.55f);
@@ -2604,6 +2605,7 @@ namespace WitcherRightVersion.Editor
             var health = drowner.AddComponent<Health>();
             health.Configure("Nest drowner", 38f);
             AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
+            AddEnemyActionVisual(drowner, slime != null ? slime.transform : null, false);
             var ai = drowner.AddComponent<EnemyAI>();
             ai.Configure("Nest drowner", false, deathFlag, QuestService.ActionDrownerNestEnemyKilled, "drownerNestStarted", "Nest drowner is dead. Keep clearing the den.");
             ai.ConfigureCombat(8f, 1.55f, 2.15f, 9f, 1.6f);
@@ -2642,6 +2644,7 @@ namespace WitcherRightVersion.Editor
             var health = wolf.AddComponent<Health>();
             health.Configure("Forest wolf", 34f);
             AddCombatVisual(wolf, new Color(1f, 0.2f, 0.08f, 1f), new Color(0.09f, 0.07f, 0.055f, 1f));
+            AddEnemyActionVisual(wolf, visual != null ? visual.transform : null, true);
             var ai = wolf.AddComponent<EnemyAI>();
             ai.Configure("Forest wolf", false, deathFlag, "", "", "The forest wolf is dead.");
             ai.ConfigureCombat(11f, 1.45f, 3.15f, 8f, 1.15f);
@@ -2668,6 +2671,7 @@ namespace WitcherRightVersion.Editor
             var health = bandit.AddComponent<Health>();
             health.Configure("Ash Road bandit", maxHealth);
             AddCombatVisual(bandit, new Color(1f, 0.18f, 0.06f, 1f), new Color(0.1f, 0.05f, 0.035f, 1f));
+            AddEnemyActionVisual(bandit, bandit.transform.Find($"{objectName}_Model"), false);
             var ai = bandit.AddComponent<EnemyAI>();
             ai.Configure("Ash Road bandit", false, deathFlag, "", "", "The ambusher falls.");
             ai.ConfigureCombat(10.5f, 1.7f, 2.35f, damage, 1.4f);
@@ -2705,6 +2709,7 @@ namespace WitcherRightVersion.Editor
             var health = guard.AddComponent<Health>();
             health.Configure("Tower skeleton guard", 62f);
             AddCombatVisual(guard, new Color(1f, 0.2f, 0.1f, 1f), new Color(0.12f, 0.1f, 0.08f, 1f));
+            AddEnemyActionVisual(guard, skeleton != null ? skeleton.transform : null, false);
             var ai = guard.AddComponent<EnemyAI>();
             ai.Configure("Skeleton guard", false, objectName + "_Defeated", "");
             ai.ConfigureCombat(8.5f, 1.65f, 1.65f, 14f, 1.8f);
@@ -2917,6 +2922,7 @@ namespace WitcherRightVersion.Editor
             var health = enforcer.AddComponent<Health>();
             health.Configure("Voytsekh's enforcer", 55f);
             AddCombatVisual(enforcer, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.1f, 0.055f, 0.04f, 1f));
+            AddEnemyActionVisual(enforcer, enforcer.transform.Find($"{objectName}_Model"), false);
             var ai = enforcer.AddComponent<EnemyAI>();
             ai.Configure(
                 "Voytsekh's enforcer",
@@ -3472,6 +3478,12 @@ namespace WitcherRightVersion.Editor
         {
             var feedback = target.AddComponent<CombatVisualFeedback>();
             feedback.Configure(hitFlashColor, deathColor);
+        }
+
+        private static void AddEnemyActionVisual(GameObject target, Transform visualRoot, bool quadruped)
+        {
+            var animator = target.AddComponent<EnemyActionVisualAnimator>();
+            animator.Configure(visualRoot, quadruped);
         }
 
         private static void CreateCharacterGroundRing(GameObject anchor, string ringName, Color color, float radius)

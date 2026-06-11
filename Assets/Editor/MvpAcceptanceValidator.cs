@@ -476,6 +476,7 @@ namespace WitcherRightVersion.Editor
                 RequireComponent<Health>(drowner, failures, "WorldDrowner_Prototype");
                 RequireComponent<EnemyAI>(drowner, failures, "WorldDrowner_Prototype");
                 RequireComponent<CombatVisualFeedback>(drowner, failures, "WorldDrowner_Prototype");
+                RequireComponent<EnemyActionVisualAnimator>(drowner, failures, "WorldDrowner_Prototype");
             }
             RequireObject("WorldDrownerThreatRing", failures);
 
@@ -506,6 +507,7 @@ namespace WitcherRightVersion.Editor
             RequireComponent<Health>(enemy, failures, objectName);
             RequireComponent<EnemyAI>(enemy, failures, objectName);
             RequireComponent<CombatVisualFeedback>(enemy, failures, objectName);
+            RequireComponent<EnemyActionVisualAnimator>(enemy, failures, objectName);
         }
 
         private static void ValidateLootEnemy(string objectName, List<string> failures)

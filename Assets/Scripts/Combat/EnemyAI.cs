@@ -2,6 +2,7 @@ using UnityEngine;
 using WitcherRightVersion.Core;
 using WitcherRightVersion.Quest;
 using WitcherRightVersion.UI;
+using System;
 
 namespace WitcherRightVersion.Combat
 {
@@ -34,6 +35,9 @@ namespace WitcherRightVersion.Combat
         private bool lastCombatActiveState = true;
         private float nextAttackTime;
         private float stunEndTime;
+
+        public event Action AttackStarted;
+        public event Action<float> Stunned;
 
         private void Awake()
         {
@@ -123,6 +127,7 @@ namespace WitcherRightVersion.Combat
             if (Time.time >= nextAttackTime)
             {
                 nextAttackTime = Time.time + attackCooldown;
+                AttackStarted?.Invoke();
                 var targetCombat = target.GetComponent<CombatController>();
                 if (targetCombat != null)
                 {
@@ -151,7 +156,9 @@ namespace WitcherRightVersion.Combat
             }
 
             transform.position += flatDirection.normalized * Mathf.Max(0f, knockbackDistance);
-            stunEndTime = Mathf.Max(stunEndTime, Time.time + Mathf.Max(0f, stunDuration));
+            var duration = Mathf.Max(0f, stunDuration);
+            stunEndTime = Mathf.Max(stunEndTime, Time.time + duration);
+            Stunned?.Invoke(duration);
         }
 
         private void OnDestroy()
@@ -216,7 +223,15 @@ namespace WitcherRightVersion.Combat
 
         private void HandleDeath(Health deadHealth, GameObject source)
         {
-            ApplyCombatActiveState(false);
+            lastCombatActiveState = false;
+
+            for (var i = 0; i < colliders.Length; i++)
+            {
+                if (colliders[i] != null)
+                {
+                    colliders[i].enabled = false;
+                }
+            }
 
             if (!string.IsNullOrWhiteSpace(deathFlagToSet))
             {
