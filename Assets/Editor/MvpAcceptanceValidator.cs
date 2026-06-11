@@ -280,6 +280,10 @@ namespace WitcherRightVersion.Editor
             RequireObject("AmbientTowerMemory_01", failures);
             RequireObject("VisualAtmospherePolishPass", failures);
             RequireObject("VillageCameraCompositionPolish", failures);
+            RequireObject("VillageAntiFlickerGround", failures);
+            RequireObject("VillageAntiFlickerPackedEarth", failures);
+            RequireObject("VillageAntiFlickerMainRoadNS", failures);
+            RequireObject("VillageAntiFlickerMainRoadEW", failures);
             RequireObject("VillagePolishMainStreetWetMud", failures);
             RequireObject("VillagePolishDistantMillSilhouette", failures);
             RequireObject("ForestDepthFogPolish", failures);

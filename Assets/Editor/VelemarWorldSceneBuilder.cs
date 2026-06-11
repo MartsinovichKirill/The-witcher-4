@@ -1403,6 +1403,7 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
 
             CreateVillageCameraCompositionPolish(root.transform);
+            CreateVillageAntiFlickerGround(root.transform);
             CreateForestDepthFogPolish(root.transform);
             CreateSwampWaterAndReedPolish(root.transform);
             CreateAshRoadSmokeAndRuinPolish(root.transform);
@@ -1445,6 +1446,19 @@ namespace WitcherRightVersion.Editor
             PlaceKayKit(root.transform, "VillagePolishDistantMillSilhouette", "mill.fbx", new Vector3(30.5f, 0f, 20.8f), Quaternion.Euler(0f, -42f, 0f), Vector3.one * 0.92f);
             PlaceKayKit(root.transform, "VillagePolishDistantArcheryRange", "archeryrange.fbx", new Vector3(-30.8f, 0f, 19.2f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 0.8f);
             CreatePointLight(root.transform, "VillagePolishMarketGlow", new Vector3(0.8f, 2.2f, 4.1f), new Color(1f, 0.58f, 0.25f, 1f), 0.72f, 8.5f);
+        }
+
+        private static void CreateVillageAntiFlickerGround(Transform parent)
+        {
+            var root = new GameObject("VillageAntiFlickerGround");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "VillageAntiFlickerPackedEarth", new Vector3(0f, 0.226f, -1.5f), new Vector3(34f, 0.012f, 30f), new Color(0.115f, 0.092f, 0.055f, 1f));
+            CreateSurfacePatch(root.transform, "VillageAntiFlickerMainRoadNS", new Vector3(0f, 0.241f, -1.5f), new Vector3(5.8f, 0.01f, 32f), new Color(0.082f, 0.066f, 0.042f, 1f));
+            CreateSurfacePatch(root.transform, "VillageAntiFlickerMainRoadEW", new Vector3(0f, 0.246f, 0f), new Vector3(32f, 0.01f, 5.8f), new Color(0.086f, 0.068f, 0.043f, 1f));
+            CreateSurfacePatch(root.transform, "VillageAntiFlickerMarketMud", new Vector3(2.2f, 0.252f, 3.9f), new Vector3(12f, 0.01f, 6.2f), new Color(0.13f, 0.095f, 0.05f, 1f));
+            CreateSurfacePatch(root.transform, "VillageAntiFlickerBackGrassLeft", new Vector3(-14.5f, 0.238f, 8.8f), new Vector3(6.4f, 0.01f, 7f), new Color(0.052f, 0.095f, 0.042f, 1f));
+            CreateSurfacePatch(root.transform, "VillageAntiFlickerBackGrassRight", new Vector3(14.5f, 0.239f, 8.6f), new Vector3(6.4f, 0.01f, 7f), new Color(0.052f, 0.094f, 0.042f, 1f));
         }
 
         private static void CreateForestDepthFogPolish(Transform parent)
@@ -3536,6 +3550,10 @@ namespace WitcherRightVersion.Editor
                     renderer.sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", fallbackColor);
                 }
             }
+            else
+            {
+                ApplyMaterialToChildRenderers(visual, CreateMaterial($"Assets/Materials/{name}_ModelTint.mat", fallbackColor));
+            }
 
             return anchor;
         }
@@ -3909,14 +3927,40 @@ namespace WitcherRightVersion.Editor
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material != null)
             {
-                material.color = color;
+                ConfigureMaterialColor(material, color);
                 return material;
             }
 
             material = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
-            material.color = color;
+            ConfigureMaterialColor(material, color);
             AssetDatabase.CreateAsset(material, path);
             return material;
+        }
+
+        private static void ConfigureMaterialColor(Material material, Color color)
+        {
+            material.color = color;
+            if (material.HasProperty("_BaseColor"))
+            {
+                material.SetColor("_BaseColor", color);
+            }
+
+            if (material.HasProperty("_Color"))
+            {
+                material.SetColor("_Color", color);
+            }
+
+            if (material.HasProperty("_Metallic"))
+            {
+                material.SetFloat("_Metallic", 0f);
+            }
+
+            if (material.HasProperty("_Smoothness"))
+            {
+                material.SetFloat("_Smoothness", 0.18f);
+            }
+
+            EditorUtility.SetDirty(material);
         }
 
         private static Material CreateEmissiveMaterial(string path, Color color, float emissionStrength)

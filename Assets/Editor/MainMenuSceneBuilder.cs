@@ -40,32 +40,27 @@ namespace WitcherRightVersion.Editor
             backgroundImage.preserveAspect = false;
             backgroundImage.color = Color.white;
 
-            var leftShade = CreatePanel("MainMenuLeftShadow", background.transform, new Color(0.005f, 0.007f, 0.01f, 0.68f));
-            SetRect(leftShade, new Vector2(0f, 0f), new Vector2(0.45f, 1f), new Vector2(0f, 0.5f), Vector2.zero, Vector2.zero);
+            var centerShade = CreatePanel("MainMenuCenterShadow", background.transform, new Color(0.005f, 0.007f, 0.01f, 0.28f));
+            SetRect(centerShade, new Vector2(0.24f, 0f), new Vector2(0.76f, 1f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
             var bottomShade = CreatePanel("MainMenuBottomShadow", background.transform, new Color(0.005f, 0.006f, 0.008f, 0.72f));
             SetRect(bottomShade, new Vector2(0f, 0f), new Vector2(1f, 0.32f), new Vector2(0.5f, 0f), Vector2.zero, Vector2.zero);
 
-            var accent = CreatePanel("LeftAccent", background.transform, new Color(0.72f, 0.16f, 0.1f, 0.82f));
-            SetRect(accent, new Vector2(0f, 0.15f), new Vector2(0f, 0.82f), new Vector2(0f, 0.5f), new Vector2(16f, 0f), new Vector2(20f, 0f));
+            var title = CreateText("Title", background.transform, font, "", 1, FontStyle.Bold, new Color(0.87f, 0.72f, 0.35f, 0f));
+            SetRect(title.gameObject, new Vector2(0.5f, 0.83f), new Vector2(0.5f, 0.83f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
-            var title = CreateText("Title", background.transform, font, "The Witcher 4", 58, FontStyle.Bold, new Color(0.87f, 0.72f, 0.35f, 1f));
-            SetRect(title.gameObject, new Vector2(0.08f, 0.62f), new Vector2(0.92f, 0.82f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            title.alignment = TextAnchor.MiddleLeft;
-
-            var subtitle = CreateText("Subtitle", background.transform, font, "Правильная версия", 30, FontStyle.Normal, new Color(0.75f, 0.78f, 0.72f, 1f));
-            SetRect(subtitle.gameObject, new Vector2(0.08f, 0.56f), new Vector2(0.92f, 0.65f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            subtitle.alignment = TextAnchor.MiddleLeft;
+            var subtitle = CreateText("Subtitle", background.transform, font, "", 1, FontStyle.Normal, new Color(0.75f, 0.78f, 0.72f, 0f));
+            SetRect(subtitle.gameObject, new Vector2(0.5f, 0.79f), new Vector2(0.5f, 0.79f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
             var mainPanel = CreatePanel("MainPanel", background.transform, new Color(0f, 0f, 0f, 0f));
-            SetRect(mainPanel, new Vector2(0.08f, 0.15f), new Vector2(0.38f, 0.54f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            SetRect(mainPanel, new Vector2(0.5f, 0.28f), new Vector2(0.5f, 0.76f), new Vector2(0.5f, 0.5f), new Vector2(-220f, 0f), new Vector2(220f, 0f));
 
             var settingsPanel = CreatePanel("SettingsPanel", background.transform, new Color(0.035f, 0.04f, 0.04f, 0.94f));
             SetRect(settingsPanel, new Vector2(0.48f, 0.12f), new Vector2(0.92f, 0.76f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
             var status = CreateText("StatusText", background.transform, font, "Готов к новому контракту.", 18, FontStyle.Normal, new Color(0.76f, 0.78f, 0.73f, 1f));
-            SetRect(status.gameObject, new Vector2(0.08f, 0.07f), new Vector2(0.88f, 0.14f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
-            status.alignment = TextAnchor.MiddleLeft;
+            SetRect(status.gameObject, new Vector2(0.28f, 0.05f), new Vector2(0.72f, 0.12f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            status.alignment = TextAnchor.MiddleCenter;
 
             var newGameButton = CreateButton("NewGameButton", mainPanel.transform, font, "Новая игра");
             var continueButton = CreateButton("ContinueButton", mainPanel.transform, font, "Продолжить");
@@ -455,11 +450,18 @@ namespace WitcherRightVersion.Editor
 
         private static Button CreateButton(string name, Transform parent, Font font, string label)
         {
-            var buttonObject = CreatePanel(name, parent, new Color(0.12f, 0.16f, 0.13f, 0.95f));
+            var buttonObject = CreatePanel(name, parent, new Color(0.18f, 0.19f, 0.2f, 0.56f));
             var button = buttonObject.AddComponent<Button>();
             button.targetGraphic = buttonObject.GetComponent<Image>();
 
-            var labelText = CreateText("Label", buttonObject.transform, font, label, 24, FontStyle.Bold, new Color(0.92f, 0.9f, 0.82f, 1f));
+            var colors = button.colors;
+            colors.normalColor = new Color(0.18f, 0.19f, 0.2f, 0.56f);
+            colors.highlightedColor = new Color(0.32f, 0.33f, 0.35f, 0.72f);
+            colors.pressedColor = new Color(0.45f, 0.38f, 0.3f, 0.82f);
+            colors.selectedColor = colors.highlightedColor;
+            button.colors = colors;
+
+            var labelText = CreateText("Label", buttonObject.transform, font, label, 30, FontStyle.Normal, Color.white);
             Stretch(labelText.gameObject);
             return button;
         }
@@ -596,8 +598,8 @@ namespace WitcherRightVersion.Editor
 
         private static void SetStackedButtonRect(GameObject button, int index)
         {
-            var top = 1f - index * 0.19f;
-            SetRect(button, new Vector2(0f, top - 0.135f), new Vector2(1f, top), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            var top = 1f - index * 0.21f;
+            SetRect(button, new Vector2(0f, top - 0.145f), new Vector2(1f, top), new Vector2(0.5f, 0.5f), new Vector2(0f, 8f), new Vector2(0f, -8f));
         }
 
         private static void SetRect(GameObject obj, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 offsetMin, Vector2 offsetMax)

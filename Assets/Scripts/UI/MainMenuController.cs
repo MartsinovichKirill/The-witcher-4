@@ -188,7 +188,7 @@ namespace WitcherRightVersion.UI
             var musicEnabled = PlayerPrefs.GetInt(RuntimeSettingsService.MusicKey, 1) == 1;
             var resolutionIndex = PlayerPrefs.GetInt(RuntimeSettingsService.ResolutionKey, 2);
             var graphicsIndex = PlayerPrefs.GetInt(RuntimeSettingsService.GraphicsKey, Mathf.Min(2, QualitySettings.names.Length - 1));
-            var screenModeIndex = PlayerPrefs.GetInt(RuntimeSettingsService.ScreenModeKey, 1);
+            var screenModeIndex = PlayerPrefs.GetInt(RuntimeSettingsService.ScreenModeKey, 0);
             var sharpnessEnabled = PlayerPrefs.GetInt(RuntimeSettingsService.SharpnessKey, 1) == 1;
             var blurEnabled = PlayerPrefs.GetInt(RuntimeSettingsService.BlurKey, 0) == 1;
 
@@ -228,7 +228,7 @@ namespace WitcherRightVersion.UI
                 blurToggle.isOn = blurEnabled;
             }
 
-            AudioListener.volume = volume;
+            RuntimeSettingsService.Apply(volume, musicEnabled, resolutionIndex, graphicsIndex, screenModeIndex, sharpnessEnabled, blurEnabled);
         }
 
         private void ApplyLanguage()
