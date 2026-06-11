@@ -13,6 +13,7 @@ using WitcherRightVersion.Player;
 using WitcherRightVersion.Quest;
 using WitcherRightVersion.Save;
 using WitcherRightVersion.UI;
+using WitcherRightVersion.Visual;
 
 namespace WitcherRightVersion.Editor
 {
@@ -179,6 +180,7 @@ namespace WitcherRightVersion.Editor
             CreateAmbientCharacterPopulationPass(root.transform);
             CreateVisualAtmospherePolishPass(root.transform);
             CreateCharacterPresentationPolishPass(root.transform);
+            CreateDynamicAmbientVfxPass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -1641,6 +1643,198 @@ namespace WitcherRightVersion.Editor
             PlaceKenney(root.transform, "BanditPresentationSpikeFenceA", "fence-broken.fbx", new Vector3(52.4f, 0f, 2.2f), Quaternion.Euler(0f, 72f, 0f), Vector3.one * 0.92f);
             PlaceKenney(root.transform, "BanditPresentationSpikeFenceB", "fence-broken.fbx", new Vector3(60.7f, 0f, -1.6f), Quaternion.Euler(0f, -56f, 0f), Vector3.one * 0.92f);
             CreateNonBlockingMarker(root.transform, "BanditPresentationFreshAsh", new Vector3(55.4f, 0.21f, 0.2f), new Vector3(2.2f, 0.04f, 0.85f), new Color(0.18f, 0.16f, 0.13f, 1f));
+        }
+
+        private static void CreateDynamicAmbientVfxPass(Transform parent)
+        {
+            var root = new GameObject("DynamicAmbientVfxPass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageDynamicVfx(root.transform);
+            CreateForestDynamicVfx(root.transform);
+            CreateSwampDynamicVfx(root.transform);
+            CreateAshRoadDynamicVfx(root.transform);
+            CreateTowerDynamicVfx(root.transform);
+        }
+
+        private static void CreateVillageDynamicVfx(Transform parent)
+        {
+            var root = new GameObject("VillageDynamicVfx");
+            root.transform.SetParent(parent, false);
+
+            var chimneyPositions = new[]
+            {
+                new Vector3(-12.2f, 4.4f, 7.8f),
+                new Vector3(11.8f, 4.2f, 7.1f),
+                new Vector3(-10.8f, 4.0f, -11.4f)
+            };
+
+            for (var chimney = 0; chimney < chimneyPositions.Length; chimney++)
+            {
+                for (var puff = 0; puff < 3; puff++)
+                {
+                    CreateAnimatedVfxMarker(
+                        root.transform,
+                        $"VillageDynamicChimneySmoke_{chimney + 1:00}_{puff + 1:00}",
+                        PrimitiveType.Sphere,
+                        chimneyPositions[chimney] + new Vector3(puff * 0.18f, puff * 0.62f, puff * 0.12f),
+                        Vector3.one * (0.34f + puff * 0.13f),
+                        new Color(0.18f, 0.18f, 0.17f, 1f),
+                        new Vector3(0.12f, 0.28f, 0.12f),
+                        new Vector3(0f, 8f, 0f),
+                        0.42f + puff * 0.08f,
+                        0.08f,
+                        false);
+                }
+            }
+
+            for (var i = 0; i < 6; i++)
+            {
+                CreateAnimatedVfxMarker(
+                    root.transform,
+                    $"VillageDynamicForgeSpark_{i + 1:00}",
+                    PrimitiveType.Sphere,
+                    new Vector3(-4.5f + Mathf.Sin(i) * 0.7f, 0.8f + (i % 3) * 0.35f, 0.6f + Mathf.Cos(i) * 0.55f),
+                    Vector3.one * 0.055f,
+                    new Color(1f, 0.3f, 0.045f, 1f),
+                    new Vector3(0.16f, 0.32f, 0.16f),
+                    new Vector3(20f, 40f, 10f),
+                    1.8f + i * 0.08f,
+                    0.22f,
+                    i == 0);
+            }
+        }
+
+        private static void CreateForestDynamicVfx(Transform parent)
+        {
+            var root = new GameObject("ForestDynamicVfx");
+            root.transform.SetParent(parent, false);
+
+            for (var i = 0; i < 14; i++)
+            {
+                var x = -62f - (i % 7) * 7.2f;
+                var z = 6f + (i / 7) * 13f + Mathf.Sin(i * 0.8f) * 3f;
+                CreateAnimatedVfxMarker(
+                    root.transform,
+                    $"ForestDynamicMoonMote_{i + 1:00}",
+                    PrimitiveType.Sphere,
+                    new Vector3(x, 0.8f + (i % 4) * 0.42f, z),
+                    Vector3.one * (0.045f + (i % 3) * 0.014f),
+                    new Color(0.48f, 0.62f, 0.78f, 1f),
+                    new Vector3(0.3f, 0.18f, 0.3f),
+                    new Vector3(0f, 34f, 0f),
+                    0.65f + (i % 4) * 0.12f,
+                    0.18f,
+                    false);
+            }
+        }
+
+        private static void CreateSwampDynamicVfx(Transform parent)
+        {
+            var root = new GameObject("SwampDynamicVfx");
+            root.transform.SetParent(parent, false);
+
+            for (var i = 0; i < 10; i++)
+            {
+                var angle = i * Mathf.PI * 2f / 10f;
+                var radius = 6.5f + (i % 3) * 2.3f;
+                CreateAnimatedVfxMarker(
+                    root.transform,
+                    $"SwampDynamicWillOWisp_{i + 1:00}",
+                    PrimitiveType.Sphere,
+                    new Vector3(12f + Mathf.Cos(angle) * radius, 0.75f + (i % 4) * 0.28f, -82f + Mathf.Sin(angle) * radius),
+                    Vector3.one * (0.12f + (i % 2) * 0.04f),
+                    new Color(0.06f, 0.78f, 0.46f, 1f),
+                    new Vector3(0.38f, 0.25f, 0.38f),
+                    new Vector3(0f, 45f, 0f),
+                    0.72f + (i % 3) * 0.16f,
+                    0.24f,
+                    i == 0 || i == 5);
+            }
+        }
+
+        private static void CreateAshRoadDynamicVfx(Transform parent)
+        {
+            var root = new GameObject("AshRoadDynamicVfx");
+            root.transform.SetParent(parent, false);
+
+            for (var i = 0; i < 18; i++)
+            {
+                var x = 78f + (i % 9) * 6.2f;
+                var z = 2f + (i / 9) * 14f + Mathf.Sin(i * 0.7f) * 4f;
+                CreateAnimatedVfxMarker(
+                    root.transform,
+                    $"AshRoadDynamicEmber_{i + 1:00}",
+                    PrimitiveType.Sphere,
+                    new Vector3(x, 0.45f + (i % 5) * 0.3f, z),
+                    Vector3.one * (0.045f + (i % 3) * 0.012f),
+                    new Color(1f, 0.22f, 0.035f, 1f),
+                    new Vector3(0.28f, 0.44f, 0.28f),
+                    new Vector3(16f, 70f, 20f),
+                    1.15f + (i % 4) * 0.14f,
+                    0.28f,
+                    i == 4 || i == 13);
+            }
+        }
+
+        private static void CreateTowerDynamicVfx(Transform parent)
+        {
+            var root = new GameObject("TowerDynamicVfx");
+            root.transform.SetParent(parent, false);
+
+            for (var i = 0; i < 12; i++)
+            {
+                var angle = i * Mathf.PI * 2f / 12f;
+                var radius = 3.2f + (i % 3) * 1.1f;
+                CreateAnimatedVfxMarker(
+                    root.transform,
+                    $"TowerDynamicMirrorFragment_{i + 1:00}",
+                    PrimitiveType.Cube,
+                    new Vector3(Mathf.Cos(angle) * radius, 1.0f + (i % 4) * 0.48f, 78.2f + Mathf.Sin(angle) * radius),
+                    new Vector3(0.08f, 0.45f + (i % 2) * 0.22f, 0.035f),
+                    new Color(0.62f, 0.38f, 1f, 1f),
+                    new Vector3(0.2f, 0.22f, 0.2f),
+                    new Vector3(32f + i * 3f, 46f + i * 4f, 18f),
+                    0.65f + (i % 3) * 0.12f,
+                    0.12f,
+                    i == 0 || i == 6);
+            }
+        }
+
+        private static GameObject CreateAnimatedVfxMarker(
+            Transform parent,
+            string name,
+            PrimitiveType primitiveType,
+            Vector3 position,
+            Vector3 scale,
+            Color color,
+            Vector3 bobAmplitude,
+            Vector3 rotationSpeed,
+            float motionSpeed,
+            float scalePulse,
+            bool addLight)
+        {
+            var marker = GameObject.CreatePrimitive(primitiveType);
+            marker.name = name;
+            marker.transform.SetParent(parent, false);
+            marker.transform.localPosition = position;
+            marker.transform.localScale = scale;
+            marker.GetComponent<Renderer>().sharedMaterial = CreateEmissiveMaterial($"Assets/Materials/{name}.mat", color, 2.1f);
+            Object.DestroyImmediate(marker.GetComponent<Collider>());
+
+            if (addLight)
+            {
+                var light = marker.AddComponent<Light>();
+                light.type = LightType.Point;
+                light.color = color;
+                light.intensity = 0.46f;
+                light.range = 5.5f;
+                light.shadows = LightShadows.None;
+            }
+
+            var motion = marker.AddComponent<AmbientVisualMotion>();
+            motion.Configure(bobAmplitude, rotationSpeed, motionSpeed, scalePulse, 0.24f);
+            return marker;
         }
 
         private static void CreateWorldDressing(Transform parent)
@@ -3327,6 +3521,19 @@ namespace WitcherRightVersion.Editor
             material = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
             material.color = color;
             AssetDatabase.CreateAsset(material, path);
+            return material;
+        }
+
+        private static Material CreateEmissiveMaterial(string path, Color color, float emissionStrength)
+        {
+            var material = CreateMaterial(path, color);
+            if (material.HasProperty("_EmissionColor"))
+            {
+                material.EnableKeyword("_EMISSION");
+                material.SetColor("_EmissionColor", color * Mathf.Max(0f, emissionStrength));
+                EditorUtility.SetDirty(material);
+            }
+
             return material;
         }
 

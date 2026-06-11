@@ -14,6 +14,7 @@ using WitcherRightVersion.Player;
 using WitcherRightVersion.Quest;
 using WitcherRightVersion.Save;
 using WitcherRightVersion.UI;
+using WitcherRightVersion.Visual;
 
 namespace WitcherRightVersion.Editor
 {
@@ -281,6 +282,18 @@ namespace WitcherRightVersion.Editor
             RequireObject("DrownerPresentationThreatWater", failures);
             RequireObject("SkeletonPresentationGraveDust", failures);
             RequireObject("BanditPresentationAmbushDirt", failures);
+            RequireObject("DynamicAmbientVfxPass", failures);
+            RequireObject("VillageDynamicVfx", failures);
+            RequireObject("VillageDynamicChimneySmoke_01_01", failures);
+            RequireObject<AmbientVisualMotion>("VillageDynamicForgeSpark_01", failures);
+            RequireObject("ForestDynamicVfx", failures);
+            RequireObject<AmbientVisualMotion>("ForestDynamicMoonMote_01", failures);
+            RequireObject("SwampDynamicVfx", failures);
+            RequireObject<AmbientVisualMotion>("SwampDynamicWillOWisp_01", failures);
+            RequireObject("AshRoadDynamicVfx", failures);
+            RequireObject<AmbientVisualMotion>("AshRoadDynamicEmber_01", failures);
+            RequireObject("TowerDynamicVfx", failures);
+            RequireObject<AmbientVisualMotion>("TowerDynamicMirrorFragment_01", failures);
             RequireObject("OuterVillageLumbermill", failures);
             RequireObject("OuterVillageWindmill", failures);
             RequireObject("DeepForestRangerOutpost", failures);
