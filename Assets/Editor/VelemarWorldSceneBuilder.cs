@@ -177,6 +177,7 @@ namespace WitcherRightVersion.Editor
             CreateFullMapVisualOverhaulPass(root.transform);
             CreateTerrainDepthAndSilhouettePass(root.transform);
             CreateAmbientCharacterPopulationPass(root.transform);
+            CreateVisualAtmospherePolishPass(root.transform);
             CreateWorldDressing(root.transform);
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
@@ -1381,6 +1382,167 @@ namespace WitcherRightVersion.Editor
             }
 
             CreateCharacterGroundRing(character, $"{objectName}_PresenceRing", new Color(0.36f, 0.28f, 0.14f, 1f), 0.62f);
+        }
+
+        private static void CreateVisualAtmospherePolishPass(Transform parent)
+        {
+            var root = new GameObject("VisualAtmospherePolishPass");
+            root.transform.SetParent(parent, false);
+
+            CreateVillageCameraCompositionPolish(root.transform);
+            CreateForestDepthFogPolish(root.transform);
+            CreateSwampWaterAndReedPolish(root.transform);
+            CreateAshRoadSmokeAndRuinPolish(root.transform);
+            CreateTowerRitualSkylinePolish(root.transform);
+        }
+
+        private static void CreateVillageCameraCompositionPolish(Transform parent)
+        {
+            var root = new GameObject("VillageCameraCompositionPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "VillagePolishMainStreetWetMud", new Vector3(0f, 0.142f, -8.8f), new Vector3(18f, 0.012f, 8.6f), new Color(0.105f, 0.077f, 0.046f, 1f));
+            CreateSurfacePatch(root.transform, "VillagePolishMarketWarmGround", new Vector3(1.6f, 0.143f, 3.9f), new Vector3(15.5f, 0.012f, 9f), new Color(0.15f, 0.105f, 0.055f, 1f));
+            CreateSurfacePatch(root.transform, "VillagePolishBackyardGrassA", new Vector3(-17.5f, 0.118f, 8.8f), new Vector3(8.5f, 0.012f, 7.5f), new Color(0.07f, 0.125f, 0.054f, 1f));
+            CreateSurfacePatch(root.transform, "VillagePolishBackyardGrassB", new Vector3(17.8f, 0.119f, 8.3f), new Vector3(8.2f, 0.012f, 7.8f), new Color(0.068f, 0.12f, 0.052f, 1f));
+
+            var frontYards = new[]
+            {
+                new Vector3(-16.2f, 0f, -7.8f),
+                new Vector3(-13.8f, 0f, 10.8f),
+                new Vector3(14.2f, 0f, -8.4f),
+                new Vector3(16.5f, 0f, 9.6f)
+            };
+
+            for (var i = 0; i < frontYards.Length; i++)
+            {
+                var side = i < 2 ? -1f : 1f;
+                PlaceKenney(root.transform, $"VillagePolishHouseFacadeFence_{i + 1:00}", i % 2 == 0 ? "fence.fbx" : "fence-broken.fbx", frontYards[i] + new Vector3(side * -1.8f, 0f, 0f), Quaternion.Euler(0f, 4f + side * 84f, 0f), Vector3.one * 0.96f);
+                PlaceKenney(root.transform, $"VillagePolishHouseFacadeLantern_{i + 1:00}", "lantern.fbx", frontYards[i] + new Vector3(side * 1.3f, 0f, 1.5f), Quaternion.Euler(0f, 25f * i, 0f), Vector3.one * 0.82f);
+                PlaceKenney(root.transform, $"VillagePolishHouseFacadeBench_{i + 1:00}", "stall-bench.fbx", frontYards[i] + new Vector3(side * 0.6f, 0f, -1.8f), Quaternion.Euler(0f, side * 58f, 0f), Vector3.one * 0.76f);
+            }
+
+            for (var i = 0; i < 9; i++)
+            {
+                var x = -9.5f + i * 2.35f;
+                CreateNonBlockingMarker(root.transform, $"VillagePolishWheelTrack_{i + 1:00}", new Vector3(x, 0.18f, -6.2f + (i % 2) * 0.45f), new Vector3(1.42f, 0.035f, 0.18f), new Color(0.058f, 0.044f, 0.03f, 1f));
+            }
+
+            PlaceKayKit(root.transform, "VillagePolishDistantMillSilhouette", "mill.fbx", new Vector3(30.5f, 0f, 20.8f), Quaternion.Euler(0f, -42f, 0f), Vector3.one * 0.92f);
+            PlaceKayKit(root.transform, "VillagePolishDistantArcheryRange", "archeryrange.fbx", new Vector3(-30.8f, 0f, 19.2f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 0.8f);
+            CreatePointLight(root.transform, "VillagePolishMarketGlow", new Vector3(0.8f, 2.2f, 4.1f), new Color(1f, 0.58f, 0.25f, 1f), 0.72f, 8.5f);
+        }
+
+        private static void CreateForestDepthFogPolish(Transform parent)
+        {
+            var root = new GameObject("ForestDepthFogPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "ForestPolishMossCarpet", new Vector3(-89f, 0.115f, 12f), new Vector3(52f, 0.012f, 28f), new Color(0.026f, 0.07f, 0.028f, 1f));
+            CreateSurfacePatch(root.transform, "ForestPolishTrailDarkerBend", new Vector3(-66f, 0.128f, 2.5f), new Vector3(22f, 0.012f, 5.6f), new Color(0.052f, 0.047f, 0.028f, 1f));
+
+            for (var i = 0; i < 24; i++)
+            {
+                var row = i / 8;
+                var col = i % 8;
+                var x = -62f - col * 7.4f - row * 3.5f;
+                var z = 21f + row * 7.2f + Mathf.Sin(i * 0.7f) * 2.6f;
+                var tree = i % 4 == 0 ? "tree-high-crooked.fbx" : i % 4 == 1 ? "tree-high-round.fbx" : "tree-high.fbx";
+                PlaceKenney(root.transform, $"ForestPolishLayeredCanopy_{i + 1:00}", tree, new Vector3(x, 0f, z), Quaternion.Euler(0f, i * 31f, 0f), Vector3.one * (1.14f + row * 0.1f + (i % 3) * 0.05f));
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                PlaceKayKit(root.transform, $"ForestPolishRootRock_{i + 1:00}", i % 2 == 0 ? "detail_rocks.fbx" : "detail_rocks_small.fbx", new Vector3(-58f - i * 6.2f, 0f, -4.6f + (i % 3) * 2.4f), Quaternion.Euler(0f, 18f + i * 21f, 0f), Vector3.one * (0.78f + (i % 3) * 0.13f));
+            }
+
+            for (var i = 0; i < 7; i++)
+            {
+                CreateNonBlockingMarker(root.transform, $"ForestPolishLowMistBand_{i + 1:00}", new Vector3(-58f - i * 8.2f, 0.42f, 17f + Mathf.Sin(i) * 3.6f), new Vector3(4.8f, 0.24f, 0.75f), new Color(0.13f, 0.18f, 0.16f, 0.82f));
+            }
+
+            CreatePointLight(root.transform, "ForestPolishBlueBacklight", new Vector3(-102f, 3.6f, 26f), new Color(0.36f, 0.5f, 0.72f, 1f), 0.58f, 17f);
+        }
+
+        private static void CreateSwampWaterAndReedPolish(Transform parent)
+        {
+            var root = new GameObject("SwampWaterAndReedPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "SwampPolishMirrorWater_Main", new Vector3(12.2f, 0.09f, -84.5f), new Vector3(34f, 0.012f, 25f), new Color(0.006f, 0.031f, 0.03f, 1f));
+            CreateSurfacePatch(root.transform, "SwampPolishMirrorWater_Left", new Vector3(-12f, 0.091f, -74.6f), new Vector3(16f, 0.012f, 15f), new Color(0.008f, 0.035f, 0.032f, 1f));
+            CreateSurfacePatch(root.transform, "SwampPolishPoisonGreenBloom", new Vector3(15.4f, 0.102f, -76.8f), new Vector3(8.4f, 0.012f, 6.2f), new Color(0.03f, 0.12f, 0.065f, 1f));
+            CreateSurfacePatch(root.transform, "SwampPolishHutDryIsland", new Vector3(17.2f, 0.15f, -71.5f), new Vector3(10.2f, 0.03f, 8.6f), new Color(0.044f, 0.072f, 0.043f, 1f));
+
+            for (var i = 0; i < 14; i++)
+            {
+                var x = -5.5f + (i % 7) * 4.4f;
+                var z = -68.2f - (i / 7) * 17.2f + Mathf.Sin(i * 0.6f) * 2f;
+                CreateReedCluster(root.transform, $"SwampPolishTallReedCluster_{i + 1:00}", new Vector3(x, 0.05f, z), 1.15f + (i % 3) * 0.18f);
+            }
+
+            for (var i = 0; i < 7; i++)
+            {
+                PlaceKenney(root.transform, $"SwampPolishRottenBoardwalk_{i + 1:00}", i % 2 == 0 ? "planks-opening.fbx" : "planks-half.fbx", new Vector3(0.5f + i * 3.1f, 0.045f, -86.0f + Mathf.Sin(i * 0.85f) * 2.4f), Quaternion.Euler(0f, 78f + i * 8f, 0f), Vector3.one * 0.82f);
+            }
+
+            PlaceKenney(root.transform, "SwampPolishCrookedTreeHero", "tree-high-crooked.fbx", new Vector3(27.2f, 0f, -88.4f), Quaternion.Euler(0f, -36f, 0f), Vector3.one * 1.42f);
+            PlaceKenney(root.transform, "SwampPolishHalfSunkenCart", "cart-high.fbx", new Vector3(1.4f, -0.08f, -93.6f), Quaternion.Euler(8f, 18f, -10f), Vector3.one * 0.86f);
+            CreatePointLight(root.transform, "SwampPolishWaterGlow", new Vector3(15.1f, 1.1f, -78.4f), new Color(0.05f, 0.58f, 0.35f, 1f), 0.62f, 14f);
+        }
+
+        private static void CreateAshRoadSmokeAndRuinPolish(Transform parent)
+        {
+            var root = new GameObject("AshRoadSmokeAndRuinPolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "AshRoadPolishMainSootStreet", new Vector3(101f, 0.125f, 6.5f), new Vector3(62f, 0.012f, 9.2f), new Color(0.065f, 0.054f, 0.047f, 1f));
+            CreateSurfacePatch(root.transform, "AshRoadPolishBurnedVillageFloor", new Vector3(103f, 0.126f, 24.5f), new Vector3(45f, 0.012f, 17f), new Color(0.095f, 0.07f, 0.055f, 1f));
+
+            for (var i = 0; i < 12; i++)
+            {
+                var x = 80f + i * 4.5f;
+                var z = 16f + Mathf.Sin(i * 0.8f) * 8f;
+                var model = i % 4 == 0 ? "wall-wood-broken.fbx" : i % 4 == 1 ? "wall-broken.fbx" : i % 4 == 2 ? "pillar-wood.fbx" : "fence-broken.fbx";
+                PlaceKenney(root.transform, $"AshRoadPolishLayeredRuin_{i + 1:00}", model, new Vector3(x, 0f, z), Quaternion.Euler(0f, -38f + i * 19f, 0f), Vector3.one * (0.92f + (i % 3) * 0.11f));
+            }
+
+            for (var i = 0; i < 9; i++)
+            {
+                CreateNonBlockingMarker(root.transform, $"AshRoadPolishSmokeColumn_{i + 1:00}", new Vector3(84f + i * 5.7f, 1.0f + (i % 3) * 0.15f, 11f + Mathf.Sin(i) * 9f), new Vector3(1.0f + (i % 2) * 0.32f, 1.7f + (i % 3) * 0.38f, 1.0f), new Color(0.12f, 0.115f, 0.105f, 0.9f));
+                CreateNonBlockingMarker(root.transform, $"AshRoadPolishEmberPatch_{i + 1:00}", new Vector3(83f + i * 5.8f, 0.18f, 4.2f + Mathf.Cos(i) * 5f), new Vector3(1.4f, 0.05f, 0.7f), new Color(0.64f, 0.12f, 0.035f, 1f));
+            }
+
+            PlaceKayKit(root.transform, "AshRoadPolishCollapsedBarracksSilhouette", "barracks.fbx", new Vector3(128f, 0f, 25.2f), Quaternion.Euler(0f, -22f, 0f), Vector3.one * 0.92f);
+            PlaceKayKit(root.transform, "AshRoadPolishRearWatchtowerSilhouette", "watchtower.fbx", new Vector3(132f, 0f, -8.2f), Quaternion.Euler(0f, 28f, 0f), Vector3.one * 0.82f);
+            CreatePointLight(root.transform, "AshRoadPolishDeepFireGlow", new Vector3(108f, 1.7f, 16f), new Color(1f, 0.25f, 0.08f, 1f), 0.78f, 14f);
+        }
+
+        private static void CreateTowerRitualSkylinePolish(Transform parent)
+        {
+            var root = new GameObject("TowerRitualSkylinePolish");
+            root.transform.SetParent(parent, false);
+
+            CreateSurfacePatch(root.transform, "TowerPolishBrokenCauseway", new Vector3(0f, 0.135f, 103f), new Vector3(12f, 0.012f, 45f), new Color(0.07f, 0.066f, 0.077f, 1f));
+            CreateSurfacePatch(root.transform, "TowerPolishMirrorLightPool", new Vector3(0f, 0.158f, 78.5f), new Vector3(10f, 0.012f, 7.5f), new Color(0.22f, 0.14f, 0.36f, 1f));
+
+            for (var i = 0; i < 14; i++)
+            {
+                var side = i % 2 == 0 ? -1f : 1f;
+                var z = 83f + i * 4.2f;
+                var model = i % 4 == 0 ? "wall-arch.fbx" : i % 4 == 1 ? "wall-arch-top.fbx" : i % 4 == 2 ? "pillar-stone.fbx" : "wall-broken.fbx";
+                PlaceKenney(root.transform, $"TowerPolishProcessionRuin_{i + 1:00}", model, new Vector3(side * (7.5f + (i % 3) * 1.6f), 0f, z), Quaternion.Euler(0f, side * (12f + i * 5f), 0f), Vector3.one * (0.85f + (i % 4) * 0.08f));
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                CreateNonBlockingMarker(root.transform, $"TowerPolishFloatingMirrorShard_{i + 1:00}", new Vector3(-4.5f + i * 1.3f, 1.05f + (i % 3) * 0.35f, 77.8f + Mathf.Sin(i) * 1.8f), new Vector3(0.12f, 0.9f + (i % 2) * 0.3f, 0.08f), new Color(0.52f, 0.36f, 0.95f, 1f));
+            }
+
+            PlaceKayKit(root.transform, "TowerPolishFarCastleSilhouette", "castle.fbx", new Vector3(0f, 0f, 151f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * 1.4f);
+            PlaceKayKit(root.transform, "TowerPolishLeftMountainBacker", "mountain.fbx", new Vector3(-31f, 0f, 142f), Quaternion.Euler(0f, 26f, 0f), new Vector3(1.8f, 0.65f, 1.8f));
+            PlaceKayKit(root.transform, "TowerPolishRightMountainBacker", "mountain.fbx", new Vector3(31f, 0f, 142f), Quaternion.Euler(0f, -26f, 0f), new Vector3(1.8f, 0.65f, 1.8f));
+            CreatePointLight(root.transform, "TowerPolishMirrorCoreGlow", new Vector3(0f, 2.8f, 78f), new Color(0.58f, 0.32f, 1f, 1f), 0.9f, 17f);
         }
 
         private static void CreateWorldDressing(Transform parent)
