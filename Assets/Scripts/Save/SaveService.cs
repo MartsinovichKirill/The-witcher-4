@@ -108,12 +108,12 @@ namespace WitcherRightVersion.Save
                 return false;
             }
 
-            return SaveToPath(GetAutosavePath(), "Autosave");
+            return SaveToPath(GetAutosavePath(), "Автосохранение");
         }
 
         public bool LoadAutosave()
         {
-            return LoadFromPath(GetAutosavePath(), "Autosave");
+            return LoadFromPath(GetAutosavePath(), "Автосохранение");
         }
 
         public bool SaveManualSlot(int slotNumber)
@@ -124,7 +124,7 @@ namespace WitcherRightVersion.Save
                 return false;
             }
 
-            return SaveToPath(GetManualSlotPath(slotNumber), $"Manual slot {slotNumber}");
+            return SaveToPath(GetManualSlotPath(slotNumber), $"Слот {slotNumber}");
         }
 
         public bool LoadManualSlot(int slotNumber)
@@ -135,7 +135,7 @@ namespace WitcherRightVersion.Save
                 return false;
             }
 
-            return LoadFromPath(GetManualSlotPath(slotNumber), $"Manual slot {slotNumber}");
+            return LoadFromPath(GetManualSlotPath(slotNumber), $"Слот {slotNumber}");
         }
 
         public static bool HasAutosave()
@@ -163,7 +163,7 @@ namespace WitcherRightVersion.Save
             }
 
             pendingSceneTransferData = data;
-            Debug.Log($"Scene transfer prepared from {data.sceneName}.");
+            Debug.Log($"Scene transfer prepared from {data.currentScene}.");
             return true;
         }
 
@@ -172,14 +172,14 @@ namespace WitcherRightVersion.Save
             var data = CaptureSaveData();
             if (data == null)
             {
-                InteractionPromptUI.Instance?.ShowMessage($"{label} failed: no player.");
+                InteractionPromptUI.Instance?.ShowMessage($"{label}: сохранение невозможно, игрок не найден.");
                 return false;
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.WriteAllText(path, JsonUtility.ToJson(data, true));
             Debug.Log($"{label} written to {path}", this);
-            InteractionPromptUI.Instance?.ShowMessage($"{label} saved.");
+            InteractionPromptUI.Instance?.ShowMessage($"Игра сохранена ({label}).");
             return true;
         }
 
@@ -188,7 +188,7 @@ namespace WitcherRightVersion.Save
             if (!File.Exists(path))
             {
                 Debug.LogWarning($"{label} not found: {path}", this);
-                InteractionPromptUI.Instance?.ShowMessage($"{label} not found.");
+                InteractionPromptUI.Instance?.ShowMessage($"Сохранение не найдено ({label}).");
                 return false;
             }
 
@@ -198,27 +198,27 @@ namespace WitcherRightVersion.Save
                 var data = JsonUtility.FromJson<SaveData>(json);
                 if (data == null)
                 {
-                    InteractionPromptUI.Instance?.ShowMessage($"{label} failed: broken save.");
+                    InteractionPromptUI.Instance?.ShowMessage($"{label}: файл сохранения повреждён.");
                     return false;
                 }
 
                 var currentScene = SceneManager.GetActiveScene().name;
-                if (!string.Equals(data.sceneName, currentScene, StringComparison.Ordinal))
+                if (!string.Equals(data.currentScene, currentScene, StringComparison.Ordinal))
                 {
-                    Debug.LogWarning($"Save scene mismatch. Saved: {data.sceneName}, current: {currentScene}. Cross-scene restore is deferred.", this);
-                    InteractionPromptUI.Instance?.ShowMessage($"{label} needs scene {data.sceneName}.");
+                    Debug.LogWarning($"Save scene mismatch. Saved: {data.currentScene}, current: {currentScene}. Cross-scene restore is deferred.", this);
+                    InteractionPromptUI.Instance?.ShowMessage($"{label}: сохранение относится к сцене {data.currentScene}.");
                     return false;
                 }
 
                 RestoreSaveData(data);
                 Debug.Log($"{label} loaded from {path}", this);
-                InteractionPromptUI.Instance?.ShowMessage($"{label} loaded.");
+                InteractionPromptUI.Instance?.ShowMessage($"Сохранение загружено ({label}).");
                 return true;
             }
             catch (Exception exception)
             {
                 Debug.LogError($"{label} load failed: {exception}", this);
-                InteractionPromptUI.Instance?.ShowMessage($"{label} failed.");
+                InteractionPromptUI.Instance?.ShowMessage($"{label}: ошибка загрузки.");
                 return false;
             }
         }
@@ -232,17 +232,68 @@ namespace WitcherRightVersion.Save
             }
 
             var health = player.GetComponent<Health>();
+            var rewards = PlayerRewardService.Instance;
+            var inventory = InventoryService.Instance;
 
             return new SaveData
             {
-                sceneName = SceneManager.GetActiveScene().name,
+                currentScene = SceneManager.GetActiveScene().name,
                 playerPosition = new SerializableVector3(player.transform.position),
                 playerHealth = health != null ? health.CurrentHealth : 0f,
+                playerLevel = rewards != null ? rewards.Level : 1,
+                playerExperience = rewards != null ? rewards.Experience : 0,
+                skillPoints = rewards != null ? rewards.SkillPoints : 0,
+                coins = rewards != null ? rewards.Coins : 0,
+                equippedWeapon = inventory != null ? inventory.EquippedWeapon : string.Empty,
                 quest = QuestService.Instance != null ? QuestService.Instance.CaptureSnapshot() : null,
                 completedQuestInteractables = CaptureCompletedQuestInteractables(),
                 decisionFlags = DecisionFlagService.Instance != null ? DecisionFlagService.Instance.CaptureFlags() : Array.Empty<string>(),
-                rewards = PlayerRewardService.Instance != null ? PlayerRewardService.Instance.CaptureSnapshot() : null,
-                inventory = InventoryService.Instance != null ? InventoryService.Instance.CaptureSnapshot() : null
+                rewards = rewards != null ? rewards.CaptureSnapshot() : null,
+                inventory = inventory != null ? inventory.CaptureSnapshot() : null,
+                locations = CaptureLocations(),
+                settings = CaptureSettings()
+            };
+        }
+
+        private static LocationData[] CaptureLocations()
+        {
+            var flags = DecisionFlagService.Instance;
+
+            LocationData Describe(string id, string name)
+            {
+                return new LocationData
+                {
+                    locationId = id,
+                    locationName = name,
+                    isUnlocked = true,
+                    visited = flags != null && flags.HasFlag("visited_" + id)
+                };
+            }
+
+            return new[]
+            {
+                Describe("heather_ford", "Вересковый Брод"),
+                Describe("old_forest", "Старый Лес"),
+                Describe("black_swamp", "Чёрное Болото"),
+                Describe("ash_road", "Пепельный тракт"),
+                Describe("tower_ruins", "Руины Башни")
+            };
+        }
+
+        private static SettingsData CaptureSettings()
+        {
+            var resolutionNames = new[] { "1280x720", "1600x900", "1920x1080" };
+            var resolutionIndex = Mathf.Clamp(PlayerPrefs.GetInt(RuntimeSettingsService.ResolutionKey, 2), 0, resolutionNames.Length - 1);
+            var graphicsIndex = Mathf.Clamp(PlayerPrefs.GetInt(RuntimeSettingsService.GraphicsKey, QualitySettings.GetQualityLevel()), 0, Mathf.Max(0, QualitySettings.names.Length - 1));
+            var volume = PlayerPrefs.GetFloat(RuntimeSettingsService.VolumeKey, 1f);
+
+            return new SettingsData
+            {
+                language = "Russian",
+                volume = volume,
+                musicVolume = PlayerPrefs.GetInt(RuntimeSettingsService.MusicKey, 1) == 1 ? volume : 0f,
+                resolution = resolutionNames[resolutionIndex],
+                graphicsQuality = QualitySettings.names.Length > 0 ? QualitySettings.names[graphicsIndex] : string.Empty
             };
         }
 
@@ -294,8 +345,8 @@ namespace WitcherRightVersion.Save
             pendingSceneTransferData = null;
 
             RestoreSharedState(data);
-            Debug.Log($"Scene transfer restored from {data.sceneName} to {SceneManager.GetActiveScene().name}.", this);
-            InteractionPromptUI.Instance?.ShowMessage("Progress carried into this area.");
+            Debug.Log($"Scene transfer restored from {data.currentScene} to {SceneManager.GetActiveScene().name}.", this);
+            InteractionPromptUI.Instance?.ShowMessage("Прогресс перенесён в эту область.");
             return true;
         }
 

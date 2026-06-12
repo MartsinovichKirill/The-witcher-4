@@ -194,7 +194,7 @@ namespace WitcherRightVersion.Player
                 {
                     isTargetLocked = false;
                     cameraCombatTarget = null;
-                    InteractionPromptUI.Instance?.ShowMessage("Target lock released.");
+                    InteractionPromptUI.Instance?.ShowMessage("Захват цели снят.");
                 }
                 else
                 {
@@ -202,11 +202,11 @@ namespace WitcherRightVersion.Player
                     isTargetLocked = cameraCombatTarget != null;
                     if (isTargetLocked)
                     {
-                        InteractionPromptUI.Instance?.ShowMessage($"Locked: {cameraCombatTarget.DisplayName}.");
+                        InteractionPromptUI.Instance?.ShowMessage($"Цель: {WitcherRightVersion.Localization.GameLocalization.Text(cameraCombatTarget.DisplayName)}.");
                     }
                     else
                     {
-                        InteractionPromptUI.Instance?.ShowMessage("No target in range.");
+                        InteractionPromptUI.Instance?.ShowMessage("Нет цели поблизости.");
                     }
                 }
             }

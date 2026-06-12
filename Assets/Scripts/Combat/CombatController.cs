@@ -220,8 +220,8 @@ namespace WitcherRightVersion.Combat
             ownHealth.TakeDamage(finalDamage, source);
 
             var message = IsBlocking
-                ? $"Blocked hit: {finalDamage:0} damage taken."
-                : $"Reynard took {finalDamage:0} damage.";
+                ? $"Блок: получено {finalDamage:0} урона."
+                : $"Рейнард получил {finalDamage:0} урона.";
             InteractionPromptUI.Instance?.ShowMessage(message);
         }
 
@@ -240,7 +240,7 @@ namespace WitcherRightVersion.Combat
                 : 1f;
             var finalDamage = damage * progressionMultiplier * GetWeaponMultiplier(bestTarget) * GetTimedDamageMultiplier(bestTarget);
             bestTarget.TakeDamage(finalDamage, gameObject);
-            InteractionPromptUI.Instance?.ShowMessage($"Hit {bestTarget.DisplayName}: {finalDamage:0} damage.");
+            InteractionPromptUI.Instance?.ShowMessage($"Удар по цели «{WitcherRightVersion.Localization.GameLocalization.Text(bestTarget.DisplayName)}»: {finalDamage:0} урона.");
         }
 
         private float GetWeaponMultiplier(Health target)
@@ -559,7 +559,7 @@ namespace WitcherRightVersion.Combat
             IsBlocking = false;
             IsDodging = true;
             DodgeStarted?.Invoke();
-            InteractionPromptUI.Instance?.ShowMessage("Dodge.");
+            InteractionPromptUI.Instance?.ShowMessage("Уклонение.");
         }
 
         private void ContinueDodge()
@@ -634,7 +634,7 @@ namespace WitcherRightVersion.Combat
                 affected++;
             }
 
-            InteractionPromptUI.Instance?.ShowMessage(affected > 0 ? $"Aard hit {affected} target(s)." : "Aard hit nothing.");
+            InteractionPromptUI.Instance?.ShowMessage(affected > 0 ? $"Аард задел целей: {affected}." : "Аард никого не задел.");
         }
 
         private void CastIgni()

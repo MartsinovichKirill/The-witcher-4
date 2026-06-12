@@ -9,15 +9,41 @@ namespace WitcherRightVersion.Save
     [Serializable]
     public sealed class SaveData
     {
-        public string version = "combat-equipment-0.21";
-        public string sceneName;
+        public string saveVersion = "pz-structure-0.22";
+        public string currentScene;
         public SerializableVector3 playerPosition;
         public float playerHealth;
+        public int playerLevel;
+        public int playerExperience;
+        public int skillPoints;
+        public int coins;
+        public string equippedWeapon;
         public QuestSnapshot quest;
         public string[] completedQuestInteractables;
         public string[] decisionFlags;
         public PlayerRewardSnapshot rewards;
         public InventorySnapshot inventory;
+        public LocationData[] locations;
+        public SettingsData settings;
+    }
+
+    [Serializable]
+    public sealed class LocationData
+    {
+        public string locationId;
+        public string locationName;
+        public bool isUnlocked;
+        public bool visited;
+    }
+
+    [Serializable]
+    public sealed class SettingsData
+    {
+        public string language;
+        public float volume;
+        public float musicVolume;
+        public string resolution;
+        public string graphicsQuality;
     }
 
     [Serializable]

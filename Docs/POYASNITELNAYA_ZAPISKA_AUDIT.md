@@ -2,6 +2,21 @@
 
 Проверенный файл: `H:\ввывывы\Автокопия Документ1.docx`.
 
+## Выравнивание сохранения с таблицами 3.1–3.6 (выполнено 2026-06-12)
+
+Структура JSON-сохранения приведена в соответствие с ПЗ:
+
+- `SaveData` теперь содержит поля из таблицы 3.1: `saveVersion`, `currentScene`, `playerPosition`, `playerHealth`, `playerLevel`, `playerExperience`, `skillPoints`, `coins`, `equippedWeapon`.
+- Добавлена структура `LocationData` (таблица 3.5): `locationId`, `locationName`, `isUnlocked`, `visited`. Посещение зоны фиксируется флагом `visited_<id>` при срабатывании триггера обнаружения зоны.
+- Добавлена структура `SettingsData` (таблица 3.6): `language`, `volume`, `musicVolume`, `resolution`, `graphicsQuality`. Заполняется из текущих настроек при сохранении.
+- `InventorySnapshot` уже соответствовал таблице 3.2 (`weapons`, `items`, `equippedWeapon`, `equippedArmor`; `unlockedRecipes` хранится в `rewards`).
+- Версия сохранения поднята до `pz-structure-0.22`; старые сохранения с полем `sceneName` загружаться не будут (ожидаемо, защита по сцене).
+
+## Руководства по разделу 4.1 (созданы 2026-06-12)
+
+- `Docs/Руководство пользователя.docx` — все 12 разделов из ПЗ, таблица клавиш, аварийные ситуации.
+- `Docs/Руководство системного программиста.docx` — все 9 разделов из ПЗ, структура проекта, команды сборки, формат сохранений.
+
 ## Что соответствует игре
 
 - Название проекта: `The Witcher 4: Right Version`.

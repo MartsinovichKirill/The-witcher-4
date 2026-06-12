@@ -27,6 +27,12 @@ namespace WitcherRightVersion.Core
 
             AudioListener.volume = Mathf.Clamp01(volume);
             QualitySettings.SetQualityLevel(graphicsIndex, true);
+            // Re-apply the cinematic shadow boost: SetQualityLevel resets these to level defaults.
+            QualitySettings.shadows = ShadowQuality.All;
+            QualitySettings.shadowResolution = ShadowResolution.High;
+            QualitySettings.shadowDistance = Mathf.Max(QualitySettings.shadowDistance, 85f);
+            QualitySettings.shadowCascades = 2;
+            QualitySettings.pixelLightCount = Mathf.Max(QualitySettings.pixelLightCount, 8);
             QualitySettings.anisotropicFiltering = sharpnessEnabled ? AnisotropicFiltering.ForceEnable : AnisotropicFiltering.Disable;
             QualitySettings.antiAliasing = blurEnabled ? 2 : 0;
 

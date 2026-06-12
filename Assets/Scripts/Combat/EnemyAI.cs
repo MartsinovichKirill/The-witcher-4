@@ -157,7 +157,7 @@ namespace WitcherRightVersion.Combat
                 else
                 {
                     targetHealth.TakeDamage(damage, gameObject);
-                    InteractionPromptUI.Instance?.ShowMessage($"{enemyName} hits target: {damage:0} damage.");
+                    InteractionPromptUI.Instance?.ShowMessage($"{WitcherRightVersion.Localization.GameLocalization.Text(enemyName)} наносит удар: {damage:0} урона.");
                 }
             }
         }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using WitcherRightVersion.Core;
 
 namespace WitcherRightVersion.UI
 {
@@ -27,7 +28,15 @@ namespace WitcherRightVersion.UI
             }
 
             shown = true;
+            DecisionFlagService.Instance?.SetFlag("visited_" + ToLocationId(englishZoneName));
             ZoneDiscoveryUI.Instance?.Show(englishZoneName, russianZoneName);
+        }
+
+        private static string ToLocationId(string zoneName)
+        {
+            return string.IsNullOrWhiteSpace(zoneName)
+                ? "unknown_zone"
+                : zoneName.Trim().ToLowerInvariant().Replace(' ', '_');
         }
     }
 }

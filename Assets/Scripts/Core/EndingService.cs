@@ -85,7 +85,7 @@ namespace WitcherRightVersion.Core
         {
             if (!CanCompleteTruthEnding())
             {
-                InteractionPromptUI.Instance?.ShowMessage("The altar is silent. Reynard needs stronger proof before choosing the truth.");
+                InteractionPromptUI.Instance?.ShowMessage("Концовка недоступна: алтарь молчит. Рейнарду нужны более весомые доказательства правды.");
                 return false;
             }
 
@@ -93,14 +93,14 @@ namespace WitcherRightVersion.Core
                 TruthEndingType,
                 TruthEndingFlag,
                 "VillageTruthExposed",
-                "Ending reached: Truth. The first right version is no longer buried.");
+                "Концовка получена: Правда. Первая, настоящая версия больше не похоронена.");
         }
 
         public bool CompleteLieEnding()
         {
             if (!CanCompleteLieEnding())
             {
-                InteractionPromptUI.Instance?.ShowMessage("The mirror stays dark. Reynard needs the elder's version or fewer doubts before choosing the lie.");
+                InteractionPromptUI.Instance?.ShowMessage("Концовка недоступна: зеркало темно. Нужно поддержать версию старосты или отбросить сомнения.");
                 return false;
             }
 
@@ -108,14 +108,14 @@ namespace WitcherRightVersion.Core
                 LieEndingType,
                 LieEndingFlag,
                 "MayorSupported",
-                "Ending reached: Corrected Story. Velemar survives by choosing the useful lie.");
+                "Концовка получена: Исправленная история. Велемар выживает, выбрав удобную ложь.");
         }
 
         public bool CompleteSacrificeEnding()
         {
             if (!CanCompleteSacrificeEnding())
             {
-                InteractionPromptUI.Instance?.ShowMessage("The shards do not break. Reynard needs Orten's diary or destroyed mirror fragments before choosing sacrifice.");
+                InteractionPromptUI.Instance?.ShowMessage("Концовка недоступна: осколки не поддаются. Нужен дневник Ортена или разрушенные осколки зеркала.");
                 return false;
             }
 
@@ -123,7 +123,7 @@ namespace WitcherRightVersion.Core
                 SacrificeEndingType,
                 SacrificeEndingFlag,
                 "MirrorDestroyed",
-                "Ending reached: Sacrifice. The curse breaks, and Velemar pays the living price.");
+                "Концовка получена: Жертва. Проклятие разрушено, но Велемар платит живую цену.");
         }
 
         public bool CompleteEndingByType(string endingType)
@@ -137,7 +137,7 @@ namespace WitcherRightVersion.Core
                 case SacrificeEndingType:
                     return CompleteSacrificeEnding();
                 default:
-                    InteractionPromptUI.Instance?.ShowMessage("This ending has not been written yet.");
+                    InteractionPromptUI.Instance?.ShowMessage("Концовка недоступна.");
                     return false;
             }
         }
