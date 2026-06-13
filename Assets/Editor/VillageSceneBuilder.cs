@@ -32,6 +32,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("VillageMovementTestArea");
             RemoveIfExists("VillageBlockoutGround");
             RemoveIfExists("VillagePropRoot");
+            RemoveIfExists("VillageAtmosphereLights");
             RemoveIfExists("SwampMoodRoot");
             RemoveIfExists("InteractionCanvas");
             RemoveIfExists("DialogueCanvas");
@@ -180,13 +181,102 @@ namespace WitcherRightVersion.Editor
 
             light.name = "VillageSunLight";
             light.type = LightType.Directional;
-            light.intensity = 1.05f;
-            light.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
+            // Soft, low-angle warm dusk sun for an overcast hamlet.
+            light.intensity = 0.82f;
+            light.color = new Color(1f, 0.83f, 0.62f, 1f);
+            light.transform.rotation = Quaternion.Euler(22f, -42f, 0f);
+            light.shadows = LightShadows.Soft;
+            light.shadowStrength = 0.62f;
 
-            RenderSettings.ambientLight = new Color(0.28f, 0.3f, 0.26f, 1f);
+            // Trilight ambient gradient derived from the existing neutral ambient colour:
+            // cool-ish sky, neutral equator, warmer ground.
+            var baseAmbient = new Color(0.28f, 0.3f, 0.26f, 1f);
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.3f, 0.34f, 0.4f, 1f);
+            RenderSettings.ambientEquatorColor = baseAmbient;
+            RenderSettings.ambientGroundColor = new Color(0.26f, 0.22f, 0.17f, 1f);
+            RenderSettings.ambientIntensity = 1f;
+
             RenderSettings.fog = true;
-            RenderSettings.fogColor = new Color(0.38f, 0.42f, 0.38f, 1f);
-            RenderSettings.fogDensity = 0.012f;
+            RenderSettings.fogColor = new Color(0.4f, 0.44f, 0.41f, 1f);
+            RenderSettings.fogDensity = 0.0135f;
+
+            // Authored dusk skybox; the sun reference draws the low sun disc.
+            RenderSettings.sun = light;
+            RenderSettings.skybox = CreateSkyboxMaterial(
+                "Assets/Materials/VillageDuskSkybox.mat",
+                0.055f, 1.2f,
+                new Color(0.42f, 0.4f, 0.38f, 1f),
+                new Color(0.16f, 0.14f, 0.12f, 1f),
+                0.92f);
+
+            CreateAtmosphereLights();
+        }
+
+        private static Material CreateSkyboxMaterial(string path, float sunSize, float atmosphereThickness, Color skyTint, Color groundColor, float exposure)
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(Shader.Find("Skybox/Procedural"));
+                AssetDatabase.CreateAsset(material, path);
+            }
+
+            material.SetFloat("_SunSize", sunSize);
+            material.SetFloat("_SunSizeConvergence", 6f);
+            material.SetFloat("_AtmosphereThickness", atmosphereThickness);
+            material.SetColor("_SkyTint", skyTint);
+            material.SetColor("_GroundColor", groundColor);
+            material.SetFloat("_Exposure", exposure);
+            return material;
+        }
+
+        private static void CreateAtmosphereLights()
+        {
+            var root = new GameObject("VillageAtmosphereLights");
+            root.transform.position = Vector3.zero;
+
+            // Warm lantern point lights at gate, market and well.
+            CreatePointLight(root.transform, "GateLanternLight", new Vector3(-1.9f, 2.1f, 3.9f), new Color(1f, 0.74f, 0.42f, 1f), 1.5f, 7.5f);
+            CreatePointLight(root.transform, "MarketLanternLight", new Vector3(3.0f, 2.0f, 1.6f), new Color(1f, 0.78f, 0.46f, 1f), 1.35f, 7f);
+            CreatePointLight(root.transform, "WellLanternLight", new Vector3(0.4f, 1.9f, 0.2f), new Color(1f, 0.8f, 0.5f, 1f), 1.2f, 6.5f);
+            CreatePointLight(root.transform, "MarketStallLight", new Vector3(2.2f, 1.7f, 3.2f), new Color(1f, 0.76f, 0.46f, 1f), 1.1f, 6f);
+
+            // Hot orange forge glow at the smithy.
+            CreatePointLight(root.transform, "ForgeLight", new Vector3(-4.6f, 1.1f, -2.9f), new Color(1f, 0.45f, 0.16f, 1f), 2.6f, 6.5f);
+
+            // Warm spot cone over the gate for a welcoming pool of light.
+            CreateSpotLight(root.transform, "GateSpotLight", new Vector3(-2.0f, 3.4f, 3.7f), Quaternion.Euler(70f, 10f, 0f), new Color(1f, 0.8f, 0.55f, 1f), 1.4f, 9f, 62f);
+        }
+
+        private static void CreatePointLight(Transform parent, string name, Vector3 position, Color color, float intensity, float range)
+        {
+            var lightObject = new GameObject(name);
+            lightObject.transform.SetParent(parent, true);
+            lightObject.transform.position = position;
+
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+            light.shadows = LightShadows.None;
+        }
+
+        private static void CreateSpotLight(Transform parent, string name, Vector3 position, Quaternion rotation, Color color, float intensity, float range, float spotAngle)
+        {
+            var lightObject = new GameObject(name);
+            lightObject.transform.SetParent(parent, true);
+            lightObject.transform.position = position;
+            lightObject.transform.rotation = rotation;
+
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Spot;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+            light.spotAngle = spotAngle;
+            light.shadows = LightShadows.None;
         }
 
         private static void CreateMovementMarkers(Transform parent)
@@ -224,6 +314,40 @@ namespace WitcherRightVersion.Editor
             PlaceProp(root.transform, "VillageLantern_01", "lantern.fbx", new Vector3(-1.9f, 0f, 3.8f), Quaternion.identity, Vector3.one);
             PlaceProp(root.transform, "VillageRock_01", "rock-small.fbx", new Vector3(4.4f, 0f, -2.6f), Quaternion.Euler(0f, 20f, 0f), Vector3.one);
             PlaceProp(root.transform, "VillageBanner_01", "banner-red.fbx", new Vector3(-4.4f, 0f, -1.4f), Quaternion.Euler(0f, -35f, 0f), Vector3.one);
+
+            // --- Well / village centre ---
+            PlaceProp(root.transform, "VillageWell_Fountain", "fountain-round.fbx", new Vector3(0.4f, 0f, 0.2f), Quaternion.identity, Vector3.one);
+
+            // --- Market cluster (north-east) ---
+            PlaceProp(root.transform, "VillageStall_Red", "stall-red.fbx", new Vector3(2.9f, 0f, 1.5f), Quaternion.Euler(0f, -110f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageStall_Green", "stall-green.fbx", new Vector3(3.4f, 0f, 2.9f), Quaternion.Euler(0f, -150f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageStallBench_01", "stall-bench.fbx", new Vector3(2.1f, 0f, 2.3f), Quaternion.Euler(0f, 60f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageStallStool_01", "stall-stool.fbx", new Vector3(2.4f, 0f, 1.2f), Quaternion.Euler(0f, 15f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageMarketCart_01", "cart-high.fbx", new Vector3(3.9f, 0f, 0.6f), Quaternion.Euler(0f, -65f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageMarketPlanks_01", "planks.fbx", new Vector3(2.0f, 0f, 3.0f), Quaternion.Euler(0f, 25f, 0f), new Vector3(0.9f, 0.9f, 0.9f));
+
+            // --- Gate cluster (north) ---
+            PlaceProp(root.transform, "VillageGatePole_L", "poles.fbx", new Vector3(-2.6f, 0f, 4.4f), Quaternion.identity, Vector3.one);
+            PlaceProp(root.transform, "VillageGatePole_R", "poles.fbx", new Vector3(-1.2f, 0f, 4.4f), Quaternion.identity, Vector3.one);
+            PlaceProp(root.transform, "VillageGateFence_01", "fence.fbx", new Vector3(-3.4f, 0f, 4.3f), Quaternion.identity, Vector3.one);
+            PlaceProp(root.transform, "VillageGateBanner_01", "banner-green.fbx", new Vector3(-1.9f, 0f, 4.6f), Quaternion.Euler(0f, 12f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageGateLantern_01", "lantern.fbx", new Vector3(-2.7f, 0f, 4.2f), Quaternion.identity, Vector3.one);
+            PlaceProp(root.transform, "VillageGateRock_01", "rock-wide.fbx", new Vector3(-3.9f, 0f, 3.4f), Quaternion.Euler(0f, -40f, 0f), new Vector3(0.8f, 0.8f, 0.8f));
+
+            // --- Smithy cluster (south-west) ---
+            PlaceProp(root.transform, "VillageSmithyPlanks_01", "planks.fbx", new Vector3(-4.2f, 0f, -3.5f), Quaternion.Euler(0f, -20f, 0f), new Vector3(0.9f, 0.9f, 0.9f));
+            PlaceProp(root.transform, "VillageSmithyPlanksHalf_01", "planks-half.fbx", new Vector3(-5.3f, 0f, -2.4f), Quaternion.Euler(0f, 40f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageSmithyFence_01", "fence.fbx", new Vector3(-5.6f, 0f, -3.4f), Quaternion.Euler(0f, 12f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageSmithyLantern_01", "lantern.fbx", new Vector3(-4.0f, 0f, -2.4f), Quaternion.identity, Vector3.one);
+            PlaceProp(root.transform, "VillageSmithyPoles_01", "poles-horizontal.fbx", new Vector3(-5.2f, 0f, -3.0f), Quaternion.Euler(0f, 65f, 0f), Vector3.one);
+
+            // --- Loose dressing / scatter ---
+            PlaceProp(root.transform, "VillageFence_03", "fence-curved.fbx", new Vector3(4.0f, 0f, 3.6f), Quaternion.Euler(0f, -90f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageRock_02", "rock-small.fbx", new Vector3(1.6f, 0f, -3.4f), Quaternion.Euler(0f, -55f, 0f), new Vector3(0.85f, 0.85f, 0.85f));
+            PlaceProp(root.transform, "VillageRock_03", "rock-large.fbx", new Vector3(4.8f, 0f, 1.8f), Quaternion.Euler(0f, 130f, 0f), new Vector3(0.7f, 0.7f, 0.7f));
+            PlaceProp(root.transform, "VillageTree_01", "tree.fbx", new Vector3(-4.8f, 0f, 1.2f), Quaternion.Euler(0f, 25f, 0f), Vector3.one);
+            PlaceProp(root.transform, "VillageTree_02", "tree-crooked.fbx", new Vector3(4.6f, 0f, -0.4f), Quaternion.Euler(0f, -70f, 0f), new Vector3(1.1f, 1.1f, 1.1f));
+            PlaceProp(root.transform, "VillageCart_02", "cart.fbx", new Vector3(-3.0f, 0f, 3.6f), Quaternion.Euler(0f, 70f, 0f), Vector3.one);
         }
 
         private static void CreateSwampMoodArea()

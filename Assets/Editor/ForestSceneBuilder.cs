@@ -29,6 +29,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("ThirdPersonCamera");
             RemoveIfExists("ForestBlockoutGround");
             RemoveIfExists("ForestMoodRoot");
+            RemoveIfExists("ForestAtmosphereLights");
             RemoveIfExists("ForestInteractionRoot");
             RemoveIfExists("InteractionCanvas");
             RemoveIfExists("InventoryCanvas");
@@ -40,6 +41,7 @@ namespace WitcherRightVersion.Editor
             var player = CreatePlayer();
             CreateCamera(player.transform);
             CreateForestMood();
+            CreateAtmosphereLights();
             CreateInteractionObjects();
             CreateInteractionCanvas();
             CreateInventoryCanvas();
@@ -68,13 +70,49 @@ namespace WitcherRightVersion.Editor
             var lightObject = new GameObject("ForestMoonLight");
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.intensity = 0.82f;
-            light.transform.rotation = Quaternion.Euler(48f, -46f, 0f);
+            light.color = new Color(0.62f, 0.72f, 0.95f, 1f);
+            light.intensity = 0.55f;
+            light.transform.rotation = Quaternion.Euler(32f, -58f, 0f);
+            light.shadows = LightShadows.Soft;
+            light.shadowStrength = 0.62f;
 
-            RenderSettings.ambientLight = new Color(0.18f, 0.21f, 0.18f, 1f);
+            var baseAmbient = new Color(0.18f, 0.21f, 0.18f, 1f);
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.16f, 0.21f, 0.30f, 1f);
+            RenderSettings.ambientEquatorColor = baseAmbient;
+            RenderSettings.ambientGroundColor = new Color(0.07f, 0.08f, 0.06f, 1f);
+            RenderSettings.ambientLight = baseAmbient;
+
             RenderSettings.fog = true;
-            RenderSettings.fogColor = new Color(0.27f, 0.32f, 0.28f, 1f);
-            RenderSettings.fogDensity = 0.018f;
+            RenderSettings.fogColor = new Color(0.16f, 0.22f, 0.24f, 1f);
+            RenderSettings.fogDensity = 0.022f;
+
+            // Authored moonlit night skybox; the sun reference draws the moon disc.
+            RenderSettings.sun = light;
+            RenderSettings.skybox = CreateSkyboxMaterial(
+                "Assets/Materials/ForestNightSkybox.mat",
+                0.035f, 0.65f,
+                new Color(0.3f, 0.38f, 0.55f, 1f),
+                new Color(0.06f, 0.07f, 0.075f, 1f),
+                0.55f);
+        }
+
+        private static Material CreateSkyboxMaterial(string path, float sunSize, float atmosphereThickness, Color skyTint, Color groundColor, float exposure)
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(Shader.Find("Skybox/Procedural"));
+                AssetDatabase.CreateAsset(material, path);
+            }
+
+            material.SetFloat("_SunSize", sunSize);
+            material.SetFloat("_SunSizeConvergence", 6f);
+            material.SetFloat("_AtmosphereThickness", atmosphereThickness);
+            material.SetColor("_SkyTint", skyTint);
+            material.SetColor("_GroundColor", groundColor);
+            material.SetFloat("_Exposure", exposure);
+            return material;
         }
 
         private static void CreateGround()
@@ -145,6 +183,86 @@ namespace WitcherRightVersion.Editor
             CreateTree(root.transform, "ForestTree_04", new Vector3(4.8f, 0f, 3.8f), 1.2f);
             CreateRock(root.transform, "ForestRock_01", new Vector3(1.9f, 0.25f, 2.4f), new Vector3(0.85f, 0.45f, 0.65f));
             CreateRock(root.transform, "ForestRock_02", new Vector3(-4.7f, 0.2f, 1.1f), new Vector3(0.65f, 0.35f, 0.5f));
+
+            // Outer treeline clusters (irregular spacing, varied scale) to build depth toward the fog.
+            CreateTree(root.transform, "ForestTree_05", new Vector3(-6.9f, 0f, 4.6f), 1.45f);
+            CreateTree(root.transform, "ForestTree_06", new Vector3(-5.6f, 0f, 6.3f), 1.15f);
+            CreateTree(root.transform, "ForestTree_07", new Vector3(-7.8f, 0f, 1.4f), 1.3f);
+            CreateTree(root.transform, "ForestTree_08", new Vector3(6.4f, 0f, 5.7f), 1.4f);
+            CreateTree(root.transform, "ForestTree_09", new Vector3(7.5f, 0f, 2.1f), 1.2f);
+            CreateTree(root.transform, "ForestTree_10", new Vector3(5.1f, 0f, 7.2f), 1.05f);
+            CreateTree(root.transform, "ForestTree_11", new Vector3(-1.1f, 0f, 7.6f), 1.5f);
+            CreateTree(root.transform, "ForestTree_12", new Vector3(1.8f, 0f, 6.9f), 1.25f);
+            CreateTree(root.transform, "ForestTree_13", new Vector3(-8.3f, 0f, -2.4f), 1.35f);
+            CreateTree(root.transform, "ForestTree_14", new Vector3(7.9f, 0f, -2.9f), 1.3f);
+
+            // Scattered undergrowth rocks tucked against the treelines.
+            CreateRock(root.transform, "ForestRock_03", new Vector3(-6.2f, 0.18f, 3.5f), new Vector3(0.55f, 0.3f, 0.45f));
+            CreateRock(root.transform, "ForestRock_04", new Vector3(6.1f, 0.22f, 4.4f), new Vector3(0.7f, 0.4f, 0.55f));
+            CreateRock(root.transform, "ForestRock_05", new Vector3(0.4f, 0.16f, 6.2f), new Vector3(0.5f, 0.28f, 0.42f));
+            CreateRock(root.transform, "ForestRock_06", new Vector3(-3.4f, 0.2f, 5.4f), new Vector3(0.62f, 0.34f, 0.5f));
+
+            // Low ground-mist markers nestled in the clusters to catch the moonlight.
+            CreateMistMarker(root.transform, "ForestMist_01", new Vector3(-5.0f, 0.05f, 4.8f), 2.4f);
+            CreateMistMarker(root.transform, "ForestMist_02", new Vector3(5.6f, 0.05f, 5.1f), 2.1f);
+            CreateMistMarker(root.transform, "ForestMist_03", new Vector3(0.2f, 0.05f, 6.6f), 2.7f);
+            CreateMistMarker(root.transform, "ForestMist_04", new Vector3(-1.4f, 0.05f, 1.6f), 1.8f);
+        }
+
+        private static void CreateMistMarker(Transform parent, string name, Vector3 position, float radius)
+        {
+            var mist = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            mist.name = name;
+            mist.transform.SetParent(parent, true);
+            mist.transform.position = position;
+            mist.transform.localScale = new Vector3(radius, 0.35f, radius);
+            mist.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/ForestGroundMist.mat", new Color(0.6f, 0.66f, 0.7f, 0.12f));
+            Object.DestroyImmediate(mist.GetComponent<Collider>());
+        }
+
+        private static void CreateAtmosphereLights()
+        {
+            var root = new GameObject("ForestAtmosphereLights");
+            root.transform.position = Vector3.zero;
+
+            // Cool moon-pool point lights resting on the forest floor between the clusters.
+            CreatePointLight(root.transform, "MoonPool_01", new Vector3(-5.0f, 1.2f, 4.6f), new Color(0.55f, 0.66f, 0.92f, 1f), 0.65f, 7.5f);
+            CreatePointLight(root.transform, "MoonPool_02", new Vector3(5.4f, 1.1f, 5.0f), new Color(0.5f, 0.62f, 0.9f, 1f), 0.6f, 7f);
+            CreatePointLight(root.transform, "MoonPool_03", new Vector3(0.3f, 1.0f, 6.4f), new Color(0.52f, 0.64f, 0.9f, 1f), 0.55f, 6.5f);
+
+            // Faint warm ember glow at the hunter camp landmark.
+            CreatePointLight(root.transform, "CampEmberGlow", new Vector3(-1.65f, 0.6f, -1.2f), new Color(0.95f, 0.55f, 0.25f, 1f), 0.45f, 4.5f);
+
+            // A single moon shaft cutting down through a canopy gap.
+            CreateMoonShaft(root.transform, "MoonShaft_01", new Vector3(-2.0f, 7.5f, 3.0f), Quaternion.Euler(70f, 20f, 0f), new Color(0.6f, 0.7f, 0.95f, 1f), 0.85f, 16f, 34f);
+        }
+
+        private static void CreatePointLight(Transform parent, string name, Vector3 position, Color color, float intensity, float range)
+        {
+            var lightObject = new GameObject(name);
+            lightObject.transform.SetParent(parent, true);
+            lightObject.transform.position = position;
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+            light.shadows = LightShadows.None;
+        }
+
+        private static void CreateMoonShaft(Transform parent, string name, Vector3 position, Quaternion rotation, Color color, float intensity, float range, float spotAngle)
+        {
+            var lightObject = new GameObject(name);
+            lightObject.transform.SetParent(parent, true);
+            lightObject.transform.position = position;
+            lightObject.transform.rotation = rotation;
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Spot;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+            light.spotAngle = spotAngle;
+            light.shadows = LightShadows.None;
         }
 
         private static void CreateInteractionObjects()

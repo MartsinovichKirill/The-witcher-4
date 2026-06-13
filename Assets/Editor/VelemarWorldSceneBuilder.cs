@@ -100,17 +100,40 @@ namespace WitcherRightVersion.Editor
             var lightObject = new GameObject("VelemarWorldSun");
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.color = new Color(0.82f, 0.72f, 0.58f, 1f);
-            light.intensity = 0.62f;
+            light.color = new Color(0.84f, 0.73f, 0.58f, 1f);
+            light.intensity = 0.68f;
             light.shadows = LightShadows.Soft;
-            light.transform.rotation = Quaternion.Euler(32f, -38f, 0f);
+            light.shadowStrength = 0.82f;
+            light.transform.rotation = Quaternion.Euler(30f, -40f, 0f);
 
-            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.11f, 0.13f, 0.12f, 1f);
+            // Subtle cool bounce fill from the opposite side so shadow sides do not crush to black.
+            var fillObject = new GameObject("VelemarWorldSkyFill");
+            var fillLight = fillObject.AddComponent<Light>();
+            fillLight.type = LightType.Directional;
+            fillLight.color = new Color(0.34f, 0.42f, 0.54f, 1f);
+            fillLight.intensity = 0.18f;
+            fillLight.shadows = LightShadows.None;
+            fillLight.transform.rotation = Quaternion.Euler(24f, 152f, 0f);
+
+            // Authored sky/horizon/ground gradient. Build-time Trilight is authoritative:
+            // CinematicCameraEffect only upgrades ambient when it is still Flat.
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.18f, 0.23f, 0.27f, 1f);
+            RenderSettings.ambientEquatorColor = new Color(0.12f, 0.14f, 0.13f, 1f);
+            RenderSettings.ambientGroundColor = new Color(0.07f, 0.066f, 0.055f, 1f);
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogColor = new Color(0.16f, 0.21f, 0.19f, 1f);
-            RenderSettings.fogDensity = 0.0135f;
+            RenderSettings.fogColor = new Color(0.15f, 0.2f, 0.19f, 1f);
+            RenderSettings.fogDensity = 0.0128f;
+
+            // Authored warm-dusk skybox; the sun reference draws the disc at the light's angle.
+            RenderSettings.sun = light;
+            RenderSettings.skybox = CreateSkyboxMaterial(
+                "Assets/Materials/VelemarWorldSkybox.mat",
+                0.05f, 1.3f,
+                new Color(0.45f, 0.39f, 0.33f, 1f),
+                new Color(0.12f, 0.115f, 0.1f, 1f),
+                1.0f);
 
             var lightsRoot = new GameObject("VelemarAtmosphereLights");
             CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.54f, 0.24f, 1f), 1.45f, 12f);
@@ -3920,6 +3943,24 @@ namespace WitcherRightVersion.Editor
             text.horizontalOverflow = HorizontalWrapMode.Wrap;
             text.verticalOverflow = VerticalWrapMode.Truncate;
             return text;
+        }
+
+        private static Material CreateSkyboxMaterial(string path, float sunSize, float atmosphereThickness, Color skyTint, Color groundColor, float exposure)
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(Shader.Find("Skybox/Procedural"));
+                AssetDatabase.CreateAsset(material, path);
+            }
+
+            material.SetFloat("_SunSize", sunSize);
+            material.SetFloat("_SunSizeConvergence", 6f);
+            material.SetFloat("_AtmosphereThickness", atmosphereThickness);
+            material.SetColor("_SkyTint", skyTint);
+            material.SetColor("_GroundColor", groundColor);
+            material.SetFloat("_Exposure", exposure);
+            return material;
         }
 
         private static Material CreateMaterial(string path, Color color)
