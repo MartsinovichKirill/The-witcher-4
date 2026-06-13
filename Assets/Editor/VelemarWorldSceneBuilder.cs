@@ -746,6 +746,7 @@ namespace WitcherRightVersion.Editor
             if (dragon != null)
             {
                 ApplyMaterialToChildRenderers(dragon, CreateMaterial("Assets/Materials/DeepSwampBossSilhouette.mat", new Color(0.05f, 0.14f, 0.095f, 1f)));
+                AttachAnimator(dragon, CharacterAnimationSetup.DragonController, $"{MonsterPath}/Dragon.fbx");
             }
         }
 
@@ -1169,6 +1170,7 @@ namespace WitcherRightVersion.Editor
             if (bat != null)
             {
                 ApplyMaterialToChildRenderers(bat, CreateMaterial("Assets/Materials/SwampOverhaulBatVisual.mat", new Color(0.045f, 0.055f, 0.05f, 1f)));
+                AttachAnimator(bat, CharacterAnimationSetup.BatController, $"{MonsterPath}/Bat.fbx");
             }
 
             CreatePointLight(root.transform, "SwampOverhaulGreenFogLight", new Vector3(10f, 1.3f, -88f), new Color(0.12f, 0.62f, 0.36f, 1f), 0.55f, 18f);
@@ -1242,6 +1244,7 @@ namespace WitcherRightVersion.Editor
             if (dragon != null)
             {
                 ApplyMaterialToChildRenderers(dragon, CreateMaterial("Assets/Materials/SwampOverhaulBossBackdrop.mat", new Color(0.12f, 0.16f, 0.12f, 1f)));
+                AttachAnimator(dragon, CharacterAnimationSetup.DragonController, $"{MonsterPath}/Dragon.fbx");
             }
         }
 
@@ -2494,6 +2497,12 @@ namespace WitcherRightVersion.Editor
             var radek = CreateRpgCharacterAnchor(parent, "RadekTrader_World", "Rogue.fbx", new Vector3(3.1f, 1f, -0.7f), Quaternion.Euler(0f, -135f, 0f), new Vector3(0.82f, 0.82f, 0.82f), new Color(0.2f, 0.16f, 0.09f, 1f));
             AddNpcEquipment(radek, "RadekTraderDaggerProp", "Rogue_Dagger.fbx", new Vector3(-0.28f, -0.48f, 0.14f), Quaternion.Euler(72f, 0f, 24f), Vector3.one * 0.34f);
             CreateCharacterGroundRing(radek, "RadekRoleRing", new Color(0.66f, 0.5f, 0.18f, 1f), 0.76f);
+
+            // Visible weapon wares leaning at the trader's stall (existing pack FBX).
+            CreateWeaponWare(parent, "RadekWare_Sword", $"{KnightPath}/Sword.fbx", new Vector3(2.25f, 0.5f, -1.45f), Quaternion.Euler(8f, 18f, 22f), 0.6f, new Color(0.62f, 0.64f, 0.69f, 1f));
+            CreateWeaponWare(parent, "RadekWare_Katana", $"{KnightPath}/Katana.fbx", new Vector3(2.55f, 0.5f, -1.6f), Quaternion.Euler(8f, -6f, -16f), 0.6f, new Color(0.7f, 0.72f, 0.78f, 1f));
+            CreateWeaponWare(parent, "RadekWare_Bow", $"{RpgWeaponPath}/Ranger_Bow.fbx", new Vector3(3.65f, 0.5f, -1.5f), Quaternion.Euler(4f, 30f, 12f), 0.55f, new Color(0.42f, 0.3f, 0.18f, 1f));
+            CreateWeaponWare(parent, "RadekWare_Club", $"{KnightPath}/Club.fbx", new Vector3(3.35f, 0.45f, -1.7f), Quaternion.Euler(10f, 0f, 14f), 0.6f, new Color(0.4f, 0.31f, 0.22f, 1f));
             var merchant = radek.AddComponent<MerchantInteractable>();
             merchant.Configure(
                 "Radek the Trader",
@@ -3768,6 +3777,16 @@ namespace WitcherRightVersion.Editor
             }
 
             InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, anchor.transform, localPosition, localRotation, localScale);
+        }
+
+        // Standalone weapon prop (full asset path) used as visible merchant wares.
+        private static void CreateWeaponWare(Transform parent, string objectName, string assetPath, Vector3 position, Quaternion rotation, float scale, Color tint)
+        {
+            var weapon = InstantiateModel(assetPath, objectName, parent, position, rotation, Vector3.one * scale);
+            if (weapon != null)
+            {
+                ApplyMaterialToChildRenderers(weapon, CreateMaterial($"Assets/Materials/{objectName}_Tint.mat", tint));
+            }
         }
 
         private static void AddInteractablePropVisual(GameObject marker, string objectName)

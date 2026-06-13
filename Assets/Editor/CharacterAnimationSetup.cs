@@ -17,11 +17,15 @@ namespace WitcherRightVersion.Editor
         public const string KnightPath = "Assets/Art/External/Quaternius_Knight/Knight Character by @Quaternius/FBX/KnightCharacter.fbx";
         public const string SkeletonPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX/Skeleton.fbx";
         public const string SlimePath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX/Slime.fbx";
+        public const string BatPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX/Bat.fbx";
+        public const string DragonPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX/Dragon.fbx";
 
         public const string ControllerDir = "Assets/Generated/Animators";
         public const string ReynardController = ControllerDir + "/ReynardKnight.controller";
         public const string SkeletonController = ControllerDir + "/SkeletonGuard.controller";
         public const string DrownerController = ControllerDir + "/DrownerSlime.controller";
+        public const string BatController = ControllerDir + "/BatFlyer.controller";
+        public const string DragonController = ControllerDir + "/DragonFlyer.controller";
 
         [MenuItem("Tools/Witcher Right Version/Setup Character Animations")]
         public static void Setup()
@@ -30,6 +34,8 @@ namespace WitcherRightVersion.Editor
             ConfigureLooping(KnightPath, name => NameMatches(name, "idle", "walk", "run") && !name.ToLower().Contains("attack"));
             ConfigureLooping(SkeletonPath, name => NameMatches(name, "idle", "running", "walk"));
             ConfigureLooping(SlimePath, name => NameMatches(name, "idle", "walk"));
+            ConfigureLooping(BatPath, name => NameMatches(name, "flying"));
+            ConfigureLooping(DragonPath, name => NameMatches(name, "flying"));
 
             if (!AssetDatabase.IsValidFolder("Assets/Generated"))
             {
@@ -67,9 +73,29 @@ namespace WitcherRightVersion.Editor
                 death: "Armature|Slime_Death",
                 runThreshold: 99f);
 
+            // Simple single-state looping flight controllers for ambient flying monsters.
+            BuildLoopController(BatController, BatPath, "BatArmature|Bat_Flying");
+            BuildLoopController(DragonController, DragonPath, "DragonArmature|Dragon_Flying");
+
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("CharacterAnimationSetup: controllers built.");
+        }
+
+        // One looping state, no parameters: makes a dormant flier animate continuously.
+        private static void BuildLoopController(string controllerPath, string fbxPath, string clipName)
+        {
+            if (AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath) != null)
+            {
+                AssetDatabase.DeleteAsset(controllerPath);
+            }
+
+            var controller = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+            var clip = LoadClip(fbxPath, clipName);
+            var state = controller.layers[0].stateMachine.AddState("Fly");
+            state.motion = clip;
+            controller.layers[0].stateMachine.defaultState = state;
+            EditorUtility.SetDirty(controller);
         }
 
         private static bool NameMatches(string clipName, params string[] tokens)
