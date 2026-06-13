@@ -2936,6 +2936,16 @@ namespace WitcherRightVersion.Editor
         {
             CreateSupplyCrate(parent, "WorldMartaHerbBasket", "Marta's herb basket", "Take herbs", new[] { "Swallow Grass", "Field Ration", "Bogweed" }, "Resources gained: Swallow Grass, Field Ration, Bogweed.", new Vector3(5.5f, 0.2f, -4.7f), new Vector3(0.5f, 0.25f, 0.5f), new Color(0.13f, 0.28f, 0.12f, 1f));
             CreateSupplyCrate(parent, "WorldForgeSupplies", "Forge supplies", "Take supplies", new[] { "Iron Ore", "Wolf Pelt", "Drowner Slime" }, "Resources gained: Iron Ore, Wolf Pelt, Drowner Slime.", new Vector3(-4.7f, 0.2f, 0.9f), new Vector3(0.6f, 0.3f, 0.5f), new Color(0.25f, 0.19f, 0.12f, 1f));
+
+            // Scattered pickup spots across the zones so the player can gather resources
+            // while travelling, not only at the village. Reuse existing item names.
+            CreateSupplyCrate(parent, "ForestHerbPatch_Pickup", "Лесная травяная кочка", "Собрать травы", new[] { "Swallow Grass", "Bogweed" }, "Собрано: Дьявольский гриб, Болотник.", new Vector3(-69.5f, 0.2f, 16.4f), new Vector3(0.5f, 0.22f, 0.5f), new Color(0.14f, 0.3f, 0.13f, 1f));
+            CreateSupplyCrate(parent, "ForestHunterCache_Pickup", "Схрон охотника", "Обыскать", new[] { "Field Ration", "Wolf Pelt" }, "Собрано: Походный паёк, Волчья шкура.", new Vector3(-65.8f, 0.2f, 9.3f), new Vector3(0.55f, 0.3f, 0.5f), new Color(0.22f, 0.17f, 0.11f, 1f));
+            CreateSupplyCrate(parent, "SwampIngredientPool_Pickup", "Болотные ингредиенты", "Собрать", new[] { "Bogweed", "Drowner Slime" }, "Собрано: Болотник, Слизь утопца.", new Vector3(12.4f, 0.2f, -70.2f), new Vector3(0.5f, 0.22f, 0.5f), new Color(0.1f, 0.26f, 0.18f, 1f));
+            CreateSupplyCrate(parent, "SwampDrownedChest_Pickup", "Затонувший сундук", "Открыть", new[] { "Field Ration", "Iron Ore" }, "Собрано: Походный паёк, Железная руда.", new Vector3(15.2f, 0.2f, -72.8f), new Vector3(0.6f, 0.32f, 0.5f), new Color(0.2f, 0.18f, 0.13f, 1f));
+            CreateSupplyCrate(parent, "AshRoadSalvage_Pickup", "Утиль на тракте", "Обыскать", new[] { "Iron Ore", "Field Ration" }, "Собрано: Железная руда, Походный паёк.", new Vector3(69.2f, 0.2f, 11.3f), new Vector3(0.58f, 0.3f, 0.5f), new Color(0.24f, 0.2f, 0.16f, 1f));
+            CreateSupplyCrate(parent, "TowerRelicCrate_Pickup", "Реликварий у башни", "Забрать", new[] { "Iron Ore", "Bogweed" }, "Собрано: Железная руда, Болотник.", new Vector3(3.2f, 0.2f, 74.1f), new Vector3(0.55f, 0.3f, 0.5f), new Color(0.2f, 0.18f, 0.26f, 1f));
+            CreateSupplyCrate(parent, "WestRouteTravelerPack_Pickup", "Брошенный мешок", "Подобрать", new[] { "Field Ration", "Swallow Grass" }, "Собрано: Походный паёк, Дьявольский гриб.", new Vector3(-40.4f, 0.2f, 5.2f), new Vector3(0.5f, 0.28f, 0.5f), new Color(0.23f, 0.2f, 0.14f, 1f));
             CreateCraftingStation(parent, "WorldAlchemyTable_Swallow", "Alchemy table: Swallow", "Craft", "swallow", new Vector3(5.1f, 0.35f, -5.7f), new Vector3(0.95f, 0.2f, 0.58f), new Color(0.11f, 0.24f, 0.16f, 1f));
             CreateCraftingStation(parent, "WorldAlchemyTable_Antitoxin", "Alchemy table: Antitoxin", "Craft", "antitoxin", new Vector3(5.1f, 0.62f, -5.7f), new Vector3(0.7f, 0.08f, 0.42f), new Color(0.08f, 0.36f, 0.26f, 1f));
             CreateCraftingStation(parent, "WorldForge_ReinforcedArmor", "Boris's forge: Reinforced Armor", "Craft", "reinforced_armor", new Vector3(-5.1f, 0.55f, 0.2f), new Vector3(0.85f, 0.32f, 0.58f), new Color(0.26f, 0.16f, 0.1f, 1f));
@@ -3337,11 +3347,20 @@ namespace WitcherRightVersion.Editor
                 return (fallback.transform, null, null);
             }
 
-            // Swords sheathed on the back. The separate helmet/shoulder-pad add-ons are
-            // dropped: they sat on the most-animated bones and would float off the body;
-            // the base KnightCharacter mesh is already a fully armoured, helmeted knight.
-            var steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.22f, 1.05f, -0.14f), Quaternion.Euler(65f, 0f, 25f), Vector3.one * 0.3f);
-            var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.22f, 1.0f, -0.14f), Quaternion.Euler(65f, 0f, -25f), Vector3.one * 0.3f);
+            // Two swords crossed on the upper back (Witcher style), enlarged and tinted so
+            // they read clearly. The separate helmet/shoulder-pad add-ons are dropped: they
+            // sat on the most-animated bones and floated off; the base KnightCharacter mesh
+            // is already a fully armoured, helmeted knight.
+            var steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.16f, 1.5f, -0.22f), Quaternion.Euler(14f, 0f, 32f), Vector3.one * 0.55f);
+            if (steelSword != null)
+            {
+                ApplyMaterialToChildRenderers(steelSword, CreateMaterial("Assets/Materials/ReynardSteelSwordTint.mat", new Color(0.62f, 0.64f, 0.69f, 1f)));
+            }
+            var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.16f, 1.5f, -0.22f), Quaternion.Euler(14f, 0f, -32f), Vector3.one * 0.55f);
+            if (silverSword != null)
+            {
+                ApplyMaterialToChildRenderers(silverSword, CreateMaterial("Assets/Materials/ReynardSilverSwordTint.mat", new Color(0.82f, 0.84f, 0.9f, 1f)));
+            }
             AttachAnimator(knight, CharacterAnimationSetup.ReynardController, $"{KnightPath}/KnightCharacter.fbx");
             return (knight.transform, steelSword != null ? steelSword.transform : null, silverSword != null ? silverSword.transform : null);
         }

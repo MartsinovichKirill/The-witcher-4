@@ -64,3 +64,8 @@ Assets/Art/External/**/Previews/
 Assets/Art/External/**/Sample.png
 Assets/Art/External/**/Preview*.png
 *.blend
+
+# User bug-report drop file at repo root (never commit) and its extraction.
+# Scoped to root so Docs/*.docx manuals stay committable.
+/*.docx
+_bagfile_extracted.txt
