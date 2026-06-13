@@ -128,11 +128,23 @@ namespace WitcherRightVersion.Combat
 
         private void ApplyLocomotion(Vector3 worldVelocity, ref Vector3 position, ref Quaternion rotation)
         {
+            if (currentPose != Pose.None)
+            {
+                return;
+            }
+
             var flatVelocity = worldVelocity;
             flatVelocity.y = 0f;
             var speed = flatVelocity.magnitude;
-            if (speed < 0.08f || currentPose != Pose.None)
+            if (speed < 0.08f)
             {
+                // Idle: subtle breathing/sway so standing enemies are not frozen statues.
+                var phase = Time.time * (quadruped ? 2.1f : 1.4f) + GetInstanceID() * 0.013f;
+                var breath = Mathf.Sin(phase);
+                position.y += breath * (quadruped ? 0.008f : 0.012f);
+                rotation *= quadruped
+                    ? Quaternion.Euler(breath * 1.4f, 0f, Mathf.Cos(phase * 0.8f) * 0.8f)
+                    : Quaternion.Euler(breath * 0.7f, Mathf.Sin(phase * 0.6f) * 1.2f, Mathf.Cos(phase) * 0.7f);
                 return;
             }
 

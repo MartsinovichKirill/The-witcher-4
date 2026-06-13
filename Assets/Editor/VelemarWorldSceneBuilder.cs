@@ -101,40 +101,40 @@ namespace WitcherRightVersion.Editor
             var lightObject = new GameObject("VelemarWorldSun");
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.color = new Color(0.84f, 0.73f, 0.58f, 1f);
-            light.intensity = 0.68f;
+            light.color = new Color(0.95f, 0.84f, 0.68f, 1f);
+            light.intensity = 0.95f;
             light.shadows = LightShadows.Soft;
-            light.shadowStrength = 0.82f;
-            light.transform.rotation = Quaternion.Euler(30f, -40f, 0f);
+            light.shadowStrength = 0.7f;
+            light.transform.rotation = Quaternion.Euler(34f, -40f, 0f);
 
             // Subtle cool bounce fill from the opposite side so shadow sides do not crush to black.
             var fillObject = new GameObject("VelemarWorldSkyFill");
             var fillLight = fillObject.AddComponent<Light>();
             fillLight.type = LightType.Directional;
-            fillLight.color = new Color(0.34f, 0.42f, 0.54f, 1f);
-            fillLight.intensity = 0.18f;
+            fillLight.color = new Color(0.4f, 0.48f, 0.6f, 1f);
+            fillLight.intensity = 0.28f;
             fillLight.shadows = LightShadows.None;
             fillLight.transform.rotation = Quaternion.Euler(24f, 152f, 0f);
 
             // Authored sky/horizon/ground gradient. Build-time Trilight is authoritative:
             // CinematicCameraEffect only upgrades ambient when it is still Flat.
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.18f, 0.23f, 0.27f, 1f);
-            RenderSettings.ambientEquatorColor = new Color(0.12f, 0.14f, 0.13f, 1f);
-            RenderSettings.ambientGroundColor = new Color(0.07f, 0.066f, 0.055f, 1f);
+            RenderSettings.ambientSkyColor = new Color(0.32f, 0.37f, 0.43f, 1f);
+            RenderSettings.ambientEquatorColor = new Color(0.21f, 0.23f, 0.21f, 1f);
+            RenderSettings.ambientGroundColor = new Color(0.11f, 0.1f, 0.085f, 1f);
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogColor = new Color(0.15f, 0.2f, 0.19f, 1f);
-            RenderSettings.fogDensity = 0.0128f;
+            RenderSettings.fogColor = new Color(0.2f, 0.25f, 0.25f, 1f);
+            RenderSettings.fogDensity = 0.0092f;
 
             // Authored warm-dusk skybox; the sun reference draws the disc at the light's angle.
             RenderSettings.sun = light;
             RenderSettings.skybox = CreateSkyboxMaterial(
                 "Assets/Materials/VelemarWorldSkybox.mat",
-                0.05f, 1.3f,
-                new Color(0.45f, 0.39f, 0.33f, 1f),
-                new Color(0.12f, 0.115f, 0.1f, 1f),
-                1.0f);
+                0.05f, 1.4f,
+                new Color(0.52f, 0.46f, 0.4f, 1f),
+                new Color(0.16f, 0.15f, 0.13f, 1f),
+                1.25f);
 
             var lightsRoot = new GameObject("VelemarAtmosphereLights");
             CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.54f, 0.24f, 1f), 1.45f, 12f);
@@ -1226,10 +1226,10 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("CreatureModelShowcase");
             root.transform.SetParent(parent, false);
 
-            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", "TowerOverhaulSkeletonDisplay", root.transform, new Vector3(-7.2f, 0f, 86f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 0.95f);
+            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", "TowerOverhaulSkeletonDisplay", root.transform, new Vector3(-7.2f, 0f, 86f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 1.5f);
             if (skeleton != null)
             {
-                ApplyMaterialToChildRenderers(skeleton, CreateMaterial("Assets/Materials/TowerOverhaulSkeletonDisplay.mat", new Color(0.36f, 0.35f, 0.32f, 1f)));
+                ApplyMaterialToChildRenderers(skeleton, CreateMaterial("Assets/Materials/TowerOverhaulSkeletonDisplay.mat", new Color(0.76f, 0.74f, 0.68f, 1f)));
             }
 
             var slime = InstantiateModel($"{MonsterPath}/Slime.fbx", "SwampOverhaulDrownerDisplay", root.transform, new Vector3(18.5f, 0f, -83.5f), Quaternion.Euler(0f, -125f, 0f), Vector3.one * 1.35f);
@@ -2260,6 +2260,11 @@ namespace WitcherRightVersion.Editor
             {
                 CreateMarker(root.transform, "SwampBossForeshadow_Fallback", new Vector3(14.8f, 0.8f, -67.9f), new Vector3(1.6f, 1.2f, 1.6f), new Color(0.06f, 0.22f, 0.12f, 1f));
             }
+            else
+            {
+                // Untinted Slime.fbx renders white; tint it to match the cursed-bog drowners.
+                ApplyMaterialToChildRenderers(foreshadow, CreateMaterial("Assets/Materials/SwampBossForeshadow_Tint.mat", new Color(0.05f, 0.2f, 0.13f, 1f)));
+            }
         }
 
         private static void CreateTowerDressing(Transform parent)
@@ -2706,7 +2711,7 @@ namespace WitcherRightVersion.Editor
                 ApplyMaterialToChildRenderers(drowner, CreateMaterial("Assets/Materials/DrownerMonsterVisual.mat", new Color(0.04f, 0.24f, 0.17f, 1f)));
             }
 
-            CreateCharacterGroundRing(drowner, "WorldDrownerThreatRing", new Color(0.66f, 0.08f, 0.04f, 1f), 1.02f);
+            CreateCharacterGroundRing(drowner, "WorldDrownerThreatRing", new Color(0.66f, 0.08f, 0.04f, 1f), 0.62f);
 
             var health = drowner.AddComponent<Health>();
             health.Configure("World drowner", 72f);
@@ -2770,7 +2775,7 @@ namespace WitcherRightVersion.Editor
                 ApplyMaterialToChildRenderers(drowner, CreateMaterial("Assets/Materials/DrownerNestMonsterVisual.mat", new Color(0.05f, 0.2f, 0.14f, 1f)));
             }
 
-            CreateCharacterGroundRing(drowner, $"{objectName}_ThreatRing", new Color(0.54f, 0.07f, 0.035f, 1f), 0.88f);
+            CreateCharacterGroundRing(drowner, $"{objectName}_ThreatRing", new Color(0.54f, 0.07f, 0.035f, 1f), 0.55f);
 
             var health = drowner.AddComponent<Health>();
             health.Configure("Nest drowner", 38f);
@@ -2806,13 +2811,18 @@ namespace WitcherRightVersion.Editor
                 renderer.enabled = false;
             }
 
-            var visual = InstantiateModel($"{WolfPath}/dog2.FBX", $"{objectName}_Model", wolf.transform, new Vector3(0f, -0.95f, 0f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.35f, 0.35f, 0.35f));
+            var visual = InstantiateModel($"{WolfPath}/dog2.FBX", $"{objectName}_Model", wolf.transform, new Vector3(0f, -0.95f, 0f), Quaternion.Euler(0f, 180f, 0f), new Vector3(0.5f, 0.5f, 0.5f));
             if (visual == null && renderer != null)
             {
                 renderer.enabled = true;
             }
+            else if (visual != null)
+            {
+                // dog2.FBX ships no usable material and renders white without this tint.
+                ApplyMaterialToChildRenderers(visual, CreateMaterial("Assets/Materials/ForestWolfFur.mat", new Color(0.26f, 0.22f, 0.18f, 1f)));
+            }
 
-            CreateCharacterGroundRing(wolf, $"{objectName}_ThreatRing", new Color(0.58f, 0.08f, 0.04f, 1f), 0.82f);
+            CreateCharacterGroundRing(wolf, $"{objectName}_ThreatRing", new Color(0.58f, 0.08f, 0.04f, 1f), 0.55f);
             var health = wolf.AddComponent<Health>();
             health.Configure("Forest wolf", 34f);
             AddCombatVisual(wolf, new Color(1f, 0.2f, 0.08f, 1f), new Color(0.09f, 0.07f, 0.055f, 1f));
@@ -2841,7 +2851,7 @@ namespace WitcherRightVersion.Editor
         {
             var bandit = CreateRpgCharacterAnchor(parent, objectName, modelName, position, rotation, new Vector3(0.84f, 0.84f, 0.84f), new Color(0.22f, 0.12f, 0.08f, 1f));
             AddNpcEquipment(bandit, $"{objectName}_WeaponProp", modelName.Contains("Warrior") ? "Warrior_Sword.fbx" : "Rogue_Dagger.fbx", new Vector3(0.34f, -0.48f, 0.12f), Quaternion.Euler(64f, 0f, -18f), Vector3.one * 0.38f);
-            CreateCharacterGroundRing(bandit, $"{objectName}_ThreatRing", new Color(0.62f, 0.07f, 0.035f, 1f), 0.86f);
+            CreateCharacterGroundRing(bandit, $"{objectName}_ThreatRing", new Color(0.62f, 0.07f, 0.035f, 1f), 0.58f);
             var health = bandit.AddComponent<Health>();
             health.Configure("Ash Road bandit", maxHealth);
             AddCombatVisual(bandit, new Color(1f, 0.18f, 0.06f, 1f), new Color(0.1f, 0.05f, 0.035f, 1f));
@@ -2869,17 +2879,17 @@ namespace WitcherRightVersion.Editor
                 renderer.enabled = false;
             }
 
-            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", $"{objectName}_Model", guard.transform, new Vector3(0f, -0.92f, 0f), Quaternion.identity, new Vector3(0.92f, 0.92f, 0.92f));
+            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", $"{objectName}_Model", guard.transform, new Vector3(0f, -0.96f, 0f), Quaternion.identity, new Vector3(1.5f, 1.5f, 1.5f));
             if (skeleton == null && renderer != null)
             {
                 renderer.enabled = true;
             }
             else
             {
-                ApplyMaterialToChildRenderers(guard, CreateMaterial("Assets/Materials/SkeletonGuardVisual.mat", new Color(0.32f, 0.31f, 0.28f, 1f)));
+                ApplyMaterialToChildRenderers(guard, CreateMaterial("Assets/Materials/SkeletonGuardVisual.mat", new Color(0.78f, 0.76f, 0.7f, 1f)));
             }
 
-            CreateCharacterGroundRing(guard, $"{objectName}_ThreatRing", new Color(0.58f, 0.08f, 0.06f, 1f), 0.9f);
+            CreateCharacterGroundRing(guard, $"{objectName}_ThreatRing", new Color(0.58f, 0.08f, 0.06f, 1f), 0.5f);
 
             var health = guard.AddComponent<Health>();
             health.Configure("Tower skeleton guard", 62f);
@@ -3104,7 +3114,7 @@ namespace WitcherRightVersion.Editor
         {
             var enforcer = CreateRpgCharacterAnchor(parent, objectName, "Warrior.fbx", position, rotation, new Vector3(0.86f, 0.86f, 0.86f), new Color(0.24f, 0.12f, 0.08f, 1f));
             AddNpcEquipment(enforcer, $"{objectName}_SwordProp", "Warrior_Sword.fbx", new Vector3(0.36f, -0.48f, 0.12f), Quaternion.Euler(58f, 0f, -18f), Vector3.one * 0.4f);
-            CreateCharacterGroundRing(enforcer, $"{objectName}_ThreatRing", new Color(0.62f, 0.08f, 0.04f, 1f), 0.88f);
+            CreateCharacterGroundRing(enforcer, $"{objectName}_ThreatRing", new Color(0.62f, 0.08f, 0.04f, 1f), 0.58f);
             var health = enforcer.AddComponent<Health>();
             health.Configure("Voytsekh's enforcer", 55f);
             AddCombatVisual(enforcer, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.1f, 0.055f, 0.04f, 1f));

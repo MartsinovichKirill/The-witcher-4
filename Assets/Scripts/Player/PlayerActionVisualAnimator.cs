@@ -165,8 +165,17 @@ namespace WitcherRightVersion.Player
 
         private void ApplyLocomotion(ref Vector3 position, ref Quaternion rotation)
         {
-            if (movement == null || !movement.IsMoving || currentPose != ActionPose.None)
+            if (currentPose != ActionPose.None)
             {
+                return;
+            }
+
+            if (movement == null || !movement.IsMoving)
+            {
+                // Idle: gentle breathing sway so the character is never a frozen statue.
+                var breath = Mathf.Sin(Time.time * 1.6f);
+                position.y += breath * 0.012f;
+                rotation *= Quaternion.Euler(breath * 0.8f, Mathf.Sin(Time.time * 0.7f) * 1.1f, Mathf.Cos(Time.time * 0.9f) * 0.6f);
                 return;
             }
 
