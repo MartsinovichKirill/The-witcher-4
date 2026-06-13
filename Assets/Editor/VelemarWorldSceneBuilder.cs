@@ -48,6 +48,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("Reynard_Player");
             RemoveIfExists("ThirdPersonCamera");
             RemoveIfExists("VelemarWorldSun");
+            RemoveIfExists("VelemarWorldSkyFill");
             RemoveIfExists("VelemarAtmosphereLights");
             RemoveIfExists("VelemarWorldRoot");
             RemoveIfExists("InteractionCanvas");
@@ -2033,6 +2034,97 @@ namespace WitcherRightVersion.Editor
             CreateTowerDressing(root.transform);
             CreateAshRoadDressing(root.transform);
             CreateTravelRouteDressing(root.transform);
+            CreateExtraDecoration(root.transform);
+        }
+
+        // Additional natural decoration built from the existing CC0 KayKit/Kenney
+        // vocabulary: distant mountain/hill horizon silhouettes for depth, plus tree
+        // and rock clusters feathering each district approach. Deterministic (fixed
+        // seed) so rebuilds are reproducible. Lives under WorldDressingRoot, which is
+        // cleared on rebuild via RemoveIfExists("VelemarWorldRoot").
+        private static void CreateExtraDecoration(Transform parent)
+        {
+            var root = new GameObject("WorldExtraDecorationRoot");
+            root.transform.SetParent(parent, false);
+
+            var previousState = UnityEngine.Random.state;
+            UnityEngine.Random.InitState(20260613);
+
+            // Far horizon mountain ring for silhouette depth on every sightline.
+            var mountainRing = new[]
+            {
+                new Vector3(-92f, 0f, -86f), new Vector3(-40f, 0f, -96f), new Vector3(18f, 0f, -98f),
+                new Vector3(72f, 0f, -90f), new Vector3(96f, 0f, -40f), new Vector3(98f, 0f, 30f),
+                new Vector3(88f, 0f, 80f), new Vector3(36f, 0f, 98f), new Vector3(-30f, 0f, 99f),
+                new Vector3(-86f, 0f, 84f), new Vector3(-98f, 0f, 28f), new Vector3(-96f, 0f, -34f)
+            };
+            for (var i = 0; i < mountainRing.Length; i++)
+            {
+                var s = 4.6f + UnityEngine.Random.Range(-0.8f, 1.6f);
+                PlaceKayKit(root.transform, $"HorizonMountain_{i + 1:00}", "mountain.fbx", mountainRing[i],
+                    Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), new Vector3(s, s * 0.92f, s));
+            }
+
+            // Tree/rock clusters feathering each district edge (away from gameplay actors).
+            var villageGrove = new[] { new Vector3(-13f, 0f, 8f), new Vector3(13.5f, 0f, 9.5f), new Vector3(-15f, 0f, -10f) };
+            ScatterGrove(root.transform, "VillageGrove", villageGrove, 4, 9f);
+
+            var forestGrove = new[] { new Vector3(-82f, 0f, 22f), new Vector3(-64f, 0f, 24f), new Vector3(-86f, 0f, 2f), new Vector3(-58f, 0f, -6f) };
+            ScatterGrove(root.transform, "ForestGrove", forestGrove, 6, 12f);
+
+            var towerApproach = new[] { new Vector3(-12f, 0f, 64f), new Vector3(12f, 0f, 64f), new Vector3(-9f, 0f, 86f) };
+            ScatterGrove(root.transform, "TowerApproachGrove", towerApproach, 3, 7f);
+
+            // Farm plots and a hill mass to read the village as inhabited land.
+            PlaceKayKit(root.transform, "VillageFarmPlot_A", "farm_plot.fbx", new Vector3(-14.5f, 0f, -2.5f), Quaternion.Euler(0f, 12f, 0f), Vector3.one * 1.4f);
+            PlaceKayKit(root.transform, "VillageFarmPlot_B", "farm_plot.fbx", new Vector3(14.8f, 0f, -1.0f), Quaternion.Euler(0f, -24f, 0f), Vector3.one * 1.4f);
+            PlaceKayKit(root.transform, "VillageHillMass_W", "detail_hill.fbx", new Vector3(-20f, 0f, 3f), Quaternion.Euler(0f, 40f, 0f), Vector3.one * 2.1f);
+            PlaceKayKit(root.transform, "ForestHillMass_N", "detail_hill.fbx", new Vector3(-70f, 0f, 30f), Quaternion.Euler(0f, -30f, 0f), Vector3.one * 2.4f);
+
+            // A few warm "inhabited" accent lights at the new village groves/farms.
+            var decoLights = new GameObject("WorldExtraDecorationLights");
+            decoLights.transform.SetParent(root.transform, false);
+            CreatePointLight(decoLights.transform, "VillageFarmHearthGlow", new Vector3(-14.5f, 1.4f, -2.5f), new Color(1f, 0.6f, 0.28f, 1f), 0.45f, 7f);
+            CreatePointLight(decoLights.transform, "VillageEastGroveGlow", new Vector3(13.5f, 1.3f, 9.5f), new Color(0.95f, 0.66f, 0.36f, 1f), 0.32f, 6.5f);
+
+            UnityEngine.Random.state = previousState;
+        }
+
+        // Places a varied cluster of trees and rocks around each anchor, jittered for
+        // a natural (non-grid) look using the existing Kenney/KayKit nature FBX.
+        private static void ScatterGrove(Transform parent, string namePrefix, Vector3[] anchors, int perAnchor, float spread)
+        {
+            string[] trees = { "tree.fbx", "tree-high.fbx", "tree-high-round.fbx", "tree-crooked.fbx", "tree-high-crooked.fbx" };
+            string[] kayDetails = { "detail_treeA.fbx", "detail_treeB.fbx", "detail_treeC.fbx" };
+            string[] rocks = { "rock-large.fbx", "rock-small.fbx", "rock-wide.fbx" };
+
+            var index = 0;
+            foreach (var anchor in anchors)
+            {
+                for (var j = 0; j < perAnchor; j++)
+                {
+                    index++;
+                    var offset = new Vector3(UnityEngine.Random.Range(-spread, spread), 0f, UnityEngine.Random.Range(-spread, spread));
+                    var pos = anchor + offset;
+                    var rot = Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f);
+
+                    if (j % 4 == 3)
+                    {
+                        var rs = UnityEngine.Random.Range(0.8f, 1.4f);
+                        PlaceKenney(parent, $"{namePrefix}_Rock_{index:00}", rocks[index % rocks.Length], pos, rot, new Vector3(rs, rs * 0.9f, rs));
+                    }
+                    else if (j % 3 == 0)
+                    {
+                        var ts = UnityEngine.Random.Range(1.0f, 1.5f);
+                        PlaceKayKit(parent, $"{namePrefix}_Detail_{index:00}", kayDetails[index % kayDetails.Length], pos, rot, Vector3.one * ts);
+                    }
+                    else
+                    {
+                        var ts = UnityEngine.Random.Range(1.05f, 1.7f);
+                        PlaceKenney(parent, $"{namePrefix}_Tree_{index:00}", trees[index % trees.Length], pos, rot, new Vector3(ts, ts * UnityEngine.Random.Range(0.92f, 1.18f), ts));
+                    }
+                }
+            }
         }
 
         private static void CreateTravelRouteDressing(Transform parent)
