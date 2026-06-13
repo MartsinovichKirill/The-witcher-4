@@ -101,10 +101,10 @@ namespace WitcherRightVersion.Editor
             var lightObject = new GameObject("VelemarWorldSun");
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.color = new Color(0.95f, 0.84f, 0.68f, 1f);
-            light.intensity = 0.95f;
+            light.color = new Color(0.92f, 0.82f, 0.66f, 1f);
+            light.intensity = 0.78f;
             light.shadows = LightShadows.Soft;
-            light.shadowStrength = 0.7f;
+            light.shadowStrength = 0.72f;
             light.transform.rotation = Quaternion.Euler(34f, -40f, 0f);
 
             // Subtle cool bounce fill from the opposite side so shadow sides do not crush to black.
@@ -119,9 +119,9 @@ namespace WitcherRightVersion.Editor
             // Authored sky/horizon/ground gradient. Build-time Trilight is authoritative:
             // CinematicCameraEffect only upgrades ambient when it is still Flat.
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.32f, 0.37f, 0.43f, 1f);
-            RenderSettings.ambientEquatorColor = new Color(0.21f, 0.23f, 0.21f, 1f);
-            RenderSettings.ambientGroundColor = new Color(0.11f, 0.1f, 0.085f, 1f);
+            RenderSettings.ambientSkyColor = new Color(0.25f, 0.29f, 0.34f, 1f);
+            RenderSettings.ambientEquatorColor = new Color(0.17f, 0.19f, 0.17f, 1f);
+            RenderSettings.ambientGroundColor = new Color(0.09f, 0.085f, 0.07f, 1f);
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             RenderSettings.fogColor = new Color(0.2f, 0.25f, 0.25f, 1f);
@@ -131,15 +131,15 @@ namespace WitcherRightVersion.Editor
             RenderSettings.sun = light;
             RenderSettings.skybox = CreateSkyboxMaterial(
                 "Assets/Materials/VelemarWorldSkybox.mat",
-                0.05f, 1.4f,
-                new Color(0.52f, 0.46f, 0.4f, 1f),
-                new Color(0.16f, 0.15f, 0.13f, 1f),
-                1.25f);
+                0.05f, 1.35f,
+                new Color(0.46f, 0.41f, 0.36f, 1f),
+                new Color(0.14f, 0.13f, 0.11f, 1f),
+                1.02f);
 
             var lightsRoot = new GameObject("VelemarAtmosphereLights");
-            CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.54f, 0.24f, 1f), 1.45f, 12f);
-            CreatePointLight(lightsRoot.transform, "VillageMarketLanternLight", new Vector3(3.1f, 2.4f, -0.2f), new Color(1f, 0.62f, 0.32f, 1f), 0.85f, 8f);
-            CreatePointLight(lightsRoot.transform, "VillageSmithForgeLight", new Vector3(-4.2f, 1.8f, 1.1f), new Color(1f, 0.28f, 0.12f, 1f), 1.1f, 7.5f);
+            CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.54f, 0.24f, 1f), 0.95f, 11f);
+            CreatePointLight(lightsRoot.transform, "VillageMarketLanternLight", new Vector3(3.1f, 2.4f, -0.2f), new Color(1f, 0.62f, 0.32f, 1f), 0.6f, 7.5f);
+            CreatePointLight(lightsRoot.transform, "VillageSmithForgeLight", new Vector3(-4.2f, 1.8f, 1.1f), new Color(1f, 0.28f, 0.12f, 1f), 0.85f, 7f);
             CreatePointLight(lightsRoot.transform, "ForestMoonPoolLight", new Vector3(-73.5f, 4.3f, 13.5f), new Color(0.42f, 0.56f, 0.72f, 1f), 0.62f, 15f);
             CreatePointLight(lightsRoot.transform, "SwampColdMiasmaLight", new Vector3(9.4f, 2.2f, -72.8f), new Color(0.12f, 0.54f, 0.36f, 1f), 1.05f, 20f);
             CreatePointLight(lightsRoot.transform, "SwampHutCandleLight", new Vector3(14.2f, 1.75f, -73.4f), new Color(0.86f, 0.48f, 0.2f, 1f), 0.62f, 7.5f);
@@ -225,7 +225,10 @@ namespace WitcherRightVersion.Editor
             var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "VelemarWorldTerrain";
             ground.transform.SetParent(parent, true);
-            ground.transform.position = Vector3.zero;
+            // Sunk below the district ground discs and surface patches so the base terrain
+            // no longer sits coplanar with them (that caused the village floor to z-fight
+            // and flicker green/white under bright light).
+            ground.transform.position = new Vector3(0f, -0.06f, 0f);
             ground.transform.localScale = new Vector3(42f, 1f, 42f);
             ground.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/VelemarWorldTerrain.mat", new Color(0.105f, 0.17f, 0.105f, 1f));
         }
@@ -290,7 +293,7 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
             root.transform.position = new Vector3(0f, 0f, -3f);
 
-            CreateRegionDisc(root.transform, "VillageDistrictGround", Vector3.zero, new Vector3(13f, 0.035f, 10f), new Color(0.17f, 0.23f, 0.14f, 1f));
+            CreateRegionDisc(root.transform, "VillageDistrictGround", new Vector3(0f, 0.01f, 0f), new Vector3(13f, 0.02f, 10f), new Color(0.12f, 0.17f, 0.105f, 1f));
 
             CreateHouse(root.transform, "ElderHouse_World", new Vector3(-5.2f, 0f, -0.7f), Quaternion.Euler(0f, 28f, 0f), 2.05f);
             CreateHouse(root.transform, "MartaHouse_World", new Vector3(5.1f, 0f, -0.8f), Quaternion.Euler(0f, -28f, 0f), 1.95f);
@@ -3360,12 +3363,12 @@ namespace WitcherRightVersion.Editor
             // they read clearly. The separate helmet/shoulder-pad add-ons are dropped: they
             // sat on the most-animated bones and floated off; the base KnightCharacter mesh
             // is already a fully armoured, helmeted knight.
-            var steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.16f, 1.5f, -0.22f), Quaternion.Euler(14f, 0f, 32f), Vector3.one * 0.55f);
+            var steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.2f, 1.55f, -0.32f), Quaternion.Euler(16f, 0f, 34f), Vector3.one * 0.85f);
             if (steelSword != null)
             {
                 ApplyMaterialToChildRenderers(steelSword, CreateMaterial("Assets/Materials/ReynardSteelSwordTint.mat", new Color(0.62f, 0.64f, 0.69f, 1f)));
             }
-            var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.16f, 1.5f, -0.22f), Quaternion.Euler(14f, 0f, -32f), Vector3.one * 0.55f);
+            var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.2f, 1.55f, -0.32f), Quaternion.Euler(16f, 0f, -34f), Vector3.one * 0.85f);
             if (silverSword != null)
             {
                 ApplyMaterialToChildRenderers(silverSword, CreateMaterial("Assets/Materials/ReynardSilverSwordTint.mat", new Color(0.82f, 0.84f, 0.9f, 1f)));
@@ -3870,6 +3873,9 @@ namespace WitcherRightVersion.Editor
             ring.transform.localScale = new Vector3(radius, 0.015f, radius);
             ring.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{ringName}.mat", color);
             Object.DestroyImmediate(ring.GetComponent<Collider>());
+            // These readability discs read as visible "hitboxes" under characters; hide
+            // the renderer so only the character skins show. Object kept for validator refs.
+            ring.GetComponent<Renderer>().enabled = false;
         }
 
         private static void CreateQuestMarker(Transform parent, string objectName, string displayName, string prompt, string questAction, string successMessage, string blockedMessage, Vector3 position, Vector3 scale, Color color, bool canRepeat = false)
