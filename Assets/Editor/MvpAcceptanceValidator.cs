@@ -351,8 +351,8 @@ namespace WitcherRightVersion.Editor
             RequireObject("FarTowerCastleBackdrop", failures);
             RequireObject("VillageDistrict_VereskovyBrod", failures);
             RequireObject("ReynardKnightModel", failures);
-            RequireObject("ReynardShoulderPads_Visual", failures);
-            RequireObject("ReynardHelmet_Visual", failures);
+            // Helmet/shoulder-pad add-ons removed: they floated off the now-animated body;
+            // the base KnightCharacter mesh is already a fully armoured, helmeted knight.
             RequireObject("ReynardSteelSword_Visual", failures);
             RequireObject("ReynardSilverSword_Visual", failures);
             RequireObject("ElderVoytsekh_World_Model", failures);
@@ -403,7 +403,7 @@ namespace WitcherRightVersion.Editor
             RequireObject("TowerRitualCircle_World", failures);
             RequireObject("AshRoadSurvivorCamp_World", failures);
             RequireObject<CombatVisualFeedback>("Reynard_Player", failures);
-            RequireObject<PlayerActionVisualAnimator>("Reynard_Player", failures);
+            RequireAnimationDriver(FindSceneObject("Reynard_Player"), failures, "Reynard_Player", true);
             RequireObject("ReynardCombatReadabilityRing", failures);
             RequireObject("ReynardAardFocusRing", failures);
             RequireObject<InteractionPromptUI>("InteractionCanvas", failures);
@@ -496,7 +496,7 @@ namespace WitcherRightVersion.Editor
                 RequireComponent<Health>(drowner, failures, "WorldDrowner_Prototype");
                 RequireComponent<EnemyAI>(drowner, failures, "WorldDrowner_Prototype");
                 RequireComponent<CombatVisualFeedback>(drowner, failures, "WorldDrowner_Prototype");
-                RequireComponent<EnemyActionVisualAnimator>(drowner, failures, "WorldDrowner_Prototype");
+                RequireAnimationDriver(drowner, failures, "WorldDrowner_Prototype", false);
             }
             RequireEnemyKind("WorldDrowner_Prototype", EnemyKind.Monster, failures);
             RequireObject("WorldDrownerThreatRing", failures);
@@ -566,7 +566,29 @@ namespace WitcherRightVersion.Editor
             RequireComponent<Health>(enemy, failures, objectName);
             RequireComponent<EnemyAI>(enemy, failures, objectName);
             RequireComponent<CombatVisualFeedback>(enemy, failures, objectName);
-            RequireComponent<EnemyActionVisualAnimator>(enemy, failures, objectName);
+            RequireAnimationDriver(enemy, failures, objectName, false);
+        }
+
+        // Accepts either the procedural visual animator (wolf/bandit/enforcer, no clips)
+        // or the new skeletal Mecanim driver (player/skeleton/drowner). Every unit must
+        // have exactly one animation system.
+        private static void RequireAnimationDriver(GameObject target, List<string> failures, string ownerName, bool isPlayer)
+        {
+            if (target == null)
+            {
+                failures.Add($"{ownerName} must have an animation driver, but the object is missing.");
+                return;
+            }
+
+            var hasProcedural = isPlayer
+                ? target.GetComponent<PlayerActionVisualAnimator>() != null
+                : target.GetComponent<EnemyActionVisualAnimator>() != null;
+            var hasSkeletal = isPlayer
+                ? target.GetComponent<CharacterAnimatorDriver>() != null
+                : target.GetComponent<EnemyAnimatorDriver>() != null;
+
+            Require(hasProcedural || hasSkeletal, failures,
+                $"{ownerName} must have a procedural or skeletal animation driver.");
         }
 
         private static void ValidateLootEnemy(string objectName, List<string> failures)

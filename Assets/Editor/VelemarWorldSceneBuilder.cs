@@ -2716,7 +2716,15 @@ namespace WitcherRightVersion.Editor
             var health = drowner.AddComponent<Health>();
             health.Configure("World drowner", 72f);
             AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
-            AddEnemyActionVisual(drowner, slime != null ? slime.transform : null, false);
+            if (slime != null)
+            {
+                AttachAnimator(slime, CharacterAnimationSetup.DrownerController, $"{MonsterPath}/Slime.fbx");
+                drowner.AddComponent<EnemyAnimatorDriver>();
+            }
+            else
+            {
+                AddEnemyActionVisual(drowner, null, false);
+            }
             var ai = drowner.GetComponent<EnemyAI>() ?? drowner.AddComponent<EnemyAI>();
             ai.ConfigureKind(EnemyKind.Monster);
             ai.Configure("Drowner", true, "killedFirstDrowner", QuestService.ActionFirstDrownerKilled);
@@ -2780,7 +2788,15 @@ namespace WitcherRightVersion.Editor
             var health = drowner.AddComponent<Health>();
             health.Configure("Nest drowner", 38f);
             AddCombatVisual(drowner, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.09f, 0.05f, 0.04f, 1f));
-            AddEnemyActionVisual(drowner, slime != null ? slime.transform : null, false);
+            if (slime != null)
+            {
+                AttachAnimator(slime, CharacterAnimationSetup.DrownerController, $"{MonsterPath}/Slime.fbx");
+                drowner.AddComponent<EnemyAnimatorDriver>();
+            }
+            else
+            {
+                AddEnemyActionVisual(drowner, null, false);
+            }
             var ai = drowner.GetComponent<EnemyAI>() ?? drowner.AddComponent<EnemyAI>();
             ai.ConfigureKind(EnemyKind.Monster);
             ai.Configure("Nest drowner", false, deathFlag, QuestService.ActionDrownerNestEnemyKilled, "drownerNestStarted", "Nest drowner is dead. Keep clearing the den.");
@@ -2894,7 +2910,15 @@ namespace WitcherRightVersion.Editor
             var health = guard.AddComponent<Health>();
             health.Configure("Tower skeleton guard", 62f);
             AddCombatVisual(guard, new Color(1f, 0.2f, 0.1f, 1f), new Color(0.12f, 0.1f, 0.08f, 1f));
-            AddEnemyActionVisual(guard, skeleton != null ? skeleton.transform : null, false);
+            if (skeleton != null)
+            {
+                AttachAnimator(skeleton, CharacterAnimationSetup.SkeletonController, $"{MonsterPath}/Skeleton.fbx");
+                guard.AddComponent<EnemyAnimatorDriver>();
+            }
+            else
+            {
+                AddEnemyActionVisual(guard, null, false);
+            }
             var ai = guard.GetComponent<EnemyAI>() ?? guard.AddComponent<EnemyAI>();
             ai.ConfigureKind(EnemyKind.Undead);
             ai.Configure("Skeleton guard", false, objectName + "_Defeated", "");
@@ -3288,9 +3312,10 @@ namespace WitcherRightVersion.Editor
             health.Configure("Reynard", 120f);
             AddCombatVisual(player, new Color(0.85f, 0.14f, 0.08f, 1f), new Color(0.16f, 0.12f, 0.1f, 1f));
             player.AddComponent<CombatController>();
-            var playerVisuals = CreatePlayerVisual(player.transform);
-            var actionAnimator = player.AddComponent<PlayerActionVisualAnimator>();
-            actionAnimator.Configure(playerVisuals.visualRoot, playerVisuals.steelSword, playerVisuals.silverSword);
+            CreatePlayerVisual(player.transform);
+            // Real skeletal animation (Idle/Walk/Run/Attack/Roll/Death) replaces the old
+            // procedural pose animator for the player; the driver feeds gameplay state in.
+            player.AddComponent<CharacterAnimatorDriver>();
             CreateCharacterGroundRing(player, "ReynardCombatReadabilityRing", new Color(0.78f, 0.58f, 0.24f, 1f), 0.95f);
             CreateCharacterGroundRing(player, "ReynardAardFocusRing", new Color(0.22f, 0.42f, 0.82f, 1f), 0.62f);
             return player;
@@ -3298,7 +3323,9 @@ namespace WitcherRightVersion.Editor
 
         private static (Transform visualRoot, Transform steelSword, Transform silverSword) CreatePlayerVisual(Transform player)
         {
-            var knight = InstantiateModel($"{KnightPath}/KnightCharacter.fbx", "ReynardKnightModel", player, new Vector3(0f, -0.02f, 0f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * PlayerVisualScale);
+            // Model faces +Z so it matches PlayerController's LookRotation(MoveDirection):
+            // a 180 offset made Reynard moonwalk facing the camera when moving away.
+            var knight = InstantiateModel($"{KnightPath}/KnightCharacter.fbx", "ReynardKnightModel", player, new Vector3(0f, -0.02f, 0f), Quaternion.identity, Vector3.one * PlayerVisualScale);
             if (knight == null)
             {
                 var fallback = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -3310,10 +3337,12 @@ namespace WitcherRightVersion.Editor
                 return (fallback.transform, null, null);
             }
 
+            // Swords sheathed on the back. The separate helmet/shoulder-pad add-ons are
+            // dropped: they sat on the most-animated bones and would float off the body;
+            // the base KnightCharacter mesh is already a fully armoured, helmeted knight.
             var steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.22f, 1.05f, -0.14f), Quaternion.Euler(65f, 0f, 25f), Vector3.one * 0.3f);
             var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.22f, 1.0f, -0.14f), Quaternion.Euler(65f, 0f, -25f), Vector3.one * 0.3f);
-            InstantiateModel($"{KnightPath}/ShoulderPads.fbx", "ReynardShoulderPads_Visual", player, new Vector3(0f, -0.02f, 0f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * PlayerVisualScale);
-            InstantiateModel($"{KnightPath}/Helmet2.fbx", "ReynardHelmet_Visual", player, new Vector3(0f, -0.02f, 0f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * PlayerVisualScale);
+            AttachAnimator(knight, CharacterAnimationSetup.ReynardController, $"{KnightPath}/KnightCharacter.fbx");
             return (knight.transform, steelSword != null ? steelSword.transform : null, silverSword != null ? silverSword.transform : null);
         }
 
@@ -3879,6 +3908,48 @@ namespace WitcherRightVersion.Editor
         private static bool IsKayKitBuildingModel(string modelName)
         {
             return modelName.Contains("house") || modelName.Contains("market") || modelName.Contains("watermill") || modelName.Contains("barracks") || modelName.Contains("watchtower") || modelName.Contains("castle") || modelName.Contains("bridge") || modelName.Contains("mine") || modelName.Contains("mill") || modelName.Contains("lumbermill") || modelName.Contains("archeryrange") || modelName.Contains("farm_plot") || modelName.StartsWith("wall");
+        }
+
+        // Assigns a generated AnimatorController to an imported (Generic-rig) model so
+        // it plays real skeletal clips. The FBX prefab already imports with an Animator
+        // and avatar; we just set the controller and disable root motion.
+        private static void AttachAnimator(GameObject modelInstance, string controllerPath, string fbxPath)
+        {
+            if (modelInstance == null)
+            {
+                return;
+            }
+
+            var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
+            if (controller == null)
+            {
+                Debug.LogWarning($"AttachAnimator: controller missing at {controllerPath}");
+                return;
+            }
+
+            // Note: GetComponent returns a Unity "fake null" when absent, which the C# ??
+            // operator does not catch, so use an explicit == null check before AddComponent.
+            var animator = modelInstance.GetComponent<Animator>();
+            if (animator == null)
+            {
+                animator = modelInstance.AddComponent<Animator>();
+            }
+
+            animator.runtimeAnimatorController = controller;
+            animator.applyRootMotion = false;
+            animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+
+            if (animator.avatar == null)
+            {
+                foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(fbxPath))
+                {
+                    if (asset is Avatar avatar)
+                    {
+                        animator.avatar = avatar;
+                        break;
+                    }
+                }
+            }
         }
 
         private static GameObject InstantiateModel(string assetPath, string objectName, Transform parent, Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
