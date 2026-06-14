@@ -19,6 +19,8 @@ namespace WitcherRightVersion.Editor
         public const string SlimePath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX/Slime.fbx";
         public const string BatPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX/Bat.fbx";
         public const string DragonPath = "Assets/Art/External/Quaternius_AnimatedMonsters/FBX/Dragon.fbx";
+        // OpenGameArt RPG characters (NPCs, bandits, enforcers) share one rig + clip set.
+        public const string RpgWarriorPath = "Assets/Art/External/OpenGameArt_RPGCharacters/FBX/Warrior.fbx";
 
         public const string ControllerDir = "Assets/Generated/Animators";
         public const string ReynardController = ControllerDir + "/ReynardKnight.controller";
@@ -26,6 +28,7 @@ namespace WitcherRightVersion.Editor
         public const string DrownerController = ControllerDir + "/DrownerSlime.controller";
         public const string BatController = ControllerDir + "/BatFlyer.controller";
         public const string DragonController = ControllerDir + "/DragonFlyer.controller";
+        public const string RpgController = ControllerDir + "/RpgCharacter.controller";
 
         [MenuItem("Tools/Witcher Right Version/Setup Character Animations")]
         public static void Setup()
@@ -36,6 +39,7 @@ namespace WitcherRightVersion.Editor
             ConfigureLooping(SlimePath, name => NameMatches(name, "idle", "walk"));
             ConfigureLooping(BatPath, name => NameMatches(name, "flying"));
             ConfigureLooping(DragonPath, name => NameMatches(name, "flying"));
+            ConfigureLooping(RpgWarriorPath, name => (name == "CharacterArmature|Idle" || name == "CharacterArmature|Walk" || name == "CharacterArmature|Run"));
 
             if (!AssetDatabase.IsValidFolder("Assets/Generated"))
             {
@@ -72,6 +76,18 @@ namespace WitcherRightVersion.Editor
                 dodge: null,
                 death: "Armature|Slime_Death",
                 runThreshold: 99f);
+
+            // Shared RPG-character controller (Idle/Walk/Run/Attack/Death). NPCs stay in
+            // Idle; bandits/enforcers are driven by EnemyAnimatorDriver. The shared
+            // CharacterArmature means Warrior's clips animate any RPG model placed.
+            BuildHumanoidController(RpgController, RpgWarriorPath,
+                idle: "CharacterArmature|Idle",
+                walk: "CharacterArmature|Walk",
+                run: "CharacterArmature|Run",
+                attack: "CharacterArmature|Sword_Attack",
+                dodge: "CharacterArmature|Roll",
+                death: "CharacterArmature|Death",
+                runThreshold: 5f);
 
             // Simple single-state looping flight controllers for ambient flying monsters.
             BuildLoopController(BatController, BatPath, "BatArmature|Bat_Flying");

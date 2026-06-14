@@ -2917,7 +2917,7 @@ namespace WitcherRightVersion.Editor
             var health = bandit.AddComponent<Health>();
             health.Configure("Ash Road bandit", maxHealth);
             AddCombatVisual(bandit, new Color(1f, 0.18f, 0.06f, 1f), new Color(0.1f, 0.05f, 0.035f, 1f));
-            AddEnemyActionVisual(bandit, bandit.transform.Find($"{objectName}_Model"), false);
+            bandit.AddComponent<EnemyAnimatorDriver>();
             var ai = bandit.GetComponent<EnemyAI>() ?? bandit.AddComponent<EnemyAI>();
             ai.ConfigureKind(EnemyKind.Human);
             ai.Configure("Ash Road bandit", false, deathFlag, "", "", "The ambusher falls.");
@@ -3198,7 +3198,7 @@ namespace WitcherRightVersion.Editor
             var health = enforcer.AddComponent<Health>();
             health.Configure("Voytsekh's enforcer", 55f);
             AddCombatVisual(enforcer, new Color(1f, 0.18f, 0.08f, 1f), new Color(0.1f, 0.055f, 0.04f, 1f));
-            AddEnemyActionVisual(enforcer, enforcer.transform.Find($"{objectName}_Model"), false);
+            enforcer.AddComponent<EnemyAnimatorDriver>();
             var ai = enforcer.GetComponent<EnemyAI>() ?? enforcer.AddComponent<EnemyAI>();
             ai.ConfigureKind(EnemyKind.Human);
             ai.Configure(
@@ -3834,6 +3834,9 @@ namespace WitcherRightVersion.Editor
                 // Model is present: strip the placeholder capsule mesh so no white
                 // "hitbox" capsule shows behind the character skin.
                 StripPrimitiveMesh(anchor);
+                // Animate the character: NPCs stay in Idle (breathe instead of standing
+                // frozen); bandits/enforcers get driven by EnemyAnimatorDriver in combat.
+                AttachAnimator(visual, CharacterAnimationSetup.RpgController, $"{RpgCharacterPath}/{modelName}");
             }
 
             return anchor;
