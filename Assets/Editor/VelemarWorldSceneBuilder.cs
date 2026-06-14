@@ -3878,7 +3878,19 @@ namespace WitcherRightVersion.Editor
                 return;
             }
 
-            InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, anchor.transform, localPosition, localRotation, localScale);
+            // Parent the weapon to the right-hand bone (Fist.R) so it follows the skeletal
+            // animation instead of floating beside the body. Grip pose is a best estimate;
+            // the larger localScale compensates for the small character/bone scale. Falls
+            // back to the anchor with the caller's values if the bone is missing.
+            var hand = FindDescendant(anchor.transform, "Fist.R");
+            if (hand != null)
+            {
+                InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, hand, new Vector3(0.03f, 0.05f, 0f), Quaternion.Euler(0f, 0f, -95f), Vector3.one * 2.2f);
+            }
+            else
+            {
+                InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, anchor.transform, localPosition, localRotation, localScale);
+            }
         }
 
         // Standalone weapon prop (full asset path) used as visible merchant wares.
