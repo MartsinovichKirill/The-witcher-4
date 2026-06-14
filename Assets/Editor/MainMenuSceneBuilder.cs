@@ -55,7 +55,9 @@ namespace WitcherRightVersion.Editor
             var mainPanel = CreatePanel("MainPanel", background.transform, new Color(0f, 0f, 0f, 0f));
             SetRect(mainPanel, new Vector2(0.5f, 0.28f), new Vector2(0.5f, 0.76f), new Vector2(0.5f, 0.5f), new Vector2(-220f, 0f), new Vector2(220f, 0f));
 
-            var settingsPanel = CreatePanel("SettingsPanel", background.transform, new Color(0.035f, 0.04f, 0.04f, 0.94f));
+            // Translucent like the menu buttons (alpha ~0.56) so the forest shows through,
+            // instead of a near-opaque dark slab — matches the main-menu style.
+            var settingsPanel = CreatePanel("SettingsPanel", background.transform, new Color(0.1f, 0.11f, 0.12f, 0.62f));
             SetRect(settingsPanel, new Vector2(0.48f, 0.12f), new Vector2(0.92f, 0.76f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
 
             var status = CreateText("StatusText", background.transform, font, "Готов к новому контракту.", 18, FontStyle.Normal, new Color(0.76f, 0.78f, 0.73f, 1f));
