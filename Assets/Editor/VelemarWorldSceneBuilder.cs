@@ -2043,6 +2043,36 @@ namespace WitcherRightVersion.Editor
             CreateAshRoadDressing(root.transform);
             CreateTravelRouteDressing(root.transform);
             CreateExtraDecoration(root.transform);
+            CreateMapFillStructures(root.transform);
+        }
+
+        // Fills the empty travel corridors and village outskirts with solid landmark
+        // buildings from the KayKit pack, so the map reads as a fuller settled world
+        // instead of long empty roads. All get colliders via PlaceKayKit.
+        private static void CreateMapFillStructures(Transform parent)
+        {
+            var root = new GameObject("MapFillStructures");
+            root.transform.SetParent(parent, false);
+
+            // Village outskirts: working buildings around the hub.
+            PlaceKayKit(root.transform, "OutskirtsLumbermill", "lumbermill.fbx", new Vector3(-15.5f, 0f, -8.5f), Quaternion.Euler(0f, 40f, 0f), Vector3.one * 2.1f);
+            PlaceKayKit(root.transform, "OutskirtsMill", "mill.fbx", new Vector3(15.5f, 0f, -9.5f), Quaternion.Euler(0f, -35f, 0f), Vector3.one * 2.1f);
+            PlaceKayKit(root.transform, "OutskirtsFarmPlot_A", "farm_plot.fbx", new Vector3(16.5f, 0f, 7f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 1.7f);
+            PlaceKayKit(root.transform, "OutskirtsFarmPlot_B", "farm_plot.fbx", new Vector3(-16f, 0f, 7.5f), Quaternion.Euler(0f, 22f, 0f), Vector3.one * 1.7f);
+
+            // West road to the forest: a watchtower and an archery range.
+            PlaceKayKit(root.transform, "WestRoadWatchtower", "watchtower.fbx", new Vector3(-34f, 0f, -4.5f), Quaternion.Euler(0f, 64f, 0f), Vector3.one * 2.0f);
+            PlaceKayKit(root.transform, "WestRoadArcheryRange", "archeryrange.fbx", new Vector3(-50f, 0f, 6f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 1.9f);
+
+            // North road to the tower: a watchtower landmark.
+            PlaceKayKit(root.transform, "NorthRoadWatchtower", "watchtower.fbx", new Vector3(-4.5f, 0f, 42f), Quaternion.Euler(0f, -28f, 0f), Vector3.one * 2.0f);
+
+            // South road to the swamp: an abandoned watermill.
+            PlaceKayKit(root.transform, "SouthRoadWatermill", "watermill.fbx", new Vector3(-5f, 0f, -42f), Quaternion.Euler(0f, 50f, 0f), Vector3.one * 1.9f);
+
+            // East road to the ash road: a ruined mine and barracks shell.
+            PlaceKayKit(root.transform, "EastRoadMine", "mine.fbx", new Vector3(42f, 0f, 5.5f), Quaternion.Euler(0f, -52f, 0f), Vector3.one * 1.9f);
+            PlaceKayKit(root.transform, "EastRoadBarracksRuin", "barracks.fbx", new Vector3(52f, 0f, -3f), Quaternion.Euler(0f, 28f, 0f), Vector3.one * 1.85f);
         }
 
         // Additional natural decoration built from the existing CC0 KayKit/Kenney
@@ -2272,6 +2302,8 @@ namespace WitcherRightVersion.Editor
             {
                 // Untinted Slime.fbx renders white; tint it to match the cursed-bog drowners.
                 ApplyMaterialToChildRenderers(foreshadow, CreateMaterial("Assets/Materials/SwampBossForeshadow_Tint.mat", new Color(0.05f, 0.2f, 0.13f, 1f)));
+                // Animate it so the looming boss silhouette idles instead of standing frozen.
+                AttachAnimator(foreshadow, CharacterAnimationSetup.DrownerController, $"{MonsterPath}/Slime.fbx");
             }
         }
 
@@ -3363,21 +3395,34 @@ namespace WitcherRightVersion.Editor
                 return (fallback.transform, null, null);
             }
 
-            // Two swords crossed on the upper back (Witcher style), enlarged and tinted so
-            // they read clearly. The separate helmet/shoulder-pad add-ons are dropped: they
-            // sat on the most-animated bones and floated off; the base KnightCharacter mesh
-            // is already a fully armoured, helmeted knight.
-            var steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.2f, 1.55f, -0.32f), Quaternion.Euler(16f, 0f, 34f), Vector3.one * 0.85f);
-            if (steelSword != null)
-            {
-                ApplyMaterialToChildRenderers(steelSword, CreateMaterial("Assets/Materials/ReynardSteelSwordTint.mat", new Color(0.62f, 0.64f, 0.69f, 1f)));
-            }
+            AttachAnimator(knight, CharacterAnimationSetup.ReynardController, $"{KnightPath}/KnightCharacter.fbx");
+
+            // Silver sword sheathed on the back. The separate helmet/shoulder-pad add-ons
+            // are dropped: they floated off the animated body; the base KnightCharacter
+            // mesh is already a fully armoured, helmeted knight.
             var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.2f, 1.55f, -0.32f), Quaternion.Euler(16f, 0f, -34f), Vector3.one * 0.85f);
             if (silverSword != null)
             {
                 ApplyMaterialToChildRenderers(silverSword, CreateMaterial("Assets/Materials/ReynardSilverSwordTint.mat", new Color(0.82f, 0.84f, 0.9f, 1f)));
             }
-            AttachAnimator(knight, CharacterAnimationSetup.ReynardController, $"{KnightPath}/KnightCharacter.fbx");
+
+            // Steel sword DRAWN, held in the right hand: parented to the Palm.R bone so it
+            // follows the skeletal animation. localScale compensates for the model's 0.34
+            // root scale. Falls back to the back if the bone is missing.
+            var handBone = FindDescendant(knight.transform, "Palm.R");
+            GameObject steelSword;
+            if (handBone != null)
+            {
+                steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", handBone, new Vector3(0.04f, 0.02f, 0f), Quaternion.Euler(0f, 0f, 90f), Vector3.one * 2.5f);
+            }
+            else
+            {
+                steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.2f, 1.55f, -0.32f), Quaternion.Euler(16f, 0f, 34f), Vector3.one * 0.85f);
+            }
+            if (steelSword != null)
+            {
+                ApplyMaterialToChildRenderers(steelSword, CreateMaterial("Assets/Materials/ReynardSteelSwordTint.mat", new Color(0.62f, 0.64f, 0.69f, 1f)));
+            }
             return (knight.transform, steelSword != null ? steelSword.transform : null, silverSword != null ? silverSword.transform : null);
         }
 
@@ -3715,6 +3760,32 @@ namespace WitcherRightVersion.Editor
             // child. Strip the mesh so no white placeholder "hitbox" capsule can render.
             StripPrimitiveMesh(capsule);
             return capsule;
+        }
+
+        // Depth-first search for a descendant transform by exact name (used to find
+        // skeleton bones like "Palm.R" inside an instantiated character model).
+        private static Transform FindDescendant(Transform root, string name)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            if (root.name == name)
+            {
+                return root;
+            }
+
+            for (var i = 0; i < root.childCount; i++)
+            {
+                var found = FindDescendant(root.GetChild(i), name);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
         }
 
         // Removes a primitive's MeshRenderer + MeshFilter, leaving only its collider.
