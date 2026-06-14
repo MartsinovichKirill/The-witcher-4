@@ -3953,6 +3953,37 @@ namespace WitcherRightVersion.Editor
                     PlaceKenney(marker.transform, $"{objectName}_ForgeBladeProp", "blade.fbx", new Vector3(0.06f, 0.2f, 0f), Quaternion.Euler(78f, 0f, 24f), Vector3.one * 0.42f);
                     break;
             }
+
+            AddInteractionBeacon(marker);
+        }
+
+        // Floating glowing pillar above an interactable so the player can spot it from a
+        // distance (quest markers, traces, pickups, crafting were tiny and easy to miss).
+        // Counter-scales the parent's (often flat/non-uniform) scale so the beacon stays a
+        // consistent thin world-space pillar. Non-blocking (collider stripped).
+        private static void AddInteractionBeacon(GameObject marker)
+        {
+            if (marker == null)
+            {
+                return;
+            }
+
+            var beacon = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            beacon.name = marker.name + "_Beacon";
+            beacon.transform.SetParent(marker.transform, false);
+            Object.DestroyImmediate(beacon.GetComponent<Collider>());
+
+            var ls = marker.transform.lossyScale;
+            var ix = Mathf.Abs(ls.x) < 0.0001f ? 1f : 1f / ls.x;
+            var iy = Mathf.Abs(ls.y) < 0.0001f ? 1f : 1f / ls.y;
+            var iz = Mathf.Abs(ls.z) < 0.0001f ? 1f : 1f / ls.z;
+            beacon.transform.localScale = new Vector3(0.1f * ix, 1.3f * iy, 0.1f * iz);
+            beacon.transform.localPosition = new Vector3(0f, 1.7f * iy, 0f);
+
+            var mat = CreateMaterial($"Assets/Materials/{marker.name}_Beacon.mat", new Color(1f, 0.84f, 0.35f, 1f));
+            mat.EnableKeyword("_EMISSION");
+            mat.SetColor("_EmissionColor", new Color(1f, 0.72f, 0.24f, 1f));
+            beacon.GetComponent<Renderer>().sharedMaterial = mat;
         }
 
         private static void CreateCharacterGroundRing(GameObject anchor, string ringName, Color color, float radius)
