@@ -101,40 +101,40 @@ namespace WitcherRightVersion.Editor
             var lightObject = new GameObject("VelemarWorldSun");
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.color = new Color(0.92f, 0.82f, 0.66f, 1f);
-            light.intensity = 0.78f;
+            light.color = new Color(0.82f, 0.78f, 0.72f, 1f);
+            light.intensity = 0.5f;
             light.shadows = LightShadows.Soft;
-            light.shadowStrength = 0.72f;
+            light.shadowStrength = 0.78f;
             light.transform.rotation = Quaternion.Euler(34f, -40f, 0f);
 
             // Subtle cool bounce fill from the opposite side so shadow sides do not crush to black.
             var fillObject = new GameObject("VelemarWorldSkyFill");
             var fillLight = fillObject.AddComponent<Light>();
             fillLight.type = LightType.Directional;
-            fillLight.color = new Color(0.4f, 0.48f, 0.6f, 1f);
-            fillLight.intensity = 0.28f;
+            fillLight.color = new Color(0.3f, 0.36f, 0.48f, 1f);
+            fillLight.intensity = 0.14f;
             fillLight.shadows = LightShadows.None;
             fillLight.transform.rotation = Quaternion.Euler(24f, 152f, 0f);
 
             // Authored sky/horizon/ground gradient. Build-time Trilight is authoritative:
             // CinematicCameraEffect only upgrades ambient when it is still Flat.
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.25f, 0.29f, 0.34f, 1f);
-            RenderSettings.ambientEquatorColor = new Color(0.17f, 0.19f, 0.17f, 1f);
-            RenderSettings.ambientGroundColor = new Color(0.09f, 0.085f, 0.07f, 1f);
+            RenderSettings.ambientSkyColor = new Color(0.13f, 0.15f, 0.2f, 1f);
+            RenderSettings.ambientEquatorColor = new Color(0.085f, 0.095f, 0.09f, 1f);
+            RenderSettings.ambientGroundColor = new Color(0.045f, 0.042f, 0.036f, 1f);
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogColor = new Color(0.2f, 0.25f, 0.25f, 1f);
-            RenderSettings.fogDensity = 0.0092f;
+            RenderSettings.fogColor = new Color(0.12f, 0.15f, 0.16f, 1f);
+            RenderSettings.fogDensity = 0.0105f;
 
             // Authored warm-dusk skybox; the sun reference draws the disc at the light's angle.
             RenderSettings.sun = light;
             RenderSettings.skybox = CreateSkyboxMaterial(
                 "Assets/Materials/VelemarWorldSkybox.mat",
-                0.05f, 1.35f,
-                new Color(0.46f, 0.41f, 0.36f, 1f),
-                new Color(0.14f, 0.13f, 0.11f, 1f),
-                1.02f);
+                0.05f, 1.5f,
+                new Color(0.3f, 0.3f, 0.32f, 1f),
+                new Color(0.09f, 0.085f, 0.08f, 1f),
+                0.62f);
 
             var lightsRoot = new GameObject("VelemarAtmosphereLights");
             CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.54f, 0.24f, 1f), 0.95f, 11f);
@@ -3707,8 +3707,26 @@ namespace WitcherRightVersion.Editor
             capsule.transform.SetParent(parent, false);
             capsule.transform.localPosition = position;
             capsule.transform.localScale = scale;
-            capsule.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{name}.mat", color);
+            // Invisible collision/anchor body only; the visible character is the model
+            // child. Strip the mesh so no white placeholder "hitbox" capsule can render.
+            StripPrimitiveMesh(capsule);
             return capsule;
+        }
+
+        // Removes a primitive's MeshRenderer + MeshFilter, leaving only its collider.
+        private static void StripPrimitiveMesh(GameObject primitive)
+        {
+            var mr = primitive.GetComponent<MeshRenderer>();
+            if (mr != null)
+            {
+                Object.DestroyImmediate(mr);
+            }
+
+            var mf = primitive.GetComponent<MeshFilter>();
+            if (mf != null)
+            {
+                Object.DestroyImmediate(mf);
+            }
         }
 
         private static GameObject CreateRpgCharacterAnchor(Transform parent, string name, string modelName, Vector3 position, Quaternion rotation, Vector3 visualScale, Color fallbackColor)
@@ -3738,6 +3756,9 @@ namespace WitcherRightVersion.Editor
             else
             {
                 ApplyMaterialToChildRenderers(visual, CreateMaterial($"Assets/Materials/{name}_ModelTint.mat", fallbackColor));
+                // Model is present: strip the placeholder capsule mesh so no white
+                // "hitbox" capsule shows behind the character skin.
+                StripPrimitiveMesh(anchor);
             }
 
             return anchor;

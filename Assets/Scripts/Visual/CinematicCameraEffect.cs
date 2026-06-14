@@ -12,12 +12,12 @@ namespace WitcherRightVersion.Visual
     [RequireComponent(typeof(Camera))]
     public sealed class CinematicCameraEffect : MonoBehaviour
     {
-        [SerializeField] private float exposure = 1.08f;
-        [SerializeField] private float contrast = 1.05f;
-        [SerializeField] private float saturation = 1.14f;
-        [SerializeField] private float bloomThreshold = 0.82f;
-        [SerializeField] private float bloomIntensity = 0.7f;
-        [SerializeField] private float vignetteStrength = 0.3f;
+        [SerializeField] private float exposure = 0.86f;
+        [SerializeField] private float contrast = 1.08f;
+        [SerializeField] private float saturation = 1.16f;
+        [SerializeField] private float bloomThreshold = 1.15f;
+        [SerializeField] private float bloomIntensity = 0.22f;
+        [SerializeField] private float vignetteStrength = 0.34f;
 
         private Material material;
         private static bool bootstrapped;
