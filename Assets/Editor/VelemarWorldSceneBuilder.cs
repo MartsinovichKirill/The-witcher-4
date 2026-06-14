@@ -101,10 +101,10 @@ namespace WitcherRightVersion.Editor
             var lightObject = new GameObject("VelemarWorldSun");
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.color = new Color(0.82f, 0.78f, 0.72f, 1f);
-            light.intensity = 0.5f;
+            light.color = new Color(0.8f, 0.77f, 0.72f, 1f);
+            light.intensity = 0.4f;
             light.shadows = LightShadows.Soft;
-            light.shadowStrength = 0.78f;
+            light.shadowStrength = 0.8f;
             light.transform.rotation = Quaternion.Euler(34f, -40f, 0f);
 
             // Subtle cool bounce fill from the opposite side so shadow sides do not crush to black.
@@ -131,10 +131,10 @@ namespace WitcherRightVersion.Editor
             RenderSettings.sun = light;
             RenderSettings.skybox = CreateSkyboxMaterial(
                 "Assets/Materials/VelemarWorldSkybox.mat",
-                0.05f, 1.5f,
-                new Color(0.3f, 0.3f, 0.32f, 1f),
-                new Color(0.09f, 0.085f, 0.08f, 1f),
-                0.62f);
+                0.05f, 1.6f,
+                new Color(0.24f, 0.25f, 0.28f, 1f),
+                new Color(0.08f, 0.075f, 0.07f, 1f),
+                0.5f);
 
             var lightsRoot = new GameObject("VelemarAtmosphereLights");
             CreatePointLight(lightsRoot.transform, "VillageWarmLanternLight", new Vector3(0f, 3.1f, -4.8f), new Color(1f, 0.54f, 0.24f, 1f), 0.95f, 11f);
@@ -238,7 +238,7 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("VelemarTerrainVisualLayers");
             root.transform.SetParent(parent, false);
 
-            CreateSurfacePatch(root.transform, "VillagePackedEarthBlend", new Vector3(0f, 0.045f, -3f), new Vector3(27f, 0.018f, 23f), new Color(0.16f, 0.135f, 0.085f, 1f));
+            CreateSurfacePatch(root.transform, "VillagePackedEarthBlend", new Vector3(0f, 0.045f, -3f), new Vector3(27f, 0.018f, 23f), new Color(0.1f, 0.155f, 0.09f, 1f));
             CreateSurfacePatch(root.transform, "VillageGreenCourtyardBlend", new Vector3(3.5f, 0.049f, 0.2f), new Vector3(13f, 0.017f, 8.5f), new Color(0.13f, 0.19f, 0.105f, 1f));
             CreateSurfacePatch(root.transform, "VillageGateTrampledGround", new Vector3(0f, 0.052f, -10.6f), new Vector3(11.5f, 0.018f, 4.8f), new Color(0.13f, 0.105f, 0.072f, 1f));
             CreateSurfacePatch(root.transform, "ForestDarkGroundBlend", new Vector3(-70f, 0.044f, 8f), new Vector3(31f, 0.018f, 27f), new Color(0.045f, 0.105f, 0.055f, 1f));
@@ -293,16 +293,18 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
             root.transform.position = new Vector3(0f, 0f, -3f);
 
-            CreateRegionDisc(root.transform, "VillageDistrictGround", new Vector3(0f, 0.01f, 0f), new Vector3(13f, 0.02f, 10f), new Color(0.12f, 0.17f, 0.105f, 1f));
+            // Grass-green village ground (was a pale disc that read as white under light).
+            CreateRegionDisc(root.transform, "VillageDistrictGround", new Vector3(0f, 0.01f, 0f), new Vector3(14f, 0.02f, 11f), new Color(0.1f, 0.16f, 0.09f, 1f));
 
-            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-5.2f, 0f, -0.7f), Quaternion.Euler(0f, 28f, 0f), 2.05f);
-            CreateHouse(root.transform, "MartaHouse_World", new Vector3(5.1f, 0f, -0.8f), Quaternion.Euler(0f, -28f, 0f), 1.95f);
-            CreateHouse(root.transform, "Smithy_World", new Vector3(-4.5f, 0f, 4.3f), Quaternion.Euler(0f, -18f, 0f), 1.85f);
-            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-8.5f, 0f, 2.8f), Quaternion.Euler(0f, 58f, 0f), new Vector3(2.05f, 2.05f, 2.05f));
-            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(2.7f, 0f, 3.4f), Quaternion.Euler(0f, -22f, 0f), new Vector3(1.75f, 1.75f, 1.75f));
-            PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, -1.35f), Quaternion.identity, new Vector3(0.95f, 0.95f, 0.95f));
-            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(8.9f, 0f, 3.7f), Quaternion.Euler(0f, -50f, 0f), new Vector3(1.7f, 1.7f, 1.7f));
-            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(-8.4f, 0f, -4.2f), Quaternion.Euler(0f, 28f, 0f), new Vector3(1.65f, 1.65f, 1.65f));
+            // Buildings scaled up ~1.35x so they read taller than the character.
+            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-5.6f, 0f, -0.9f), Quaternion.Euler(0f, 28f, 0f), 2.75f);
+            CreateHouse(root.transform, "MartaHouse_World", new Vector3(5.5f, 0f, -1f), Quaternion.Euler(0f, -28f, 0f), 2.6f);
+            CreateHouse(root.transform, "Smithy_World", new Vector3(-4.8f, 0f, 4.8f), Quaternion.Euler(0f, -18f, 0f), 2.5f);
+            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-9.2f, 0f, 3.1f), Quaternion.Euler(0f, 58f, 0f), new Vector3(2.75f, 2.75f, 2.75f));
+            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(3.0f, 0f, 3.7f), Quaternion.Euler(0f, -22f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
+            PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, -1.35f), Quaternion.identity, new Vector3(1.15f, 1.15f, 1.15f));
+            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(9.6f, 0f, 4.1f), Quaternion.Euler(0f, -50f, 0f), new Vector3(2.25f, 2.25f, 2.25f));
+            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(-9.1f, 0f, -4.6f), Quaternion.Euler(0f, 28f, 0f), new Vector3(2.2f, 2.2f, 2.2f));
             PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(1.8f, 0f, 4.8f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 1.15f);
             PlaceKenney(root.transform, "VillageLantern_World", "lantern.fbx", new Vector3(-0.9f, 0f, 1.8f), Quaternion.identity, Vector3.one);
 
@@ -3319,7 +3321,9 @@ namespace WitcherRightVersion.Editor
         {
             var player = new GameObject("Reynard_Player");
             player.tag = "Player";
-            player.transform.position = new Vector3(0f, 0.08f, -8f);
+            // Spawn on the open approach road south of the village gate, raised so the
+            // controller drops onto the ground instead of clipping into it.
+            player.transform.position = new Vector3(0f, 0.6f, -10.5f);
 
             var controller = player.AddComponent<CharacterController>();
             controller.height = 2.05f;
@@ -3947,6 +3951,7 @@ namespace WitcherRightVersion.Editor
             var instance = InstantiateModel($"{KenneyPath}/{modelName}", objectName, parent, position, rotation, adjustedScale);
             if (instance != null)
             {
+                AddSolidColliders(instance);
                 return;
             }
 
@@ -3959,10 +3964,36 @@ namespace WitcherRightVersion.Editor
             var instance = InstantiateModel($"{KayKitMedievalPath}/{modelName}", objectName, parent, position, rotation, adjustedScale);
             if (instance != null)
             {
+                AddSolidColliders(instance);
                 return;
             }
 
             CreateMarker(parent, objectName + "_Fallback", position + Vector3.up * 0.4f, new Vector3(0.9f, 0.8f, 0.9f), new Color(0.22f, 0.2f, 0.16f, 1f));
+        }
+
+        // Adds a per-mesh MeshCollider to placed props/buildings so the player can no
+        // longer walk through them. MeshCollider (not a Box) is used so openings like the
+        // village gate arch and house doorways stay passable. Non-convex static colliders
+        // work fine against the player's CharacterController. Skips already-collided meshes.
+        private static void AddSolidColliders(GameObject root)
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            var filters = root.GetComponentsInChildren<MeshFilter>();
+            for (var i = 0; i < filters.Length; i++)
+            {
+                var mf = filters[i];
+                if (mf == null || mf.sharedMesh == null || mf.GetComponent<Collider>() != null)
+                {
+                    continue;
+                }
+
+                var mc = mf.gameObject.AddComponent<MeshCollider>();
+                mc.sharedMesh = mf.sharedMesh;
+            }
         }
 
         private static bool IsKenneyBuildingModel(string modelName)
