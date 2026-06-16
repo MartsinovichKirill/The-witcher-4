@@ -3396,8 +3396,9 @@ namespace WitcherRightVersion.Editor
                 return (fallback.transform, null, null);
             }
 
-            // Show the knight's baked vertex colours (was rendering white before).
-            ApplyMaterialToChildRenderers(knight, CreateVertexColorMaterial("Assets/Materials/ReynardKnightVertex.mat", Color.white));
+            // The Quaternius knight has no vertex colours and its FBX materials import white,
+            // so apply a flat armour tint to keep him from rendering plain white.
+            ApplyMaterialToChildRenderers(knight, CreateMaterial("Assets/Materials/ReynardKnightTint.mat", new Color(0.36f, 0.38f, 0.42f, 1f)));
 
             AttachAnimator(knight, CharacterAnimationSetup.ReynardController, $"{KnightPath}/KnightCharacter.fbx");
 
@@ -3834,9 +3835,7 @@ namespace WitcherRightVersion.Editor
             }
             else
             {
-                // Show the character's baked vertex colours (real skin/cloth/armour) instead
-                // of a flat single-colour blob; near-white tint keeps them at full strength.
-                ApplyMaterialToChildRenderers(visual, CreateVertexColorMaterial($"Assets/Materials/{name}_Vertex.mat", new Color(0.97f, 0.97f, 0.97f, 1f)));
+                ApplyMaterialToChildRenderers(visual, CreateMaterial($"Assets/Materials/{name}_ModelTint.mat", fallbackColor));
                 // Model is present: strip the placeholder capsule mesh so no white
                 // "hitbox" capsule shows behind the character skin.
                 StripPrimitiveMesh(anchor);
@@ -4431,35 +4430,6 @@ namespace WitcherRightVersion.Editor
             material = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
             ConfigureMaterialColor(material, color);
             AssetDatabase.CreateAsset(material, path);
-            return material;
-        }
-
-        // Material that renders the mesh's baked vertex colours (Quaternius / OpenGameArt
-        // characters store their colours in vertices, which the Standard shader ignores and
-        // renders white). Use a near-white tint to show the real colours; a coloured tint
-        // multiplies over them for atmosphere. Falls back to a flat material if the shader
-        // is missing.
-        private static Material CreateVertexColorMaterial(string path, Color tint)
-        {
-            var shader = Shader.Find("WitcherRightVersion/VertexColorLit");
-            if (shader == null)
-            {
-                Debug.LogWarning("VertexColorLit shader missing; using flat material.");
-                return CreateMaterial(path, tint);
-            }
-
-            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
-            if (material == null)
-            {
-                material = new Material(shader);
-                AssetDatabase.CreateAsset(material, path);
-            }
-            else
-            {
-                material.shader = shader;
-            }
-
-            material.SetColor("_Color", tint);
             return material;
         }
 
