@@ -3396,9 +3396,9 @@ namespace WitcherRightVersion.Editor
                 return (fallback.transform, null, null);
             }
 
-            // The Quaternius knight has no vertex colours and its FBX materials import white,
-            // so apply a flat armour tint to keep him from rendering plain white.
-            ApplyMaterialToChildRenderers(knight, CreateMaterial("Assets/Materials/ReynardKnightTint.mat", new Color(0.36f, 0.38f, 0.42f, 1f)));
+            // Colour the knight's three material slots (Armor / Boots / Skin) distinctly
+            // instead of one flat tint, so he reads as a proper armoured figure.
+            ApplyCharacterMaterials(knight, false);
 
             AttachAnimator(knight, CharacterAnimationSetup.ReynardController, $"{KnightPath}/KnightCharacter.fbx");
 
@@ -3835,7 +3835,9 @@ namespace WitcherRightVersion.Editor
             }
             else
             {
-                ApplyMaterialToChildRenderers(visual, CreateMaterial($"Assets/Materials/{name}_ModelTint.mat", fallbackColor));
+                // Apply the character's real texture atlas (skin/armour/cloth); hide the
+                // model's built-in weapon so it doesn't double with the attached weapon prop.
+                ApplyCharacterMaterials(visual, true);
                 // Model is present: strip the placeholder capsule mesh so no white
                 // "hitbox" capsule shows behind the character skin.
                 StripPrimitiveMesh(anchor);
@@ -3864,6 +3866,130 @@ namespace WitcherRightVersion.Editor
             }
         }
 
+        private const string RpgTextureDir = "Assets/Art/External/OpenGameArt_RPGCharacters/Textures";
+        private static readonly string[] WeaponNameKeys = { "sword", "dagger", "staff", "bow", "blade", "club", "katana", "axe", "mace", "shield" };
+
+        // Gives a character model its proper colours instead of a flat blob:
+        //  - parts whose source material is a "*_Texture" (OpenGameArt RPG characters) get
+        //    that texture atlas applied (real skin/armour/cloth);
+        //  - solid-slot parts (Quaternius knight: Armor/Boots/Skin) get a colour by slot name.
+        // When hideBuiltInWeapon is set, the model's own weapon mesh is removed so it does
+        // not double with the separately-attached weapon prop.
+        private static void ApplyCharacterMaterials(GameObject root, bool hideBuiltInWeapon)
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            foreach (var r in root.GetComponentsInChildren<Renderer>(true))
+            {
+                if (r == null)
+                {
+                    continue;
+                }
+
+                if (hideBuiltInWeapon && NameHasWeaponKey(r.gameObject.name))
+                {
+                    Object.DestroyImmediate(r);
+                    continue;
+                }
+
+                var src = r.sharedMaterials;
+                var dst = new Material[src.Length];
+                for (var i = 0; i < src.Length; i++)
+                {
+                    var nm = src[i] != null ? src[i].name : "Part";
+                    var tex = nm.Contains("Texture") ? AssetDatabase.LoadAssetAtPath<Texture2D>($"{RpgTextureDir}/{nm}.png") : null;
+                    dst[i] = tex != null
+                        ? CreateTexturedMaterial(nm, tex)
+                        : CreateMaterial($"Assets/Materials/CharPart_{SanitizeName(nm)}.mat", SolidColorForPart(nm));
+                }
+
+                r.sharedMaterials = dst;
+            }
+        }
+
+        private static bool NameHasWeaponKey(string name)
+        {
+            var n = name.ToLower();
+            for (var i = 0; i < WeaponNameKeys.Length; i++)
+            {
+                if (n.Contains(WeaponNameKeys[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static Material CreateTexturedMaterial(string sourceName, Texture2D tex)
+        {
+            var path = $"Assets/Materials/CharTex_{SanitizeName(sourceName)}.mat";
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (mat == null)
+            {
+                mat = new Material(Shader.Find("Standard"));
+                AssetDatabase.CreateAsset(mat, path);
+            }
+
+            mat.shader = Shader.Find("Standard");
+            mat.mainTexture = tex;
+            mat.color = Color.white;
+            if (mat.HasProperty("_Glossiness"))
+            {
+                mat.SetFloat("_Glossiness", 0.08f);
+            }
+            if (mat.HasProperty("_Metallic"))
+            {
+                mat.SetFloat("_Metallic", 0f);
+            }
+
+            return mat;
+        }
+
+        private static Color SolidColorForPart(string name)
+        {
+            var n = name.ToLower();
+            if (n.Contains("skin") || n.Contains("face") || n.Contains("head") || n.Contains("hand"))
+            {
+                return new Color(0.78f, 0.6f, 0.48f, 1f);
+            }
+            if (n.Contains("hair"))
+            {
+                return new Color(0.26f, 0.17f, 0.09f, 1f);
+            }
+            if (n.Contains("armor") || n.Contains("metal") || n.Contains("plate") || n.Contains("shoulder") || n.Contains("guard"))
+            {
+                return new Color(0.42f, 0.44f, 0.49f, 1f);
+            }
+            if (n.Contains("boot") || n.Contains("belt") || n.Contains("leather") || n.Contains("pouch") || n.Contains("shoe") || n.Contains("strap"))
+            {
+                return new Color(0.26f, 0.17f, 0.1f, 1f);
+            }
+            if (n.Contains("cloth") || n.Contains("shirt") || n.Contains("pant") || n.Contains("hood") || n.Contains("cape") || n.Contains("robe") || n.Contains("tunic"))
+            {
+                return new Color(0.3f, 0.3f, 0.36f, 1f);
+            }
+
+            return new Color(0.4f, 0.36f, 0.32f, 1f);
+        }
+
+        private static string SanitizeName(string name)
+        {
+            var chars = name.ToCharArray();
+            for (var i = 0; i < chars.Length; i++)
+            {
+                if (!char.IsLetterOrDigit(chars[i]) && chars[i] != '_')
+                {
+                    chars[i] = '_';
+                }
+            }
+
+            return new string(chars);
+        }
+
         private static void AddCombatVisual(GameObject target, Color hitFlashColor, Color deathColor)
         {
             var feedback = target.AddComponent<CombatVisualFeedback>();
@@ -3888,14 +4014,11 @@ namespace WitcherRightVersion.Editor
             // the larger localScale compensates for the small character/bone scale. Falls
             // back to the anchor with the caller's values if the bone is missing.
             var hand = FindDescendant(anchor.transform, "Fist.R");
-            if (hand != null)
-            {
-                InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, hand, new Vector3(0.03f, 0.05f, 0f), Quaternion.Euler(0f, 0f, -95f), Vector3.one * 2.2f);
-            }
-            else
-            {
-                InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, anchor.transform, localPosition, localRotation, localScale);
-            }
+            var weapon = hand != null
+                ? InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, hand, new Vector3(0.03f, 0.05f, 0f), Quaternion.Euler(0f, 0f, -95f), Vector3.one * 2.2f)
+                : InstantiateModel($"{RpgWeaponPath}/{modelName}", objectName, anchor.transform, localPosition, localRotation, localScale);
+            // Texture the weapon (its material is a "*_Texture" atlas) so it is not white.
+            ApplyCharacterMaterials(weapon, false);
         }
 
         // Standalone weapon prop (full asset path) used as visible merchant wares.
