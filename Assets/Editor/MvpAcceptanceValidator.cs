@@ -351,9 +351,9 @@ namespace WitcherRightVersion.Editor
             RequireObject("FarTowerCastleBackdrop", failures);
             RequireObject("VillageDistrict_VereskovyBrod", failures);
             RequireObject("ReynardKnightModel", failures);
-            // Helmet/shoulder-pad add-ons removed: they floated off the now-animated body;
-            // the base KnightCharacter mesh is already a fully armoured, helmeted knight.
-            RequireObject("ReynardSteelSword_Visual", failures);
+            // Player now uses the textured Warrior model whose own built-in sword is the
+            // drawn weapon, so there is no separate steel-sword prop; the silver sword
+            // remains sheathed on the back.
             RequireObject("ReynardSilverSword_Visual", failures);
             RequireObject("ElderVoytsekh_World_Model", failures);
             RequireObject("MartaLozovaya_World_Model", failures);

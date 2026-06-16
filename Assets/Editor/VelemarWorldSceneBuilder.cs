@@ -3382,10 +3382,12 @@ namespace WitcherRightVersion.Editor
 
         private static (Transform visualRoot, Transform steelSword, Transform silverSword) CreatePlayerVisual(Transform player)
         {
-            // Model faces +Z so it matches PlayerController's LookRotation(MoveDirection):
-            // a 180 offset made Reynard moonwalk facing the camera when moving away.
-            var knight = InstantiateModel($"{KnightPath}/KnightCharacter.fbx", "ReynardKnightModel", player, new Vector3(0f, -0.02f, 0f), Quaternion.identity, Vector3.one * PlayerVisualScale);
-            if (knight == null)
+            // Player uses the textured Warrior model — it reads far better than the
+            // untextured knight (verified by render). Kept under the name "ReynardKnightModel"
+            // so scene refs/validator still resolve. Faces +Z to match PlayerController's
+            // LookRotation(MoveDirection); ~0.55 scale matches the human-sized NPCs.
+            var hero = InstantiateModel($"{RpgCharacterPath}/Warrior.fbx", "ReynardKnightModel", player, new Vector3(0f, 0f, 0f), Quaternion.identity, Vector3.one * 0.55f);
+            if (hero == null)
             {
                 var fallback = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 fallback.name = "ReynardFallbackCapsule";
@@ -3396,39 +3398,19 @@ namespace WitcherRightVersion.Editor
                 return (fallback.transform, null, null);
             }
 
-            // Colour the knight's three material slots (Armor / Boots / Skin) distinctly
-            // instead of one flat tint, so he reads as a proper armoured figure.
-            ApplyCharacterMaterials(knight, false);
+            // Apply the Warrior texture atlas (real skin/armour/cloth) and keep its built-in
+            // sword (hideBuiltInWeapon=false) as Reynard's drawn, animated weapon.
+            ApplyCharacterMaterials(hero, false);
+            AttachAnimator(hero, CharacterAnimationSetup.RpgController, $"{RpgCharacterPath}/Warrior.fbx");
 
-            AttachAnimator(knight, CharacterAnimationSetup.ReynardController, $"{KnightPath}/KnightCharacter.fbx");
-
-            // Silver sword sheathed on the back. The separate helmet/shoulder-pad add-ons
-            // are dropped: they floated off the animated body; the base KnightCharacter
-            // mesh is already a fully armoured, helmeted knight.
-            var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.2f, 1.55f, -0.32f), Quaternion.Euler(16f, 0f, -34f), Vector3.one * 0.85f);
+            // Second (silver) sword sheathed on the back for the witcher two-sword silhouette.
+            var silverSword = InstantiateModel($"{KnightPath}/ShortSword.fbx", "ReynardSilverSword_Visual", player, new Vector3(0.2f, 1.2f, -0.22f), Quaternion.Euler(16f, 0f, -34f), Vector3.one * 0.7f);
             if (silverSword != null)
             {
                 ApplyMaterialToChildRenderers(silverSword, CreateMaterial("Assets/Materials/ReynardSilverSwordTint.mat", new Color(0.82f, 0.84f, 0.9f, 1f)));
             }
 
-            // Steel sword DRAWN, held in the right hand: parented to the Palm.R bone so it
-            // follows the skeletal animation. localScale compensates for the model's 0.34
-            // root scale. Falls back to the back if the bone is missing.
-            var handBone = FindDescendant(knight.transform, "Palm.R");
-            GameObject steelSword;
-            if (handBone != null)
-            {
-                steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", handBone, new Vector3(0.04f, 0.02f, 0f), Quaternion.Euler(0f, 0f, 90f), Vector3.one * 2.5f);
-            }
-            else
-            {
-                steelSword = InstantiateModel($"{KnightPath}/Sword.fbx", "ReynardSteelSword_Visual", player, new Vector3(-0.2f, 1.55f, -0.32f), Quaternion.Euler(16f, 0f, 34f), Vector3.one * 0.85f);
-            }
-            if (steelSword != null)
-            {
-                ApplyMaterialToChildRenderers(steelSword, CreateMaterial("Assets/Materials/ReynardSteelSwordTint.mat", new Color(0.62f, 0.64f, 0.69f, 1f)));
-            }
-            return (knight.transform, steelSword != null ? steelSword.transform : null, silverSword != null ? silverSword.transform : null);
+            return (hero.transform, null, silverSword != null ? silverSword.transform : null);
         }
 
         private static void CreateCamera(Transform target)
