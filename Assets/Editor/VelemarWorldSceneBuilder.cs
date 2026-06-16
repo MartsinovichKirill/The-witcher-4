@@ -2980,6 +2980,7 @@ namespace WitcherRightVersion.Editor
 
         private static void CreateWorldCraftingObjects(Transform parent)
         {
+            CreateScatteredGroundLoot(parent);
             CreateSupplyCrate(parent, "WorldMartaHerbBasket", "Marta's herb basket", "Take herbs", new[] { "Swallow Grass", "Field Ration", "Bogweed" }, "Resources gained: Swallow Grass, Field Ration, Bogweed.", new Vector3(5.5f, 0.2f, -4.7f), new Vector3(0.5f, 0.25f, 0.5f), new Color(0.13f, 0.28f, 0.12f, 1f));
             CreateSupplyCrate(parent, "WorldForgeSupplies", "Forge supplies", "Take supplies", new[] { "Iron Ore", "Wolf Pelt", "Drowner Slime" }, "Resources gained: Iron Ore, Wolf Pelt, Drowner Slime.", new Vector3(-4.7f, 0.2f, 0.9f), new Vector3(0.6f, 0.3f, 0.5f), new Color(0.25f, 0.19f, 0.12f, 1f));
 
@@ -3394,6 +3395,9 @@ namespace WitcherRightVersion.Editor
                 Object.DestroyImmediate(fallback.GetComponent<Collider>());
                 return (fallback.transform, null, null);
             }
+
+            // Show the knight's baked vertex colours (was rendering white before).
+            ApplyMaterialToChildRenderers(knight, CreateVertexColorMaterial("Assets/Materials/ReynardKnightVertex.mat", Color.white));
 
             AttachAnimator(knight, CharacterAnimationSetup.ReynardController, $"{KnightPath}/KnightCharacter.fbx");
 
@@ -3830,7 +3834,9 @@ namespace WitcherRightVersion.Editor
             }
             else
             {
-                ApplyMaterialToChildRenderers(visual, CreateMaterial($"Assets/Materials/{name}_ModelTint.mat", fallbackColor));
+                // Show the character's baked vertex colours (real skin/cloth/armour) instead
+                // of a flat single-colour blob; near-white tint keeps them at full strength.
+                ApplyMaterialToChildRenderers(visual, CreateVertexColorMaterial($"Assets/Materials/{name}_Vertex.mat", new Color(0.97f, 0.97f, 0.97f, 1f)));
                 // Model is present: strip the placeholder capsule mesh so no white
                 // "hitbox" capsule shows behind the character skin.
                 StripPrimitiveMesh(anchor);
@@ -4046,6 +4052,70 @@ namespace WitcherRightVersion.Editor
 
             var interactable = crate.AddComponent<InventoryGrantInteractable>();
             interactable.Configure(displayName, prompt, itemsToGrant, message);
+        }
+
+        // A single pickup item lying on the ground: a small flat base (keeps a solid
+        // collider for interaction, like the crates) + an optional themed weapon/tool prop
+        // lying beside it + a beacon. Picking it up grants the listed items.
+        private static void CreateGroundLoot(Transform parent, string objectName, string displayName, string prompt, string[] items, string message, Vector3 position, Color color, string propPath = null, float propScale = 0.5f)
+        {
+            var loot = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            loot.name = objectName;
+            loot.transform.SetParent(parent, false);
+            loot.transform.localPosition = position;
+            loot.transform.localScale = new Vector3(0.5f, 0.18f, 0.5f);
+            loot.GetComponent<Renderer>().sharedMaterial = CreateMaterial($"Assets/Materials/{objectName}.mat", color);
+
+            if (!string.IsNullOrEmpty(propPath))
+            {
+                // Parent the prop to the world root (not the flat base) to avoid distortion;
+                // laid roughly horizontal so it reads as dropped on the ground.
+                var prop = InstantiateModel(propPath, $"{objectName}_Prop", parent, position + new Vector3(0f, 0.12f, 0f), Quaternion.Euler(90f, 35f, 0f), Vector3.one * propScale);
+                if (prop != null)
+                {
+                    ApplyMaterialToChildRenderers(prop, CreateMaterial($"Assets/Materials/{objectName}_Prop.mat", color));
+                }
+            }
+
+            AddInteractionBeacon(loot);
+            var interactable = loot.AddComponent<InventoryGrantInteractable>();
+            interactable.Configure(displayName, prompt, items, message);
+        }
+
+        // Loot lying around the whole map, themed per zone from the story (Velemar: herbs,
+        // pelts, bog reagents, mirror-tower bones/ore, Ash Road refugee supplies & bandit
+        // caches). Each is a pickup with a beacon so the world feels looted and alive.
+        private static void CreateScatteredGroundLoot(Transform parent)
+        {
+            // Village outskirts.
+            CreateGroundLoot(parent, "LootVillageHerbs", "Рассыпанные травы", "Подобрать", new[] { "Swallow Grass" }, "Подобрано: Дьявольский гриб.", new Vector3(3.5f, 0f, 6.2f), new Color(0.16f, 0.32f, 0.13f, 1f));
+            CreateGroundLoot(parent, "LootVillageFood", "Оброненная снедь", "Подобрать", new[] { "Food", "Field Ration" }, "Подобрано: Еда, Походный паёк.", new Vector3(-3.2f, 0f, 5.8f), new Color(0.3f, 0.24f, 0.14f, 1f));
+
+            // Old Forest.
+            CreateGroundLoot(parent, "LootForestPelt", "Шкура волка", "Снять", new[] { "Wolf Pelt" }, "Подобрано: Волчья шкура.", new Vector3(-72.5f, 0f, 11.5f), new Color(0.32f, 0.26f, 0.18f, 1f));
+            CreateGroundLoot(parent, "LootForestHerbs", "Лесные травы", "Собрать", new[] { "Swallow Grass", "Bogweed" }, "Подобрано: Дьявольский гриб, Болотник.", new Vector3(-67.5f, 0f, 5.5f), new Color(0.14f, 0.3f, 0.12f, 1f));
+            CreateGroundLoot(parent, "LootForestKnife", "Брошенный нож", "Подобрать", new[] { "Field Ration" }, "Подобрано: Походный паёк.", new Vector3(-74.5f, 0f, 8.5f), new Color(0.55f, 0.57f, 0.6f, 1f), $"{RpgWeaponPath}/Rogue_Dagger.fbx", 0.5f);
+
+            // Black Swamp.
+            CreateGroundLoot(parent, "LootSwampReagents", "Болотные реагенты", "Собрать", new[] { "Bogweed", "Drowner Slime" }, "Подобрано: Болотник, Слизь утопца.", new Vector3(11.5f, 0f, -70f), new Color(0.08f, 0.24f, 0.16f, 1f));
+            CreateGroundLoot(parent, "LootSwampBlade", "Затонувший клинок", "Поднять", new[] { "Iron Ore" }, "Подобрано: Железная руда.", new Vector3(7f, 0f, -72.5f), new Color(0.5f, 0.53f, 0.57f, 1f), $"{KnightPath}/Sword.fbx", 0.5f);
+            CreateGroundLoot(parent, "LootSwampWitchHerbs", "Травы Эльзы", "Собрать", new[] { "Bogweed" }, "Подобрано: Болотник.", new Vector3(13.5f, 0f, -76f), new Color(0.2f, 0.26f, 0.32f, 1f));
+
+            // Tower Ruins.
+            CreateGroundLoot(parent, "LootTowerBones", "Старые кости", "Осмотреть", new[] { "Iron Ore" }, "Подобрано: Железная руда.", new Vector3(2.5f, 0f, 73f), new Color(0.72f, 0.7f, 0.64f, 1f));
+            CreateGroundLoot(parent, "LootTowerOre", "Обломки руды", "Собрать", new[] { "Iron Ore" }, "Подобрано: Железная руда.", new Vector3(-3f, 0f, 77.5f), new Color(0.4f, 0.4f, 0.44f, 1f));
+            CreateGroundLoot(parent, "LootTowerWeapon", "Сломанное оружие", "Поднять", new[] { "Iron Ore" }, "Подобрано: Железная руда.", new Vector3(4.5f, 0f, 75f), new Color(0.46f, 0.4f, 0.34f, 1f), $"{KnightPath}/Club.fbx", 0.5f);
+
+            // Ash Road.
+            CreateGroundLoot(parent, "LootAshRefugeeSack", "Мешок беженца", "Обыскать", new[] { "Food", "Field Ration" }, "Подобрано: Еда, Походный паёк.", new Vector3(70f, 0f, 6f), new Color(0.3f, 0.25f, 0.16f, 1f));
+            CreateGroundLoot(parent, "LootAshSalt", "Пепельная соль", "Собрать", new[] { "Ash Salt" }, "Подобрано: Пепельная соль.", new Vector3(74.5f, 0f, 10.5f), new Color(0.6f, 0.6f, 0.58f, 1f));
+            CreateGroundLoot(parent, "LootAshBanditCache", "Схрон бандитов", "Обыскать", new[] { "Iron Ore", "Field Ration" }, "Подобрано: Железная руда, Походный паёк.", new Vector3(68f, 0f, 3.5f), new Color(0.28f, 0.2f, 0.14f, 1f), $"{RpgWeaponPath}/Warrior_Sword.fbx", 0.5f);
+
+            // Travel roads between the zones.
+            CreateGroundLoot(parent, "LootWestRoadHerbs", "Придорожные травы", "Собрать", new[] { "Swallow Grass" }, "Подобрано: Дьявольский гриб.", new Vector3(-38f, 0f, 4.5f), new Color(0.15f, 0.3f, 0.12f, 1f));
+            CreateGroundLoot(parent, "LootNorthRoadOre", "Кусок руды", "Собрать", new[] { "Iron Ore" }, "Подобрано: Железная руда.", new Vector3(-3.5f, 0f, 38f), new Color(0.4f, 0.4f, 0.44f, 1f));
+            CreateGroundLoot(parent, "LootSouthRoadBog", "Болотный сбор", "Собрать", new[] { "Bogweed" }, "Подобрано: Болотник.", new Vector3(-4.5f, 0f, -38f), new Color(0.1f, 0.24f, 0.15f, 1f));
+            CreateGroundLoot(parent, "LootEastRoadSupplies", "Оброненные припасы", "Подобрать", new[] { "Field Ration", "Food" }, "Подобрано: Походный паёк, Еда.", new Vector3(40f, 0f, 6.5f), new Color(0.3f, 0.25f, 0.16f, 1f));
         }
 
         private static void CreateCraftingStation(Transform parent, string objectName, string displayName, string prompt, string recipeId, Vector3 position, Vector3 scale, Color color)
@@ -4361,6 +4431,35 @@ namespace WitcherRightVersion.Editor
             material = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
             ConfigureMaterialColor(material, color);
             AssetDatabase.CreateAsset(material, path);
+            return material;
+        }
+
+        // Material that renders the mesh's baked vertex colours (Quaternius / OpenGameArt
+        // characters store their colours in vertices, which the Standard shader ignores and
+        // renders white). Use a near-white tint to show the real colours; a coloured tint
+        // multiplies over them for atmosphere. Falls back to a flat material if the shader
+        // is missing.
+        private static Material CreateVertexColorMaterial(string path, Color tint)
+        {
+            var shader = Shader.Find("WitcherRightVersion/VertexColorLit");
+            if (shader == null)
+            {
+                Debug.LogWarning("VertexColorLit shader missing; using flat material.");
+                return CreateMaterial(path, tint);
+            }
+
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(shader);
+                AssetDatabase.CreateAsset(material, path);
+            }
+            else
+            {
+                material.shader = shader;
+            }
+
+            material.SetColor("_Color", tint);
             return material;
         }
 
