@@ -1420,16 +1420,73 @@ namespace WitcherRightVersion.Editor
             CreateAmbientCharacter(root.transform, "AmbientTowerMemory_02", "Wizard.fbx", new Vector3(7.4f, 1f, 97.2f), Quaternion.Euler(0f, -36f, 0f), new Color(0.15f, 0.15f, 0.29f, 1f), 0.62f);
         }
 
+        private static readonly string[] AmbientVillagerLines =
+        {
+            "Доброго пути. В Велемаре чужакам не всегда рады, но ты, видать, по делу.",
+            "Слыхал про тварь на болоте? Старейшина Войцех уже ищет, кому это поручить.",
+            "Эльса — травница, не ведьма. Что бы там в деревне ни шептали.",
+            "Кузнец Борис перекуёт тебе сталь, если принесёшь годное железо.",
+            "О Зеркале Правды тут молчат. И ты помолчи, коли жить хочешь спокойно."
+        };
+
+        private static readonly string[] AmbientHunterLines =
+        {
+            "Лес сменился. Зверь идёт не туда, куда привык. Что-то его гонит.",
+            "Держись тропы, ведьмак. В чаще и днём темно.",
+            "Видел следы у ручья — тяжелее медвежьих. Не моя это добыча."
+        };
+
+        private static readonly string[] AmbientRefugeeLines =
+        {
+            "Мы с тракта. Там, откуда мы шли, не осталось ни домов, ни людей.",
+            "Дай пройти, добрый человек. Нам бы только до деревни добраться.",
+            "Война никого не щадит. Радуйся, что у тебя есть меч."
+        };
+
+        // Was decoration only — the anchor collider was stripped and nothing was attached,
+        // so these villagers/hunters/refugees were "phantoms": visible but impossible to
+        // engage. Keep the collider and give each a short, role-appropriate flavour line so
+        // every visible character is at least talkable.
         private static void CreateAmbientCharacter(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Color fallbackColor, float scale)
         {
             var character = CreateRpgCharacterAnchor(parent, objectName, modelName, position, rotation, Vector3.one * scale, fallbackColor);
-            var collider = character.GetComponent<Collider>();
-            if (collider != null)
+            CreateCharacterGroundRing(character, $"{objectName}_PresenceRing", new Color(0.36f, 0.28f, 0.14f, 1f), 0.62f);
+
+            string speaker;
+            string[] pool;
+            if (objectName.Contains("Hunter"))
             {
-                Object.DestroyImmediate(collider);
+                speaker = "Охотник";
+                pool = AmbientHunterLines;
+            }
+            else if (objectName.Contains("Refugee"))
+            {
+                speaker = "Беженец";
+                pool = AmbientRefugeeLines;
+            }
+            else if (objectName.Contains("TowerMemory"))
+            {
+                speaker = "Видение прошлого";
+                pool = new[] { "…ты слышишь? Зеркало ещё помнит то, что деревня хотела забыть." };
+            }
+            else
+            {
+                speaker = "Житель Велемара";
+                pool = AmbientVillagerLines;
             }
 
-            CreateCharacterGroundRing(character, $"{objectName}_PresenceRing", new Color(0.36f, 0.28f, 0.14f, 1f), 0.62f);
+            var line = pool[Mathf.Abs(objectName.GetHashCode()) % pool.Length];
+            character.AddComponent<DialogueInteractable>().Configure(
+                speaker,
+                "Поговорить",
+                "start",
+                new[]
+                {
+                    new DialogueNode("start", speaker, line, new[]
+                    {
+                        new DialogueChoice("Бывай.", "", "", true)
+                    })
+                });
         }
 
         private static void CreateVisualAtmospherePolishPass(Transform parent)
