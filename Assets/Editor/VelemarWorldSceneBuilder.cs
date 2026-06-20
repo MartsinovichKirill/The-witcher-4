@@ -294,32 +294,54 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
             root.transform.position = new Vector3(0f, 0f, -3f);
 
-            // Grass-green village ground (was a pale disc that read as white under light).
-            CreateRegionDisc(root.transform, "VillageDistrictGround", new Vector3(0f, 0.01f, 0f), new Vector3(14f, 0.02f, 11f), new Color(0.1f, 0.16f, 0.09f, 1f));
+            // Deliberate, structured layout (replaces the old scattered placement): a
+            // south gate opens onto a central well square; NPC houses line the path on
+            // both sides facing inward (each owner stands in front of their building); the
+            // village trails north past a watermill and barracks. Decoration only — every
+            // gameplay anchor (NPCs/quests/crates) lives in separate functions, and the
+            // NPC world coords are: Elder(-4.1,-3.4) Marta(4.2,-3.6) Boris(-4.2,-0.4)
+            // Radek(3.1,-0.7); the root sits at z=-3 so local = world+3 on Z.
+            CreateRegionDisc(root.transform, "VillageDistrictGround", new Vector3(0f, 0.01f, 2f), new Vector3(15f, 0.02f, 14f), new Color(0.1f, 0.16f, 0.09f, 1f));
 
-            // Buildings scaled up ~1.35x so they read taller than the character.
-            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-5.6f, 0f, -0.9f), Quaternion.Euler(0f, 28f, 0f), 2.75f);
-            CreateHouse(root.transform, "MartaHouse_World", new Vector3(5.5f, 0f, -1f), Quaternion.Euler(0f, -28f, 0f), 2.6f);
-            CreateHouse(root.transform, "Smithy_World", new Vector3(-4.8f, 0f, 4.8f), Quaternion.Euler(0f, -18f, 0f), 2.5f);
-            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-9.2f, 0f, 3.1f), Quaternion.Euler(0f, 58f, 0f), new Vector3(2.75f, 2.75f, 2.75f));
-            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(3.0f, 0f, 3.7f), Quaternion.Euler(0f, -22f, 0f), new Vector3(1.7f, 1.7f, 1.7f));
-            PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, -1.35f), Quaternion.identity, new Vector3(1.15f, 1.15f, 1.15f));
-            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(9.6f, 0f, 4.1f), Quaternion.Euler(0f, -50f, 0f), new Vector3(2.25f, 2.25f, 2.25f));
-            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(-9.1f, 0f, -4.6f), Quaternion.Euler(0f, 28f, 0f), new Vector3(1.7f, 1.7f, 1.7f));
-            PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(1.8f, 0f, 4.8f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 1.15f);
-            PlaceKenney(root.transform, "VillageLantern_World", "lantern.fbx", new Vector3(-0.9f, 0f, 1.8f), Quaternion.identity, Vector3.one);
-
-            for (var i = 0; i < 7; i++)
+            // South wall + gate the player walks through (spawn is just south at z=-10.5).
+            PlaceKayKit(root.transform, "VillageGate_World", "wall_gate.fbx", new Vector3(0f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.7f);
+            for (var i = 0; i < 4; i++)
             {
-                PlaceKenney(root.transform, $"VillageFence_World_{i + 1}", i % 3 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(-8.6f + i * 2.9f, 0f, -6.7f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.15f);
+                PlaceKayKit(root.transform, $"VillageWallSegment_World_{i + 1}", "wall_straight.fbx", new Vector3(-3.0f - i * 2.1f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.5f);
+                PlaceKayKit(root.transform, $"VillageWallSegmentEast_World_{i + 1}", "wall_straight.fbx", new Vector3(3.0f + i * 2.1f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.5f);
             }
 
-            for (var i = 0; i < 5; i++)
+            // Central well square.
+            PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, 1.2f), Quaternion.identity, new Vector3(1.15f, 1.15f, 1.15f));
+            PlaceKenney(root.transform, "VillageLantern_World", "lantern.fbx", new Vector3(1.5f, 0f, 0f), Quaternion.identity, Vector3.one * 0.9f);
+            PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(-1.9f, 0f, 2.4f), Quaternion.Euler(0f, 40f, 0f), Vector3.one * 1.1f);
+
+            // West row, faces east toward the path: Elder's house, the Smithy, a cottage.
+            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-6.4f, 0f, -0.6f), Quaternion.Euler(0f, 90f, 0f), 2.2f);
+            CreateHouse(root.transform, "Smithy_World", new Vector3(-6.8f, 0f, 3.8f), Quaternion.Euler(0f, 90f, 0f), 2.2f);
+            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-7.2f, 0f, 8.4f), Quaternion.Euler(0f, 95f, 0f), new Vector3(1.6f, 1.6f, 1.6f));
+
+            // East row, faces west toward the path: Marta's house, the market, a cottage.
+            CreateHouse(root.transform, "MartaHouse_World", new Vector3(6.4f, 0f, -0.8f), Quaternion.Euler(0f, -90f, 0f), 2.2f);
+            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(6.6f, 0f, 3.8f), Quaternion.Euler(0f, -90f, 0f), new Vector3(1.5f, 1.5f, 1.5f));
+            PlaceKayKit(root.transform, "VillageKayKitHouseEast_B", "house.fbx", new Vector3(7.2f, 0f, 8.6f), Quaternion.Euler(0f, -95f, 0f), new Vector3(1.6f, 1.6f, 1.6f));
+
+            // North end frames the square behind the well.
+            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(-3.4f, 0f, 12.0f), Quaternion.Euler(0f, 150f, 0f), new Vector3(1.8f, 1.8f, 1.8f));
+            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(3.6f, 0f, 12.2f), Quaternion.Euler(0f, 205f, 0f), new Vector3(1.5f, 1.5f, 1.5f));
+
+            // Low front-yard fences lining each side of the path (set back from it).
+            for (var i = 0; i < 3; i++)
             {
-                PlaceKayKit(root.transform, $"VillageWallSegment_World_{i + 1}", "wall_straight.fbx", new Vector3(-8.4f + i * 4.2f, 0f, -7.6f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.55f);
+                PlaceKenney(root.transform, $"VillageFence_World_{i + 1}", "fence.fbx", new Vector3(-4.0f, 0f, 0.6f + i * 2.5f), Quaternion.identity, Vector3.one * 1.1f);
+                PlaceKenney(root.transform, $"VillageFenceEast_World_{i + 1}", "fence.fbx", new Vector3(4.0f, 0f, 0.6f + i * 2.5f), Quaternion.identity, Vector3.one * 1.1f);
             }
 
-            PlaceKayKit(root.transform, "VillageGate_World", "wall_gate.fbx", new Vector3(0f, 0f, -7.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.7f);
+            // Trees and rocks at the village edges, clear of the path and buildings.
+            PlaceKenney(root.transform, "VillageEdgeTreeNW_World", "tree-high.fbx", new Vector3(-9.8f, 0f, 10.5f), Quaternion.Euler(0f, 20f, 0f), Vector3.one * 1.15f);
+            PlaceKenney(root.transform, "VillageEdgeTreeNE_World", "tree.fbx", new Vector3(9.8f, 0f, 10.0f), Quaternion.Euler(0f, -35f, 0f), Vector3.one * 1.1f);
+            PlaceKenney(root.transform, "VillageEdgeTreeW_World", "tree-crooked.fbx", new Vector3(-10.0f, 0f, 4.5f), Quaternion.Euler(0f, 60f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "VillageEdgeRocksE_World", "detail_rocks.fbx", new Vector3(9.9f, 0f, 4.0f), Quaternion.Euler(0f, -20f, 0f), Vector3.one);
         }
 
         private static void CreateForestDistrict(Transform parent)
