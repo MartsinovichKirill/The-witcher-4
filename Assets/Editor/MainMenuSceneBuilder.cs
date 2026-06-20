@@ -424,6 +424,17 @@ namespace WitcherRightVersion.Editor
                 material.SetColor("_BaseColor", color);
             }
 
+            // Near-matte: Standard's smoothness slider is "_Glossiness"; left at its 0.5
+            // default the surface mirrors the skybox and washes out under a pale sky.
+            if (material.HasProperty("_Glossiness"))
+            {
+                material.SetFloat("_Glossiness", 0.03f);
+            }
+            if (material.HasProperty("_GlossyReflections"))
+            {
+                material.SetFloat("_GlossyReflections", 0f);
+            }
+
             EditorUtility.SetDirty(material);
             return material;
         }

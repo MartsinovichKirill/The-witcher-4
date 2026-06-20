@@ -458,15 +458,24 @@ namespace WitcherRightVersion.Editor
         private static Material CreateMaterial(string path, Color color)
         {
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
-            if (material != null)
+            if (material == null)
             {
-                material.color = color;
-                return material;
+                material = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
+                AssetDatabase.CreateAsset(material, path);
             }
 
-            material = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
             material.color = color;
-            AssetDatabase.CreateAsset(material, path);
+            // Near-matte: Standard's smoothness slider is "_Glossiness"; left at its 0.5
+            // default the surface mirrors the skybox and washes out under a pale sky.
+            if (material.HasProperty("_Glossiness"))
+            {
+                material.SetFloat("_Glossiness", 0.03f);
+            }
+            if (material.HasProperty("_GlossyReflections"))
+            {
+                material.SetFloat("_GlossyReflections", 0f);
+            }
+            EditorUtility.SetDirty(material);
             return material;
         }
 
