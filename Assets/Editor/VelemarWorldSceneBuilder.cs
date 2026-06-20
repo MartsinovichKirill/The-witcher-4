@@ -374,20 +374,31 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
             root.transform.position = new Vector3(8f, 0f, -72f);
 
-            CreateRegionDisc(root.transform, "SwampDistrictBog", Vector3.zero, new Vector3(13f, 0.035f, 10f), new Color(0.06f, 0.12f, 0.09f, 1f));
-            CreateRegionDisc(root.transform, "SwampWaterPool_01", new Vector3(-3.5f, 0.035f, -1.4f), new Vector3(3.6f, 0.022f, 1.7f), new Color(0.025f, 0.055f, 0.05f, 1f));
-            CreateRegionDisc(root.transform, "SwampWaterPool_02", new Vector3(2.8f, 0.035f, 2.1f), new Vector3(3.1f, 0.022f, 1.45f), new Color(0.02f, 0.05f, 0.045f, 1f));
+            // Deliberate hub: Elsa's hut sits on a raised dry island to the east (where the
+            // Elsa NPC stands, world (16.6,-72.6) = local (8.6,-0.6)), reached by a roofed
+            // plank bridge from the west bank; two dark pools with reed beds frame the
+            // island; the old mine sits north. Decoration only — NPC/quests live elsewhere.
+            CreateRegionDisc(root.transform, "SwampDistrictBog", Vector3.zero, new Vector3(13f, 0.035f, 11f), new Color(0.06f, 0.12f, 0.09f, 1f));
+            CreateRegionDisc(root.transform, "ElsaDryIsland", new Vector3(8.0f, 0.045f, 0f), new Vector3(5.0f, 0.03f, 4.4f), new Color(0.09f, 0.13f, 0.075f, 1f));
+            CreateRegionDisc(root.transform, "SwampWaterPool_01", new Vector3(-4.5f, 0.035f, -2.6f), new Vector3(4.2f, 0.022f, 2.3f), new Color(0.018f, 0.05f, 0.045f, 1f));
+            CreateRegionDisc(root.transform, "SwampWaterPool_02", new Vector3(-1.5f, 0.035f, 3.8f), new Vector3(3.6f, 0.022f, 2.1f), new Color(0.015f, 0.045f, 0.04f, 1f));
 
-            PlaceKayKit(root.transform, "ElsaHut_World", "house.fbx", new Vector3(5.6f, 0f, -1.6f), Quaternion.Euler(0f, -22f, 0f), Vector3.one * 0.9f);
-            PlaceKenney(root.transform, "ElsaHutLeanTo_World", "stall.fbx", new Vector3(7.2f, 0f, -2.7f), Quaternion.Euler(0f, -38f, 0f), Vector3.one * 0.82f);
-            PlaceKayKit(root.transform, "SwampKayKitRoofedBridge_World", "bridge_roofed.fbx", new Vector3(-0.4f, 0f, 5.6f), Quaternion.Euler(0f, 8f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
-            PlaceKayKit(root.transform, "SwampKayKitMine_World", "mine.fbx", new Vector3(7.4f, 0f, 3.0f), Quaternion.Euler(0f, -60f, 0f), Vector3.one);
-            PlaceKayKit(root.transform, "SwampKayKitRocks_A", "detail_rocks_small.fbx", new Vector3(-6.6f, 0f, -0.4f), Quaternion.Euler(0f, 15f, 0f), Vector3.one * 1.25f);
-            PlaceKenney(root.transform, "DeadSwampTree_World", "tree-crooked.fbx", new Vector3(-5.2f, 0f, 2.8f), Quaternion.Euler(0f, 36f, 0f), new Vector3(1.3f, 1.1f, 1.3f));
+            PlaceKayKit(root.transform, "ElsaHut_World", "house.fbx", new Vector3(9.2f, 0f, 0.4f), Quaternion.Euler(0f, -120f, 0f), Vector3.one * 1.0f);
+            PlaceKenney(root.transform, "ElsaHutLeanTo_World", "stall.fbx", new Vector3(7.2f, 0f, 1.4f), Quaternion.Euler(0f, -80f, 0f), Vector3.one * 0.85f);
+            PlaceKayKit(root.transform, "SwampKayKitRoofedBridge_World", "bridge_roofed.fbx", new Vector3(2.8f, 0f, -0.6f), Quaternion.Euler(0f, 90f, 0f), new Vector3(1.3f, 1.3f, 1.3f));
+            PlaceKayKit(root.transform, "SwampKayKitMine_World", "mine.fbx", new Vector3(3.0f, 0f, 5.8f), Quaternion.Euler(0f, -28f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "SwampKayKitRocks_A", "detail_rocks_small.fbx", new Vector3(-6.8f, 0f, 1.2f), Quaternion.Euler(0f, 15f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "DeadSwampTree_World", "tree-crooked.fbx", new Vector3(-6.0f, 0f, 5.0f), Quaternion.Euler(0f, 36f, 0f), new Vector3(1.3f, 1.1f, 1.3f));
 
+            // Reed beds ringing each pool (deliberate clusters, not a loose scattered line).
             for (var i = 0; i < 12; i++)
             {
-                CreateReedCluster(root.transform, $"SwampReedCluster_World_{i + 1:00}", new Vector3(-6f + i * 1.1f, 0f, -4.2f + (i % 4) * 1.8f), 0.8f + (i % 3) * 0.16f);
+                var poolA = i < 6;
+                var cx = poolA ? -4.5f : -1.5f;
+                var cz = poolA ? -2.6f : 3.8f;
+                var a = (i % 6) * 60f * Mathf.Deg2Rad;
+                var pos = new Vector3(cx + Mathf.Cos(a) * 2.6f, 0f, cz + Mathf.Sin(a) * 1.7f);
+                CreateReedCluster(root.transform, $"SwampReedCluster_World_{i + 1:00}", pos, 0.85f + (i % 3) * 0.14f);
             }
         }
 
