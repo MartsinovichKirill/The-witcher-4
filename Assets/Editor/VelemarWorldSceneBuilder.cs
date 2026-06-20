@@ -51,6 +51,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("VelemarWorldSkyFill");
             RemoveIfExists("VelemarAtmosphereLights");
             RemoveIfExists("VelemarWorldRoot");
+            RemoveAllNamed("VelemarWorldTerrain"); // clear stray white-material orphan planes from old builds
             RemoveIfExists("InteractionCanvas");
             RemoveIfExists("DialogueCanvas");
             RemoveIfExists("QuestCanvas");
@@ -301,10 +302,10 @@ namespace WitcherRightVersion.Editor
             CreateHouse(root.transform, "MartaHouse_World", new Vector3(5.5f, 0f, -1f), Quaternion.Euler(0f, -28f, 0f), 2.6f);
             CreateHouse(root.transform, "Smithy_World", new Vector3(-4.8f, 0f, 4.8f), Quaternion.Euler(0f, -18f, 0f), 2.5f);
             PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-9.2f, 0f, 3.1f), Quaternion.Euler(0f, 58f, 0f), new Vector3(2.75f, 2.75f, 2.75f));
-            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(3.0f, 0f, 3.7f), Quaternion.Euler(0f, -22f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
+            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(3.0f, 0f, 3.7f), Quaternion.Euler(0f, -22f, 0f), new Vector3(1.7f, 1.7f, 1.7f));
             PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, -1.35f), Quaternion.identity, new Vector3(1.15f, 1.15f, 1.15f));
             PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(9.6f, 0f, 4.1f), Quaternion.Euler(0f, -50f, 0f), new Vector3(2.25f, 2.25f, 2.25f));
-            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(-9.1f, 0f, -4.6f), Quaternion.Euler(0f, 28f, 0f), new Vector3(2.2f, 2.2f, 2.2f));
+            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(-9.1f, 0f, -4.6f), Quaternion.Euler(0f, 28f, 0f), new Vector3(1.7f, 1.7f, 1.7f));
             PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(1.8f, 0f, 4.8f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 1.15f);
             PlaceKenney(root.transform, "VillageLantern_World", "lantern.fbx", new Vector3(-0.9f, 0f, 1.8f), Quaternion.identity, Vector3.one);
 
@@ -1233,7 +1234,9 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("CreatureModelShowcase");
             root.transform.SetParent(parent, false);
 
-            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", "TowerOverhaulSkeletonDisplay", root.transform, new Vector3(-7.2f, 0f, 86f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 1.5f);
+            // Skeleton FBX is ~5.1m tall at scale 1; 0.42 => ~2.15m, imposing but
+            // human-scaled against the castle (was 1.5 => a 7.7m giant).
+            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", "TowerOverhaulSkeletonDisplay", root.transform, new Vector3(-7.2f, 0f, 86f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 0.42f);
             if (skeleton != null)
             {
                 ApplyMaterialToChildRenderers(skeleton, CreateMaterial("Assets/Materials/TowerOverhaulSkeletonDisplay.mat", new Color(0.76f, 0.74f, 0.68f, 1f)));
@@ -2941,7 +2944,9 @@ namespace WitcherRightVersion.Editor
                 renderer.enabled = false;
             }
 
-            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", $"{objectName}_Model", guard.transform, new Vector3(0f, -0.96f, 0f), Quaternion.identity, new Vector3(1.5f, 1.5f, 1.5f));
+            // 0.42 => ~2.15m skeleton (was 1.5 => 7.7m, towering over the castle).
+            // Feet sit at the model origin, so the -0.96 ground offset stays valid.
+            var skeleton = InstantiateModel($"{MonsterPath}/Skeleton.fbx", $"{objectName}_Model", guard.transform, new Vector3(0f, -0.96f, 0f), Quaternion.identity, new Vector3(0.42f, 0.42f, 0.42f));
             if (skeleton == null && renderer != null)
             {
                 renderer.enabled = true;
@@ -3730,10 +3735,31 @@ namespace WitcherRightVersion.Editor
             house.transform.localRotation = rotation;
             house.transform.localScale = Vector3.one * scale;
 
-            PlaceKenney(house.transform, $"{name}_WallA", "wall-door.fbx", new Vector3(0f, 0f, -0.8f), Quaternion.identity, Vector3.one);
-            PlaceKenney(house.transform, $"{name}_WallB", "wall.fbx", new Vector3(-1.1f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), Vector3.one);
-            PlaceKenney(house.transform, $"{name}_WallC", "wall.fbx", new Vector3(1.1f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), Vector3.one);
-            PlaceKenney(house.transform, $"{name}_Roof", "roof-high.fbx", new Vector3(0f, 1.2f, 0f), Quaternion.identity, Vector3.one);
+            // The Kenney wall/roof meshes' UVs land on the colormap's white plaster stripe,
+            // so the shared colormap material renders them pure white (they blew out to
+            // solid slabs under the bright sun). Tint these pieces directly to a muted
+            // sandstone plaster + terracotta roof so the NPC houses read as real cottages.
+            var plaster = CreateMaterial("Assets/Materials/HousePlasterWall.mat", new Color(0.57f, 0.51f, 0.41f, 1f));
+            var roofMat = CreateMaterial("Assets/Materials/HouseRoofTile.mat", new Color(0.48f, 0.26f, 0.15f, 1f));
+
+            PlaceTintedKenney(house.transform, $"{name}_WallA", "wall-door.fbx", new Vector3(0f, 0f, -0.8f), Quaternion.identity, plaster);
+            PlaceTintedKenney(house.transform, $"{name}_WallB", "wall.fbx", new Vector3(-1.1f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), plaster);
+            PlaceTintedKenney(house.transform, $"{name}_WallC", "wall.fbx", new Vector3(1.1f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), plaster);
+            PlaceTintedKenney(house.transform, $"{name}_Roof", "roof-high.fbx", new Vector3(0f, 1.2f, 0f), Quaternion.identity, roofMat);
+        }
+
+        // Like PlaceKenney but applies an explicit tint instead of the shared colormap
+        // atlas (used where the model's UVs would otherwise sample a blown-out palette
+        // stripe). Keeps the same building scale multiplier and solid colliders.
+        private static void PlaceTintedKenney(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Material material)
+        {
+            var adjustedScale = (IsKenneyBuildingModel(modelName) ? KenneyBuildingScaleMultiplier : PropScaleMultiplier) * Vector3.one;
+            var instance = InstantiateModel($"{KenneyPath}/{modelName}", objectName, parent, position, rotation, adjustedScale);
+            if (instance != null)
+            {
+                ApplyMaterialToChildRenderers(instance, material);
+                AddSolidColliders(instance);
+            }
         }
 
         private static GameObject CreateCapsule(Transform parent, string name, Vector3 position, Vector3 scale, Color color)
@@ -4236,17 +4262,105 @@ namespace WitcherRightVersion.Editor
             interactable.Configure(displayName, prompt, recipeId);
         }
 
+        // The whole Kenney Fantasy Town Kit shares one UV atlas (colormap.png); every
+        // mesh's UVs index into it. The FBXs import with no material (materialImportMode
+        // leaves Unity's default white), which is why bare Kenney walls/roofs rendered as
+        // white slabs. Apply the shared atlas once so all pieces get their real colours.
+        private const string KenneyColormapPath = "Assets/Art/External/Kenney_FantasyTownKit/Models/FBX format/Textures/colormap.png";
+        private static Material _kenneyColormapMat;
+
+        private static Material KenneyColormapMaterial()
+        {
+            if (_kenneyColormapMat != null)
+            {
+                return _kenneyColormapMat;
+            }
+
+            const string path = "Assets/Materials/KenneyColormap.mat";
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (mat == null)
+            {
+                mat = new Material(Shader.Find("Standard"));
+                AssetDatabase.CreateAsset(mat, path);
+            }
+
+            mat.shader = Shader.Find("Standard");
+            var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(KenneyColormapPath);
+            if (tex != null)
+            {
+                mat.mainTexture = tex;
+            }
+
+            mat.color = Color.white;
+            if (mat.HasProperty("_Glossiness"))
+            {
+                mat.SetFloat("_Glossiness", 0.08f);
+            }
+            if (mat.HasProperty("_Metallic"))
+            {
+                mat.SetFloat("_Metallic", 0f);
+            }
+
+            _kenneyColormapMat = mat;
+            return mat;
+        }
+
         private static void PlaceKenney(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
         {
             var adjustedScale = IsKenneyBuildingModel(modelName) ? scale * KenneyBuildingScaleMultiplier : scale * PropScaleMultiplier;
             var instance = InstantiateModel($"{KenneyPath}/{modelName}", objectName, parent, position, rotation, adjustedScale);
             if (instance != null)
             {
+                ApplyMaterialToChildRenderers(instance, KenneyColormapMaterial());
                 AddSolidColliders(instance);
                 return;
             }
 
             CreateMarker(parent, objectName + "_Fallback", position + Vector3.up * 0.35f, new Vector3(0.8f, 0.7f, 0.8f), new Color(0.28f, 0.22f, 0.14f, 1f));
+        }
+
+        // KayKit Medieval Builder models carry no texture and no vertex colours; each
+        // submesh is a named solid-colour slot (Stone/White/Brown/Beige/...). The FBX's
+        // own "White" slot imports as blown-out pure white, which is why market/barracks
+        // read as broken white slabs. Remap every slot by name to a controlled medieval
+        // palette so all KayKit buildings look intentional and consistent.
+        private static readonly System.Collections.Generic.Dictionary<string, Color> KayKitPalette =
+            new System.Collections.Generic.Dictionary<string, Color>
+            {
+                { "Stone", new Color(0.50f, 0.52f, 0.55f, 1f) },
+                { "StoneDark", new Color(0.30f, 0.31f, 0.35f, 1f) },
+                { "White", new Color(0.64f, 0.59f, 0.49f, 1f) },     // muted sandstone plaster; lighter than stone but won't blow out under the bright sun
+                { "Beige", new Color(0.80f, 0.70f, 0.51f, 1f) },
+                { "Brown", new Color(0.56f, 0.32f, 0.18f, 1f) },     // terracotta roof / wood
+                { "BrownDark", new Color(0.29f, 0.18f, 0.10f, 1f) }, // dark beams
+            };
+
+        private static void ApplyKayKitPalette(GameObject root)
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            foreach (var r in root.GetComponentsInChildren<Renderer>(true))
+            {
+                if (r == null)
+                {
+                    continue;
+                }
+
+                var src = r.sharedMaterials;
+                var dst = new Material[src.Length];
+                for (var i = 0; i < src.Length; i++)
+                {
+                    var nm = src[i] != null ? src[i].name : "Stone";
+                    var key = nm.Split(' ')[0]; // drop any " (Instance)" suffix
+                    var col = KayKitPalette.TryGetValue(key, out var c) ? c : new Color(0.55f, 0.5f, 0.44f, 1f);
+                    dst[i] = CreateMaterial($"Assets/Materials/KayKit_{SanitizeName(key)}.mat", col);
+                }
+
+                r.sharedMaterials = dst;
+            }
         }
 
         private static void PlaceKayKit(Transform parent, string objectName, string modelName, Vector3 position, Quaternion rotation, Vector3 scale)
@@ -4255,6 +4369,7 @@ namespace WitcherRightVersion.Editor
             var instance = InstantiateModel($"{KayKitMedievalPath}/{modelName}", objectName, parent, position, rotation, adjustedScale);
             if (instance != null)
             {
+                ApplyKayKitPalette(instance);
                 AddSolidColliders(instance);
                 return;
             }
@@ -4556,9 +4671,26 @@ namespace WitcherRightVersion.Editor
                 material.SetFloat("_Metallic", 0f);
             }
 
+            // Near-matte: the Standard shader's smoothness slider is "_Glossiness" (the old
+            // code only set "_Smoothness", which Standard ignores, so materials kept the
+            // default 0.5 gloss and open ground mirrored the pale dusk skybox — that was the
+            // washed-out swamp/dragon plain). Force both names low. Low-poly stylised assets
+            // read better fully matte anyway.
+            if (material.HasProperty("_Glossiness"))
+            {
+                material.SetFloat("_Glossiness", 0.03f);
+            }
             if (material.HasProperty("_Smoothness"))
             {
-                material.SetFloat("_Smoothness", 0.18f);
+                material.SetFloat("_Smoothness", 0.03f);
+            }
+            if (material.HasProperty("_GlossyReflections"))
+            {
+                material.SetFloat("_GlossyReflections", 0f);
+            }
+            if (material.HasProperty("_SpecularHighlights"))
+            {
+                material.SetFloat("_SpecularHighlights", 0f);
             }
 
             EditorUtility.SetDirty(material);
@@ -4603,6 +4735,24 @@ namespace WitcherRightVersion.Editor
             var existing = GameObject.Find(name);
             if (existing != null)
             {
+                Object.DestroyImmediate(existing);
+            }
+        }
+
+        // Removes every active GameObject with the given name (not just the first).
+        // Used to clear stray orphans left at the scene root by old builds — e.g. a
+        // duplicate "VelemarWorldTerrain" plane that kept Unity's white Default-Material
+        // and showed through wherever dark ground patches did not cover it.
+        private static void RemoveAllNamed(string name)
+        {
+            for (var guard = 0; guard < 64; guard++)
+            {
+                var existing = GameObject.Find(name);
+                if (existing == null)
+                {
+                    return;
+                }
+
                 Object.DestroyImmediate(existing);
             }
         }
