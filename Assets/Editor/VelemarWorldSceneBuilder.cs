@@ -415,18 +415,26 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
             root.transform.position = new Vector3(72f, 0f, 8f);
 
-            CreateRegionDisc(root.transform, "AshRoadDistrictGround", Vector3.zero, new Vector3(12f, 0.035f, 7f), new Color(0.15f, 0.13f, 0.12f, 1f));
-            CreateMarker(root.transform, "AshRoadBurnedTrack_World", new Vector3(0f, 0.08f, 0f), new Vector3(2.5f, 0.08f, 9.5f), new Color(0.07f, 0.065f, 0.06f, 1f));
+            // Deliberate composition: a burned road runs north-south through the ruined
+            // waypoint; charred fence posts line both sides, a collapsed watchtower (west)
+            // and a ruined gate (north) flank it as landmarks, and a mountain closes the
+            // eastern horizon. Decoration only — the ending gate is a separate object.
+            CreateRegionDisc(root.transform, "AshRoadDistrictGround", Vector3.zero, new Vector3(12f, 0.035f, 8f), new Color(0.15f, 0.13f, 0.12f, 1f));
+            CreateMarker(root.transform, "AshRoadBurnedTrack_World", new Vector3(0f, 0.08f, 0f), new Vector3(2.6f, 0.08f, 11f), new Color(0.07f, 0.065f, 0.06f, 1f));
 
+            // Charred fence posts lining both sides of the road.
             for (var i = 0; i < 8; i++)
             {
-                CreateMarker(root.transform, $"AshRoadBrokenPost_World_{i + 1}", new Vector3(-3.8f + i * 1.1f, 0.65f, 3f + (i % 2) * 1.0f), new Vector3(0.18f, 1.15f, 0.18f), new Color(0.16f, 0.09f, 0.055f, 1f));
+                var side = i % 2 == 0 ? -1f : 1f;
+                var z = -4.5f + (i / 2) * 3.0f;
+                CreateMarker(root.transform, $"AshRoadBrokenPost_World_{i + 1}", new Vector3(side * 2.2f, 0.65f, z), new Vector3(0.18f, 1.15f, 0.18f), new Color(0.16f, 0.09f, 0.055f, 1f));
             }
 
-            PlaceKenney(root.transform, "AshRoadBrokenWall_World", "wall-broken.fbx", new Vector3(3.6f, 0f, -1.8f), Quaternion.Euler(0f, 24f, 0f), Vector3.one);
-            PlaceKayKit(root.transform, "AshRoadKayKitWatchtower_Burned", "watchtower.fbx", new Vector3(-5.4f, 0f, -1.4f), Quaternion.Euler(0f, 34f, 0f), Vector3.one * 0.95f);
-            PlaceKayKit(root.transform, "AshRoadKayKitGateRuins", "wall_gate_closed.fbx", new Vector3(3.1f, 0f, 2.6f), Quaternion.Euler(0f, -35f, 0f), Vector3.one);
-            PlaceKayKit(root.transform, "AshRoadKayKitMountain_Backdrop", "mountain.fbx", new Vector3(7.8f, 0f, 0.4f), Quaternion.Euler(0f, 74f, 0f), new Vector3(1.6f, 1.0f, 1.6f));
+            // Ruined landmarks flanking the road + a mountain backdrop to the east.
+            PlaceKayKit(root.transform, "AshRoadKayKitWatchtower_Burned", "watchtower.fbx", new Vector3(-5.2f, 0f, 2.0f), Quaternion.Euler(0f, 40f, 0f), Vector3.one * 0.95f);
+            PlaceKayKit(root.transform, "AshRoadKayKitGateRuins", "wall_gate_closed.fbx", new Vector3(0f, 0f, 5.8f), Quaternion.identity, Vector3.one * 1.1f);
+            PlaceKenney(root.transform, "AshRoadBrokenWall_World", "wall-broken.fbx", new Vector3(4.6f, 0f, -1.5f), Quaternion.Euler(0f, -24f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "AshRoadKayKitMountain_Backdrop", "mountain.fbx", new Vector3(8.5f, 0f, 1.0f), Quaternion.Euler(0f, 74f, 0f), new Vector3(1.6f, 1.0f, 1.6f));
         }
 
         private static void CreateTowerVistaDistrict(Transform parent)
