@@ -1743,7 +1743,7 @@ namespace WitcherRightVersion.Editor
 
             for (var i = 0; i < 8; i++)
             {
-                CreateNonBlockingMarker(root.transform, $"TowerPolishFloatingMirrorShard_{i + 1:00}", new Vector3(-4.5f + i * 1.3f, 1.05f + (i % 3) * 0.35f, 77.8f + Mathf.Sin(i) * 1.8f), new Vector3(0.12f, 0.9f + (i % 2) * 0.3f, 0.08f), new Color(0.52f, 0.36f, 0.95f, 1f));
+                CreateNonBlockingMarker(root.transform, $"TowerPolishFloatingMirrorShard_{i + 1:00}", new Vector3(-4.5f + i * 1.3f, 1.05f + (i % 3) * 0.35f, 77.8f + Mathf.Sin(i) * 1.8f), new Vector3(0.12f, 0.9f + (i % 2) * 0.3f, 0.08f), new Color(0.36f, 0.27f, 0.5f, 1f));
             }
 
             PlaceKayKit(root.transform, "TowerPolishFarCastleSilhouette", "castle.fbx", new Vector3(0f, 0f, 151f), Quaternion.Euler(0f, 180f, 0f), Vector3.one * 1.4f);
@@ -1832,7 +1832,7 @@ namespace WitcherRightVersion.Editor
             CreateNonBlockingMarker(root.transform, "ElsaPresentationRuneGlowB", new Vector3(17.52f, 0.22f, -72.18f), new Vector3(0.18f, 0.06f, 0.18f), new Color(0.08f, 0.72f, 0.48f, 1f));
 
             CreateSurfacePatch(root.transform, "GhostPresentationMemoryPool", new Vector3(-2.7f, 0.166f, 75.0f), new Vector3(3.6f, 0.012f, 3.0f), new Color(0.075f, 0.07f, 0.13f, 1f));
-            CreateNonBlockingMarker(root.transform, "GhostPresentationColdAura", new Vector3(-2.7f, 0.55f, 75.0f), new Vector3(1.7f, 0.42f, 1.7f), new Color(0.22f, 0.34f, 0.78f, 0.9f));
+            CreateNonBlockingMarker(root.transform, "GhostPresentationColdAura", new Vector3(-2.7f, 0.55f, 75.0f), new Vector3(1.7f, 0.42f, 1.7f), new Color(0.2f, 0.27f, 0.42f, 0.9f));
             PlaceKenney(root.transform, "GhostPresentationFallenStone", "wall-arch-top.fbx", new Vector3(-4.2f, 0f, 76.4f), Quaternion.Euler(0f, 32f, 0f), Vector3.one * 0.62f);
         }
 
@@ -1855,7 +1855,7 @@ namespace WitcherRightVersion.Editor
             CreateSurfacePatch(root.transform, "OrtenPresentationMirrorStage", new Vector3(0f, 0.166f, 78.2f), new Vector3(4.2f, 0.012f, 3.2f), new Color(0.13f, 0.085f, 0.22f, 1f));
             PlaceKenney(root.transform, "OrtenPresentationLeftShardFrame", "wall-arch.fbx", new Vector3(-2.4f, 0f, 79.0f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.7f);
             PlaceKenney(root.transform, "OrtenPresentationRightShardFrame", "wall-arch.fbx", new Vector3(2.4f, 0f, 79.0f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 0.7f);
-            CreateNonBlockingMarker(root.transform, "OrtenPresentationMirrorColumn", new Vector3(0f, 1.2f, 79.45f), new Vector3(0.18f, 1.8f, 0.08f), new Color(0.55f, 0.34f, 1f, 1f));
+            CreateNonBlockingMarker(root.transform, "OrtenPresentationMirrorColumn", new Vector3(0f, 1.2f, 79.45f), new Vector3(0.18f, 1.8f, 0.08f), new Color(0.4f, 0.28f, 0.55f, 1f));
             CreatePointLight(root.transform, "OrtenPresentationFaceLight", new Vector3(0f, 2.1f, 77.3f), new Color(0.52f, 0.32f, 0.92f, 1f), 0.45f, 6.0f);
         }
 
@@ -2026,7 +2026,7 @@ namespace WitcherRightVersion.Editor
                     PrimitiveType.Cube,
                     new Vector3(Mathf.Cos(angle) * radius, 1.0f + (i % 4) * 0.48f, 78.2f + Mathf.Sin(angle) * radius),
                     new Vector3(0.08f, 0.45f + (i % 2) * 0.22f, 0.035f),
-                    new Color(0.62f, 0.38f, 1f, 1f),
+                    new Color(0.42f, 0.3f, 0.56f, 1f),
                     new Vector3(0.2f, 0.22f, 0.2f),
                     new Vector3(32f + i * 3f, 46f + i * 4f, 18f),
                     0.65f + (i % 3) * 0.12f,
