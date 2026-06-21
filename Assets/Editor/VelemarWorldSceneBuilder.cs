@@ -1927,33 +1927,8 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("VillageDynamicVfx");
             root.transform.SetParent(parent, false);
 
-            // Aligned to the rebuilt house rows (x = +/-8.5) so smoke rises from real
-            // rooftops, not mid-air beside them.
-            var chimneyPositions = new[]
-            {
-                new Vector3(-8.5f, 4.6f, 5.5f),
-                new Vector3(8.5f, 4.6f, 0f),
-                new Vector3(-8.5f, 4.6f, 11f)
-            };
-
-            for (var chimney = 0; chimney < chimneyPositions.Length; chimney++)
-            {
-                for (var puff = 0; puff < 3; puff++)
-                {
-                    CreateAnimatedVfxMarker(
-                        root.transform,
-                        $"VillageDynamicChimneySmoke_{chimney + 1:00}_{puff + 1:00}",
-                        PrimitiveType.Sphere,
-                        chimneyPositions[chimney] + new Vector3(puff * 0.18f, puff * 0.62f, puff * 0.12f),
-                        Vector3.one * (0.34f + puff * 0.13f),
-                        new Color(0.18f, 0.18f, 0.17f, 1f),
-                        new Vector3(0.12f, 0.28f, 0.12f),
-                        new Vector3(0f, 8f, 0f),
-                        0.42f + puff * 0.08f,
-                        0.08f,
-                        false);
-                }
-            }
+            // Chimney smoke removed: as opaque dark spheres it read as floating balls over
+            // the rooftops, not smoke, and hurt the village look. The forge sparks below stay.
 
             for (var i = 0; i < 6; i++)
             {
@@ -2540,7 +2515,10 @@ namespace WitcherRightVersion.Editor
         private static void CreateElderDialogue(Transform parent)
         {
             var elder = CreateRpgCharacterAnchor(parent, "ElderVoytsekh_World", "Monk.fbx", new Vector3(-4.1f, 1f, -3.4f), Quaternion.Euler(0f, 145f, 0f), new Vector3(0.88f, 0.88f, 0.88f), new Color(0.22f, 0.18f, 0.13f, 1f));
-            AddNpcEquipment(elder, "ElderVoytsekhSealStaff", "Cleric_Staff.fbx", new Vector3(0.36f, -0.45f, 0.18f), Quaternion.Euler(12f, -18f, 8f), Vector3.one * 0.5f);
+            // Elder's staff removed: the Monk rig's hand bone scaled it into a giant ~4m
+            // staff jutting into the air over the village (visible at spawn). The elder reads
+            // fine without a held prop.
+            // AddNpcEquipment(elder, "ElderVoytsekhSealStaff", "Cleric_Staff.fbx", new Vector3(0.36f, -0.45f, 0.18f), Quaternion.Euler(12f, -18f, 8f), Vector3.one * 0.5f);
             CreateCharacterGroundRing(elder, "ElderRoleRing", new Color(0.62f, 0.42f, 0.12f, 1f), 0.82f);
             var dialogue = elder.AddComponent<DialogueInteractable>();
             dialogue.Configure(
