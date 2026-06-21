@@ -435,15 +435,28 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
             root.transform.position = new Vector3(0f, 0f, 74f);
 
-            CreateRegionDisc(root.transform, "TowerVistaGround", Vector3.zero, new Vector3(9f, 0.035f, 7f), new Color(0.12f, 0.12f, 0.13f, 1f));
-            PlaceKayKit(root.transform, "TowerKayKitCastleCore_World", "castle.fbx", new Vector3(0f, 0f, 1.2f), Quaternion.Euler(0f, 180f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
-            PlaceKayKit(root.transform, "TowerKayKitWatchtowerLeft_World", "watchtower.fbx", new Vector3(-5.2f, 0f, 1.3f), Quaternion.Euler(0f, -30f, 0f), Vector3.one);
-            PlaceKayKit(root.transform, "TowerKayKitWatchtowerRight_World", "watchtower.fbx", new Vector3(5.2f, 0f, 1.3f), Quaternion.Euler(0f, 30f, 0f), Vector3.one);
-            PlaceKenney(root.transform, "TowerVistaStairs_World", "stairs-stone.fbx", new Vector3(0f, 0f, -2.5f), Quaternion.identity, new Vector3(1.3f, 1.3f, 1.3f));
-            PlaceKenney(root.transform, "TowerVistaPillarLeft_World", "pillar-stone.fbx", new Vector3(-2.8f, 0f, 0.3f), Quaternion.identity, new Vector3(1.4f, 1.4f, 1.4f));
-            PlaceKenney(root.transform, "TowerVistaPillarRight_World", "pillar-stone.fbx", new Vector3(2.8f, 0f, 0.3f), Quaternion.identity, new Vector3(1.4f, 1.4f, 1.4f));
-            PlaceKenney(root.transform, "TowerVistaBrokenWall_World", "wall-broken.fbx", new Vector3(0f, 0f, 1.8f), Quaternion.Euler(0f, 90f, 0f), new Vector3(1.4f, 1.4f, 1.4f));
-            CreateMarker(root.transform, "TowerMirrorGlow_World", new Vector3(0f, 1.4f, 2.6f), new Vector3(0.28f, 2.1f, 0.9f), new Color(0.34f, 0.24f, 0.48f, 1f));
+            // Deliberate ritual-finale courtyard: the player climbs a processional stair
+            // from the south into an open courtyard framed by broken pillars; the Mirror of
+            // Truth glows at the centre where Orten stands (world (0,78.2) = local (0,4.2));
+            // the ruined keep rises behind as a backdrop, flanked by two watchtowers. The
+            // skeleton guards (local +/-4.5,1.5) hold the approach. Decoration only.
+            CreateRegionDisc(root.transform, "TowerVistaGround", new Vector3(0f, 0.035f, 2f), new Vector3(11f, 0.035f, 10f), new Color(0.12f, 0.12f, 0.13f, 1f));
+
+            // Castle keep backdrop (north) with flanking watchtowers, facing the approach.
+            PlaceKayKit(root.transform, "TowerKayKitCastleCore_World", "castle.fbx", new Vector3(0f, 0f, 6.0f), Quaternion.Euler(0f, 180f, 0f), new Vector3(1.35f, 1.35f, 1.35f));
+            PlaceKayKit(root.transform, "TowerKayKitWatchtowerLeft_World", "watchtower.fbx", new Vector3(-6.0f, 0f, 5.8f), Quaternion.Euler(0f, -25f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "TowerKayKitWatchtowerRight_World", "watchtower.fbx", new Vector3(6.0f, 0f, 5.8f), Quaternion.Euler(0f, 25f, 0f), Vector3.one);
+
+            // Processional stair up from the south into the courtyard.
+            PlaceKenney(root.transform, "TowerVistaStairs_World", "stairs-stone.fbx", new Vector3(0f, 0f, -3.5f), Quaternion.identity, new Vector3(1.3f, 1.3f, 1.3f));
+
+            // Broken pillars framing the courtyard sides + a ruined wall to the flank.
+            PlaceKenney(root.transform, "TowerVistaPillarLeft_World", "pillar-stone.fbx", new Vector3(-3.6f, 0f, 1.0f), Quaternion.identity, new Vector3(1.4f, 1.4f, 1.4f));
+            PlaceKenney(root.transform, "TowerVistaPillarRight_World", "pillar-stone.fbx", new Vector3(3.6f, 0f, 1.0f), Quaternion.identity, new Vector3(1.4f, 1.4f, 1.4f));
+            PlaceKenney(root.transform, "TowerVistaBrokenWall_World", "wall-broken.fbx", new Vector3(-4.6f, 0f, 3.8f), Quaternion.Euler(0f, 90f, 0f), new Vector3(1.4f, 1.4f, 1.4f));
+
+            // The Mirror of Truth glows at the courtyard centre, just before Orten's spot.
+            CreateMarker(root.transform, "TowerMirrorGlow_World", new Vector3(0f, 1.4f, 3.4f), new Vector3(0.28f, 2.1f, 0.9f), new Color(0.34f, 0.24f, 0.48f, 1f));
         }
 
         private static void CreateInternetAssetMapExtensions(Transform parent)
