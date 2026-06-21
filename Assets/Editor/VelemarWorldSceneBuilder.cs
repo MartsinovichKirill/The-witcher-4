@@ -1918,11 +1918,13 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("VillageDynamicVfx");
             root.transform.SetParent(parent, false);
 
+            // Aligned to the rebuilt house rows (x = +/-8.5) so smoke rises from real
+            // rooftops, not mid-air beside them.
             var chimneyPositions = new[]
             {
-                new Vector3(-12.2f, 4.4f, 7.8f),
-                new Vector3(11.8f, 4.2f, 7.1f),
-                new Vector3(-10.8f, 4.0f, -11.4f)
+                new Vector3(-8.5f, 4.6f, 5.5f),
+                new Vector3(8.5f, 4.6f, 0f),
+                new Vector3(-8.5f, 4.6f, 11f)
             };
 
             for (var chimney = 0; chimney < chimneyPositions.Length; chimney++)
