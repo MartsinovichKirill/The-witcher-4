@@ -503,39 +503,39 @@ namespace WitcherRightVersion.Editor
             CreateSurfacePatch(root.transform, "VillageNorthResidentialLane", new Vector3(0f, 0.108f, 9.7f), new Vector3(25f, 0.014f, 4.2f), new Color(0.142f, 0.112f, 0.07f, 1f));
             CreateSurfacePatch(root.transform, "VillageSouthGateLane", new Vector3(0f, 0.11f, -14.5f), new Vector3(24f, 0.014f, 4.5f), new Color(0.12f, 0.09f, 0.055f, 1f));
 
+            // Outer village ring: these houses/shops sit at the FAR edges so they frame the
+            // clean core (built in CreateVillageDistrict, roughly x:+/-9, z:-5..15) instead of
+            // piling on top of it. (Was 7 crowding houses + a market in the very centre + a
+            // dense 16-fence/10-lantern scatter.)
             var housePositions = new[]
             {
-                new Vector3(-15.5f, 0f, 7.8f),
-                new Vector3(-10.0f, 0f, 11.4f),
-                new Vector3(-3.8f, 0f, 10.8f),
-                new Vector3(5.0f, 0f, 10.9f),
-                new Vector3(12.0f, 0f, 7.8f),
-                new Vector3(-14.4f, 0f, -15.0f),
-                new Vector3(14.0f, 0f, -15.4f),
+                new Vector3(-17.5f, 0f, 10.0f),
+                new Vector3(17.5f, 0f, 10.0f),
+                new Vector3(-17.0f, 0f, -16.0f),
+                new Vector3(17.0f, 0f, -16.0f),
             };
 
             for (var i = 0; i < housePositions.Length; i++)
             {
-                var rotation = Quaternion.Euler(0f, i < 5 ? 170f + (i % 3) * 12f : (i % 2 == 0 ? 28f : -34f), 0f);
-                PlaceKayKit(root.transform, $"StructuredVillageHouse_{i + 1:00}", "house.fbx", housePositions[i], rotation, Vector3.one * (1.08f + (i % 2) * 0.08f));
+                var rotation = Quaternion.Euler(0f, i % 2 == 0 ? 120f : -120f, 0f);
+                PlaceKayKit(root.transform, $"StructuredVillageHouse_{i + 1:00}", "house.fbx", housePositions[i], rotation, Vector3.one * 1.7f);
                 CreateMarker(root.transform, $"StructuredVillageHouseShadow_{i + 1:00}", housePositions[i] + new Vector3(0f, 0.065f, 0.2f), new Vector3(3.4f, 0.035f, 2.4f), new Color(0.055f, 0.045f, 0.035f, 1f));
             }
 
-            PlaceKayKit(root.transform, "StructuredVillageBlacksmithShop", "barracks.fbx", new Vector3(-13.0f, 0f, 1.2f), Quaternion.Euler(0f, 72f, 0f), Vector3.one * 1.05f);
-            PlaceKayKit(root.transform, "StructuredVillageStableBarn", "lumbermill.fbx", new Vector3(14.6f, 0f, 1.2f), Quaternion.Euler(0f, -74f, 0f), Vector3.one * 0.94f);
-            PlaceKayKit(root.transform, "StructuredVillageMarketCenter", "market.fbx", new Vector3(0.8f, 0f, 5.7f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.95f);
+            PlaceKayKit(root.transform, "StructuredVillageBlacksmithShop", "barracks.fbx", new Vector3(-17.0f, 0f, 1.5f), Quaternion.Euler(0f, 72f, 0f), Vector3.one * 1.25f);
+            PlaceKayKit(root.transform, "StructuredVillageStableBarn", "lumbermill.fbx", new Vector3(17.5f, 0f, 1.5f), Quaternion.Euler(0f, -74f, 0f), Vector3.one * 1.15f);
+            PlaceKayKit(root.transform, "StructuredVillageMarketCenter", "market.fbx", new Vector3(-17.5f, 0f, -6.5f), Quaternion.Euler(0f, 35f, 0f), Vector3.one * 1.15f);
 
-            for (var i = 0; i < 16; i++)
+            // A sparse perimeter fence line + a couple of lanterns far to the south, well
+            // clear of the core (was a dense 16+10 scatter through the middle).
+            for (var i = 0; i < 5; i++)
             {
-                var x = -19.5f + i * 2.6f;
-                var z = i % 2 == 0 ? -18.1f : 13.6f;
-                var rot = i % 2 == 0 ? 90f : 88f;
-                PlaceKenney(root.transform, $"StructuredVillagePerimeterFence_{i + 1:00}", i % 5 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(x, 0f, z), Quaternion.Euler(0f, rot, 0f), Vector3.one * 1.02f);
+                PlaceKenney(root.transform, $"StructuredVillagePerimeterFence_{i + 1:00}", i % 5 == 0 ? "fence-broken.fbx" : "fence.fbx", new Vector3(-18f + i * 9f, 0f, -19.5f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.15f);
             }
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 3; i++)
             {
-                PlaceKenney(root.transform, $"StructuredVillageStreetLantern_{i + 1:00}", "lantern.fbx", new Vector3(-10f + i * 2.2f, 0f, -7.8f + (i % 2) * 11.8f), Quaternion.Euler(0f, i * 18f, 0f), Vector3.one * 0.92f);
+                PlaceKenney(root.transform, $"StructuredVillageStreetLantern_{i + 1:00}", "lantern.fbx", new Vector3(-14f + i * 14f, 0f, -17f), Quaternion.Euler(0f, i * 30f, 0f), Vector3.one * 1.0f);
             }
         }
 
