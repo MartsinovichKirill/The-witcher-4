@@ -464,6 +464,15 @@ namespace WitcherRightVersion.Editor
             PlaceKayKit(root.transform, "AshRoadKayKitGateRuins", "wall_gate_closed.fbx", new Vector3(0f, 0f, 5.8f), Quaternion.identity, Vector3.one * 1.1f);
             PlaceKenney(root.transform, "AshRoadBrokenWall_World", "wall-broken.fbx", new Vector3(4.6f, 0f, -1.5f), Quaternion.Euler(0f, -24f, 0f), Vector3.one);
             PlaceKayKit(root.transform, "AshRoadKayKitMountain_Backdrop", "mountain.fbx", new Vector3(8.5f, 0f, 1.0f), Quaternion.Euler(0f, 74f, 0f), new Vector3(1.6f, 1.0f, 1.6f));
+
+            // War debris filling the burned waypoint: overturned carts, a fallen wall chunk,
+            // rubble and ash piles, placed deliberately in the gaps along the road.
+            PlaceKenney(root.transform, "AshRoadBurntCart_A", "cart.fbx", new Vector3(2.4f, 0f, -3.4f), Quaternion.Euler(6f, 40f, 12f), Vector3.one);
+            PlaceKenney(root.transform, "AshRoadBurntCart_B", "cart-high.fbx", new Vector3(-3.0f, 0f, 3.6f), Quaternion.Euler(0f, -62f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "AshRoadRubbleWall_A", "wall-broken.fbx", new Vector3(-4.4f, 0f, -3.8f), Quaternion.Euler(0f, 18f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "AshRoadRubble_A", "detail_rocks.fbx", new Vector3(3.6f, 0f, 1.4f), Quaternion.Euler(0f, -30f, 0f), Vector3.one);
+            CreateMarker(root.transform, "AshRoadAshPile_A", new Vector3(0.6f, 0.1f, -2.0f), new Vector3(1.6f, 0.1f, 1.2f), new Color(0.09f, 0.08f, 0.075f, 1f));
+            CreateMarker(root.transform, "AshRoadAshPile_B", new Vector3(-1.2f, 0.1f, 2.4f), new Vector3(1.3f, 0.1f, 1.4f), new Color(0.085f, 0.075f, 0.07f, 1f));
         }
 
         private static void CreateTowerVistaDistrict(Transform parent)
