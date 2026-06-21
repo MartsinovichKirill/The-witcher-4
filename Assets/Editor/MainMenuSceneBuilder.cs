@@ -24,8 +24,12 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("MainMenuEventSystem");
             RemoveIfExists("MainMenuController");
             RemoveIfExists("MainMenuDiorama");
+            RemoveIfExists("MenuAudio");
 
             EnsureCamera();
+            // Menu music + UI sounds via the same procedural audio service as the game.
+            // RequireComponent adds the AudioSource; the game scene has its own instance.
+            new GameObject("MenuAudio").AddComponent<WitcherRightVersion.Core.AudioFeedbackService>();
             var backgroundSprite = EnsureMenuBackgroundSprite();
             var font = GetDefaultFont();
             var controllerHost = new GameObject("MainMenuController");

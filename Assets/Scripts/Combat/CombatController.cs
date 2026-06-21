@@ -227,6 +227,10 @@ namespace WitcherRightVersion.Combat
 
         private void Attack(float damage, float range, float radius, string missMessage)
         {
+            // Sword swoosh on every swing (the impact sound plays separately when a target
+            // is actually hit, via Health).
+            WitcherRightVersion.Core.AudioFeedbackService.Instance?.PlaySwing();
+
             var bestTarget = FindBestTarget(range, radius);
 
             if (bestTarget == null)

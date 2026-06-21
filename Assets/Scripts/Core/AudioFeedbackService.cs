@@ -13,6 +13,7 @@ namespace WitcherRightVersion.Core
         private AudioClip questClip;
         private AudioClip hitClip;
         private AudioClip deathClip;
+        private AudioClip swingClip;
         private bool lastMusicEnabled;
 
         public static AudioFeedbackService Instance { get; private set; }
@@ -34,6 +35,7 @@ namespace WitcherRightVersion.Core
             questClip = CreateChime("quest_update");
             hitClip = CreateImpact("hit", 0.7f);
             deathClip = CreateImpact("death", 1.0f);
+            swingClip = CreateSwing("swing");
 
             musicSource = gameObject.AddComponent<AudioSource>();
             musicSource.playOnAwake = false;
@@ -62,6 +64,11 @@ namespace WitcherRightVersion.Core
         public void PlayHit()
         {
             Play(hitClip);
+        }
+
+        public void PlaySwing()
+        {
+            Play(swingClip);
         }
 
         public void PlayDeath()
@@ -202,6 +209,30 @@ namespace WitcherRightVersion.Core
                 var localT = t - idx * 0.13f;
                 var env = Mathf.Exp(-localT * 9f);
                 samples[i] = Mathf.Sin(2f * Mathf.PI * notes[idx] * t) * env * 0.5f;
+            }
+
+            var clip = AudioClip.Create(clipName, n, 1, sampleRate, false);
+            clip.SetData(samples, 0);
+            return clip;
+        }
+
+        // Sword swoosh: filtered noise that swells then fades, with the low-pass opening
+        // up over time so it reads as a fast "whoosh" of a swung blade.
+        private static AudioClip CreateSwing(string clipName)
+        {
+            const int sampleRate = 44100;
+            var n = Mathf.RoundToInt(sampleRate * 0.16f);
+            var samples = new float[n];
+            var rng = new System.Random(clipName.GetHashCode());
+            var filtered = 0f;
+            for (var i = 0; i < n; i++)
+            {
+                var norm = i / (float)n;
+                var env = Mathf.Sin(norm * Mathf.PI);
+                var noise = (float)(rng.NextDouble() * 2.0 - 1.0);
+                var cutoff = Mathf.Lerp(0.04f, 0.5f, norm);
+                filtered = Mathf.Lerp(filtered, noise, cutoff);
+                samples[i] = filtered * env * 0.55f;
             }
 
             var clip = AudioClip.Create(clipName, n, 1, sampleRate, false);
