@@ -303,15 +303,15 @@ namespace WitcherRightVersion.Editor
             // gameplay anchor (NPCs/quests/crates) lives in separate functions, and the
             // NPC world coords are: Elder(-4.1,-3.4) Marta(4.2,-3.6) Boris(-4.2,-0.4)
             // Radek(3.1,-0.7); the root sits at z=-3 so local = world+3 on Z.
-            CreateRegionDisc(root.transform, "VillageDistrictGround", new Vector3(0f, 0.01f, 2f), new Vector3(15f, 0.02f, 14f), new Color(0.1f, 0.16f, 0.09f, 1f));
+            CreateRegionDisc(root.transform, "VillageDistrictGround", new Vector3(0f, 0.01f, 4f), new Vector3(24f, 0.02f, 20f), new Color(0.1f, 0.16f, 0.09f, 1f));
 
-            // South wall + gate the player walks through (spawn is just south at z=-10.5).
-            PlaceKayKit(root.transform, "VillageGate_World", "wall_gate.fbx", new Vector3(0f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.7f);
-            for (var i = 0; i < 4; i++)
-            {
-                PlaceKayKit(root.transform, $"VillageWallSegment_World_{i + 1}", "wall_straight.fbx", new Vector3(-3.0f - i * 2.1f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.5f);
-                PlaceKayKit(root.transform, $"VillageWallSegmentEast_World_{i + 1}", "wall_straight.fbx", new Vector3(3.0f + i * 2.1f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.5f);
-            }
+            // South gate the player walks through (spawn is just south at z=-10.5), with a
+            // short connected stretch of wall on each side so it reads as a real entrance
+            // (was a long row of separate segments that looked broken). Buildings below are
+            // scaled up so they tower over the ~1.7m characters instead of matching them.
+            PlaceKayKit(root.transform, "VillageGate_World", "wall_gate.fbx", new Vector3(0f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 2.1f);
+            PlaceKayKit(root.transform, "VillageWallSegment_World_1", "wall_straight.fbx", new Vector3(-3.7f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 2.1f);
+            PlaceKayKit(root.transform, "VillageWallSegment_World_2", "wall_straight.fbx", new Vector3(3.7f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 2.1f);
 
             // Central well square.
             PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, 1.2f), Quaternion.identity, new Vector3(1.15f, 1.15f, 1.15f));
@@ -319,18 +319,18 @@ namespace WitcherRightVersion.Editor
             PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(-1.9f, 0f, 2.4f), Quaternion.Euler(0f, 40f, 0f), Vector3.one * 1.1f);
 
             // West row, faces east toward the path: Elder's house, the Smithy, a cottage.
-            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-6.4f, 0f, -0.6f), Quaternion.Euler(0f, 90f, 0f), 2.2f);
-            CreateHouse(root.transform, "Smithy_World", new Vector3(-6.8f, 0f, 3.8f), Quaternion.Euler(0f, 90f, 0f), 2.2f);
-            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-7.2f, 0f, 8.4f), Quaternion.Euler(0f, 95f, 0f), new Vector3(1.6f, 1.6f, 1.6f));
+            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-7.8f, 0f, -0.4f), Quaternion.Euler(0f, 90f, 0f), 3.1f);
+            CreateHouse(root.transform, "Smithy_World", new Vector3(-8.2f, 0f, 4.6f), Quaternion.Euler(0f, 90f, 0f), 3.1f);
+            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-9.0f, 0f, 10.4f), Quaternion.Euler(0f, 95f, 0f), new Vector3(2.5f, 2.5f, 2.5f));
 
             // East row, faces west toward the path: Marta's house, the market, a cottage.
-            CreateHouse(root.transform, "MartaHouse_World", new Vector3(6.4f, 0f, -0.8f), Quaternion.Euler(0f, -90f, 0f), 2.2f);
-            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(6.6f, 0f, 3.8f), Quaternion.Euler(0f, -90f, 0f), new Vector3(1.5f, 1.5f, 1.5f));
-            PlaceKayKit(root.transform, "VillageKayKitHouseEast_B", "house.fbx", new Vector3(7.2f, 0f, 8.6f), Quaternion.Euler(0f, -95f, 0f), new Vector3(1.6f, 1.6f, 1.6f));
+            CreateHouse(root.transform, "MartaHouse_World", new Vector3(7.8f, 0f, -0.6f), Quaternion.Euler(0f, -90f, 0f), 3.1f);
+            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(8.2f, 0f, 4.8f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
+            PlaceKayKit(root.transform, "VillageKayKitHouseEast_B", "house.fbx", new Vector3(9.0f, 0f, 10.6f), Quaternion.Euler(0f, -95f, 0f), new Vector3(2.5f, 2.5f, 2.5f));
 
             // North end frames the square behind the well.
-            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(-3.4f, 0f, 12.0f), Quaternion.Euler(0f, 150f, 0f), new Vector3(1.8f, 1.8f, 1.8f));
-            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(3.6f, 0f, 12.2f), Quaternion.Euler(0f, 205f, 0f), new Vector3(1.5f, 1.5f, 1.5f));
+            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(-4.4f, 0f, 14.5f), Quaternion.Euler(0f, 150f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
+            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(4.6f, 0f, 14.8f), Quaternion.Euler(0f, 205f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
 
             // Low front-yard fences lining each side of the path (set back from it).
             for (var i = 0; i < 3; i++)
@@ -339,11 +339,11 @@ namespace WitcherRightVersion.Editor
                 PlaceKenney(root.transform, $"VillageFenceEast_World_{i + 1}", "fence.fbx", new Vector3(4.0f, 0f, 0.6f + i * 2.5f), Quaternion.identity, Vector3.one * 1.1f);
             }
 
-            // Trees and rocks at the village edges, clear of the path and buildings.
-            PlaceKenney(root.transform, "VillageEdgeTreeNW_World", "tree-high.fbx", new Vector3(-9.8f, 0f, 10.5f), Quaternion.Euler(0f, 20f, 0f), Vector3.one * 1.15f);
-            PlaceKenney(root.transform, "VillageEdgeTreeNE_World", "tree.fbx", new Vector3(9.8f, 0f, 10.0f), Quaternion.Euler(0f, -35f, 0f), Vector3.one * 1.1f);
-            PlaceKenney(root.transform, "VillageEdgeTreeW_World", "tree-crooked.fbx", new Vector3(-10.0f, 0f, 4.5f), Quaternion.Euler(0f, 60f, 0f), Vector3.one);
-            PlaceKayKit(root.transform, "VillageEdgeRocksE_World", "detail_rocks.fbx", new Vector3(9.9f, 0f, 4.0f), Quaternion.Euler(0f, -20f, 0f), Vector3.one);
+            // Trees and rocks at the village edges, clear of the path and the larger buildings.
+            PlaceKenney(root.transform, "VillageEdgeTreeNW_World", "tree-high.fbx", new Vector3(-13.0f, 0f, 13.5f), Quaternion.Euler(0f, 20f, 0f), Vector3.one * 1.3f);
+            PlaceKenney(root.transform, "VillageEdgeTreeNE_World", "tree.fbx", new Vector3(13.2f, 0f, 13.0f), Quaternion.Euler(0f, -35f, 0f), Vector3.one * 1.25f);
+            PlaceKenney(root.transform, "VillageEdgeTreeW_World", "tree-crooked.fbx", new Vector3(-13.4f, 0f, 5.0f), Quaternion.Euler(0f, 60f, 0f), Vector3.one * 1.15f);
+            PlaceKayKit(root.transform, "VillageEdgeRocksE_World", "detail_rocks.fbx", new Vector3(13.3f, 0f, 5.0f), Quaternion.Euler(0f, -20f, 0f), Vector3.one * 1.2f);
         }
 
         private static void CreateForestDistrict(Transform parent)
@@ -814,8 +814,11 @@ namespace WitcherRightVersion.Editor
             var dragon = InstantiateModel($"{MonsterPath}/Dragon.fbx", "DeepSwampBossSilhouette_InternetAsset", root.transform, new Vector3(26.5f, 0.1f, -132f), Quaternion.Euler(0f, -128f, 0f), new Vector3(1.25f, 1.25f, 1.25f));
             if (dragon != null)
             {
-                ApplyMaterialToChildRenderers(dragon, CreateMaterial("Assets/Materials/DeepSwampBossSilhouette.mat", new Color(0.05f, 0.14f, 0.095f, 1f)));
-                AttachAnimator(dragon, CharacterAnimationSetup.DragonController, $"{MonsterPath}/Dragon.fbx");
+                ApplyMaterialToChildRenderers(dragon, CreateMaterial("Assets/Materials/DeepSwampBossSilhouette.mat", new Color(0.07f, 0.18f, 0.12f, 1f)));
+                MakeDisplayMonsterFightable(dragon, $"{MonsterPath}/Dragon.fbx", CharacterAnimationSetup.DragonController,
+                    "Болотный ящер", 180f, EnemyKind.Monster, "DeepSwampBoss_Defeated",
+                    new[] { "Drowner Slime", "Iron Ore" }, 35, 90, "Добыча: слизь утопца, железная руда, 35 монет, 90 опыта.",
+                    new Vector3(0f, 1.6f, 0f), 3.2f, 1.5f, 16f, 18f);
             }
         }
 
@@ -1235,11 +1238,14 @@ namespace WitcherRightVersion.Editor
                 PlaceKenney(root.transform, $"SwampOverhaulBrokenBoardwalk_{i + 1:00}", i % 3 == 0 ? "planks-opening.fbx" : "planks-half.fbx", new Vector3(-2f + i * 2.1f, 0.055f, -84f - Mathf.Sin(i * 0.6f) * 3.2f), Quaternion.Euler(0f, 76f + i * 5f, 0f), Vector3.one * 0.82f);
             }
 
-            var bat = InstantiateModel($"{MonsterPath}/Bat.fbx", "SwampOverhaulBatSwarmMarker", root.transform, new Vector3(21f, 2.4f, -88f), Quaternion.Euler(0f, -120f, 0f), Vector3.one * 0.85f);
+            var bat = InstantiateModel($"{MonsterPath}/Bat.fbx", "SwampOverhaulBatSwarmMarker", root.transform, new Vector3(21f, 1.3f, -88f), Quaternion.Euler(0f, -120f, 0f), Vector3.one * 0.85f);
             if (bat != null)
             {
-                ApplyMaterialToChildRenderers(bat, CreateMaterial("Assets/Materials/SwampOverhaulBatVisual.mat", new Color(0.045f, 0.055f, 0.05f, 1f)));
-                AttachAnimator(bat, CharacterAnimationSetup.BatController, $"{MonsterPath}/Bat.fbx");
+                ApplyMaterialToChildRenderers(bat, CreateMaterial("Assets/Materials/SwampOverhaulBatVisual.mat", new Color(0.13f, 0.1f, 0.16f, 1f)));
+                MakeDisplayMonsterFightable(bat, $"{MonsterPath}/Bat.fbx", CharacterAnimationSetup.BatController,
+                    "Болотный нетопырь", 34f, EnemyKind.Beast, "SwampBatSwarm_Defeated",
+                    new[] { "Bogweed" }, 4, 14, "Добыча: болотник, 4 монеты, 14 опыта.",
+                    new Vector3(0f, 0.7f, 0f), 1.6f, 1.0f, 12f, 8f);
             }
 
             CreatePointLight(root.transform, "SwampOverhaulGreenFogLight", new Vector3(10f, 1.3f, -88f), new Color(0.12f, 0.62f, 0.36f, 1f), 0.55f, 18f);
@@ -1303,12 +1309,20 @@ namespace WitcherRightVersion.Editor
             if (skeleton != null)
             {
                 ApplyMaterialToChildRenderers(skeleton, CreateMaterial("Assets/Materials/TowerOverhaulSkeletonDisplay.mat", new Color(0.76f, 0.74f, 0.68f, 1f)));
+                MakeDisplayMonsterFightable(skeleton, $"{MonsterPath}/Skeleton.fbx", CharacterAnimationSetup.SkeletonController,
+                    "Скелет-страж", 55f, EnemyKind.Undead, "TowerDisplaySkeleton_Defeated",
+                    new[] { "Undead Bone" }, 0, 15, "Добыча: кость нежити, 15 опыта.",
+                    new Vector3(0f, 1.0f, 0f), 2.0f, 0.4f, 11f, 11f);
             }
 
             var slime = InstantiateModel($"{MonsterPath}/Slime.fbx", "SwampOverhaulDrownerDisplay", root.transform, new Vector3(18.5f, 0f, -83.5f), Quaternion.Euler(0f, -125f, 0f), Vector3.one * 1.35f);
             if (slime != null)
             {
-                ApplyMaterialToChildRenderers(slime, CreateMaterial("Assets/Materials/SwampOverhaulDrownerDisplay.mat", new Color(0.035f, 0.22f, 0.15f, 1f)));
+                ApplyMaterialToChildRenderers(slime, CreateMaterial("Assets/Materials/SwampOverhaulDrownerDisplay.mat", new Color(0.06f, 0.3f, 0.2f, 1f)));
+                MakeDisplayMonsterFightable(slime, $"{MonsterPath}/Slime.fbx", CharacterAnimationSetup.DrownerController,
+                    "Болотный утопец", 46f, EnemyKind.Monster, "SwampDrownerDisplay_Defeated",
+                    new[] { "Drowner Slime" }, 5, 16, "Добыча: слизь утопца, 5 монет, 16 опыта.",
+                    new Vector3(0f, 0.5f, 0f), 1.2f, 0.7f, 11f, 10f);
             }
 
             var dragon = InstantiateModel($"{MonsterPath}/Dragon.fbx", "SwampOverhaulBossBackdrop", root.transform, new Vector3(36f, 0f, -118f), Quaternion.Euler(0f, -150f, 0f), Vector3.one * 1.45f);
@@ -3052,6 +3066,42 @@ namespace WitcherRightVersion.Editor
                 10,
                 "Loot: Field Ration, 6 coins, 10 XP.",
                 "Добыча: паёк, 6 монет, 10 опыта.");
+        }
+
+        // Turns a decorative "display" monster model (no collider, no AI — a phantom the
+        // player could see but never fight) into a real, killable enemy: capsule collider +
+        // Health + EnemyAI + animator driver + loot drop, matching the normal enemy pattern.
+        private static void MakeDisplayMonsterFightable(
+            GameObject model, string modelPath, string controller, string displayName,
+            float hp, EnemyKind kind, string deathFlag,
+            string[] loot, int coins, int experience, string lootRussian,
+            Vector3 colliderCenter, float colliderHeight, float colliderRadius,
+            float aggroRange, float damage)
+        {
+            if (model == null)
+            {
+                return;
+            }
+
+            var capsule = model.AddComponent<CapsuleCollider>();
+            capsule.center = colliderCenter;
+            capsule.height = colliderHeight;
+            capsule.radius = colliderRadius;
+
+            var health = model.AddComponent<Health>();
+            health.Configure(displayName, hp);
+            AddCombatVisual(model, new Color(1f, 0.25f, 0.12f, 1f), new Color(0.12f, 0.1f, 0.08f, 1f));
+
+            AttachAnimator(model, controller, modelPath);
+            model.AddComponent<EnemyAnimatorDriver>();
+
+            var ai = model.AddComponent<EnemyAI>();
+            ai.ConfigureKind(kind);
+            ai.Configure(displayName, false, deathFlag, "");
+            ai.ConfigureCombat(aggroRange, 1.9f, 1.9f, damage, 1.9f);
+
+            model.AddComponent<EnemyLootDrop>().Configure(
+                deathFlag + "_Loot", loot, coins, experience, displayName + " loot", lootRussian);
         }
 
         private static void CreateSkeletonGuard(Transform parent, string objectName, Vector3 position, Quaternion rotation)
