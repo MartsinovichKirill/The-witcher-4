@@ -350,22 +350,29 @@ namespace WitcherRightVersion.Editor
             root.transform.SetParent(parent, false);
             root.transform.position = new Vector3(-70f, 0f, 8f);
 
+            // Deliberate hub: an open hunter-camp clearing in the centre (fire, cart, tent
+            // rock) where Ivar stands (world (-67.7,7.2) = local (2.3,-0.8)), ringed by a
+            // wall of trees around the perimeter instead of a grid growing through the camp.
             CreateRegionDisc(root.transform, "ForestDistrictGround", Vector3.zero, new Vector3(13f, 0.035f, 11f), new Color(0.08f, 0.16f, 0.08f, 1f));
 
+            // Tree wall ringing the clearing (perimeter only — leaves the camp centre open).
             for (var i = 0; i < 32; i++)
             {
-                var x = -8f + (i % 8) * 2.15f + (i % 2) * 0.45f;
-                var z = -5f + (i / 8) * 3.0f + (i % 3) * 0.35f;
+                var ang = i * (360f / 32f) * Mathf.Deg2Rad;
+                var radius = 8.6f + (i % 3) * 1.1f;
+                var x = Mathf.Cos(ang) * radius;
+                var z = Mathf.Sin(ang) * radius * 0.82f;
                 var tree = i % 4 == 0 ? "tree-crooked.fbx" : i % 3 == 0 ? "tree-high.fbx" : "tree.fbx";
                 PlaceKenney(root.transform, $"OldForestTree_{i + 1:00}", tree, new Vector3(x, 0f, z), Quaternion.Euler(0f, i * 23f, 0f), Vector3.one * (0.95f + (i % 3) * 0.12f));
             }
 
-            PlaceKenney(root.transform, "HunterCampCart_World", "cart-high.fbx", new Vector3(2.6f, 0f, -2.4f), Quaternion.Euler(0f, -42f, 0f), Vector3.one);
-            PlaceKenney(root.transform, "HunterCampRock_World", "rock-large.fbx", new Vector3(4.5f, 0f, -1f), Quaternion.Euler(0f, 16f, 0f), Vector3.one);
-            PlaceKayKit(root.transform, "OldForestKayKitForestPatch_A", "forest.fbx", new Vector3(-4.5f, 0f, 5.5f), Quaternion.Euler(0f, 25f, 0f), Vector3.one * 1.15f);
-            PlaceKayKit(root.transform, "OldForestKayKitRocks_A", "detail_rocks.fbx", new Vector3(5.9f, 0f, 3.1f), Quaternion.Euler(0f, -18f, 0f), Vector3.one);
-            PlaceKayKit(root.transform, "OldForestKayKitHill_A", "detail_hill.fbx", new Vector3(-7.2f, 0f, -4.6f), Quaternion.Euler(0f, 42f, 0f), Vector3.one);
-            CreateMarker(root.transform, "HunterCampFire_World", new Vector3(1.2f, 0.12f, -1.2f), new Vector3(0.9f, 0.18f, 0.9f), new Color(0.42f, 0.18f, 0.08f, 1f));
+            // Hunter camp arranged around the campfire in the cleared centre, near Ivar.
+            CreateMarker(root.transform, "HunterCampFire_World", new Vector3(2.0f, 0.12f, 0.4f), new Vector3(0.9f, 0.18f, 0.9f), new Color(0.42f, 0.18f, 0.08f, 1f));
+            PlaceKenney(root.transform, "HunterCampCart_World", "cart-high.fbx", new Vector3(4.2f, 0f, 1.6f), Quaternion.Euler(0f, -55f, 0f), Vector3.one);
+            PlaceKenney(root.transform, "HunterCampRock_World", "rock-large.fbx", new Vector3(0.2f, 0f, 2.6f), Quaternion.Euler(0f, 16f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "OldForestKayKitForestPatch_A", "forest.fbx", new Vector3(-3.0f, 0f, -3.6f), Quaternion.Euler(0f, 25f, 0f), Vector3.one * 1.15f);
+            PlaceKayKit(root.transform, "OldForestKayKitRocks_A", "detail_rocks.fbx", new Vector3(5.4f, 0f, -2.4f), Quaternion.Euler(0f, -18f, 0f), Vector3.one);
+            PlaceKayKit(root.transform, "OldForestKayKitHill_A", "detail_hill.fbx", new Vector3(-4.6f, 0f, 3.4f), Quaternion.Euler(0f, 42f, 0f), Vector3.one);
         }
 
         private static void CreateSwampDistrict(Transform parent)
