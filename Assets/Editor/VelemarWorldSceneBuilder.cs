@@ -200,6 +200,7 @@ namespace WitcherRightVersion.Editor
             CreateGround(root.transform);
             CreateTerrainVisualLayers(root.transform);
             CreateRoadNetwork(root.transform);
+            CreateHorizonMountains(root.transform);
             CreateVillageDistrict(root.transform);
             CreateForestDistrict(root.transform);
             CreateSwampDistrict(root.transform);
@@ -237,6 +238,27 @@ namespace WitcherRightVersion.Editor
             ground.transform.position = new Vector3(0f, -0.06f, 0f);
             ground.transform.localScale = new Vector3(42f, 1f, 42f);
             ground.GetComponent<Renderer>().sharedMaterial = CreateMaterial("Assets/Materials/VelemarWorldTerrain.mat", new Color(0.105f, 0.17f, 0.105f, 1f));
+        }
+
+        // A ring of distant mountains around the whole map, far beyond every zone, to give
+        // the world scale and a real horizon (the background-silhouette pass was disabled in
+        // the declutter, which left the edges flat). Far away, so it adds depth, not clutter.
+        private static void CreateHorizonMountains(Transform parent)
+        {
+            var root = new GameObject("HorizonMountainRing");
+            root.transform.SetParent(parent, false);
+
+            const int count = 22;
+            for (var i = 0; i < count; i++)
+            {
+                var ang = i * (360f / count) * Mathf.Deg2Rad;
+                var radius = 158f + (i % 3) * 18f;
+                var x = Mathf.Cos(ang) * radius;
+                var z = Mathf.Sin(ang) * radius;
+                PlaceKayKit(root.transform, $"HorizonMountain_{i + 1:00}", "mountain.fbx",
+                    new Vector3(x, -1f, z), Quaternion.Euler(0f, i * 37f, 0f),
+                    new Vector3(7f + (i % 4) * 1.6f, 5.5f + (i % 3) * 1.3f, 7f + (i % 4) * 1.6f));
+            }
         }
 
         private static void CreateTerrainVisualLayers(Transform parent)
