@@ -308,34 +308,34 @@ namespace WitcherRightVersion.Editor
             // Radek(3.1,-0.7); the root sits at z=-3 so local = world+3 on Z.
             CreateRegionDisc(root.transform, "VillageDistrictGround", new Vector3(0f, 0.01f, 4f), new Vector3(24f, 0.02f, 20f), new Color(0.1f, 0.16f, 0.09f, 1f));
 
-            // South gate the player walks through (spawn is just south at z=-10.5), with a
-            // short connected stretch of wall on each side so it reads as a real entrance
-            // (was a long row of separate segments that looked broken). Buildings below are
-            // scaled up so they tower over the ~1.7m characters instead of matching them.
-            PlaceKayKit(root.transform, "VillageGate_World", "wall_gate.fbx", new Vector3(0f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 2.1f);
-            PlaceKayKit(root.transform, "VillageWallSegment_World_1", "wall_straight.fbx", new Vector3(-3.7f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 2.1f);
-            PlaceKayKit(root.transform, "VillageWallSegment_World_2", "wall_straight.fbx", new Vector3(3.7f, 0f, -4.65f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 2.1f);
+            // Open southern entrance. The gate + wall segments that stood here read as
+            // out-of-place white "walls behind" the square (visible looking back from inside
+            // the village), so they are removed. Two lantern posts mark the way in instead.
+            PlaceKenney(root.transform, "VillageEntranceLanternL", "lantern.fbx", new Vector3(-2.8f, 0f, -5.2f), Quaternion.identity, Vector3.one * 1.05f);
+            PlaceKenney(root.transform, "VillageEntranceLanternR", "lantern.fbx", new Vector3(2.8f, 0f, -5.2f), Quaternion.identity, Vector3.one * 1.05f);
 
             // Central well square.
             PlaceKayKit(root.transform, "VillageKayKitWell_World", "well.fbx", new Vector3(0f, 0f, 1.2f), Quaternion.identity, new Vector3(1.15f, 1.15f, 1.15f));
             PlaceKenney(root.transform, "VillageLantern_World", "lantern.fbx", new Vector3(1.5f, 0f, 0f), Quaternion.identity, Vector3.one * 0.9f);
             PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(-1.9f, 0f, 2.4f), Quaternion.Euler(0f, 40f, 0f), Vector3.one * 1.1f);
 
-            // West row, faces east toward the path: Elder's house, the Smithy, a cottage.
-            // Use the complete KayKit house model (clean orange-roof cottage) instead of the
-            // boxy hand-assembled Kenney walls+roof, which read as crude.
-            PlaceKayKit(root.transform, "ElderHouse_World", "house.fbx", new Vector3(-8.0f, 0f, -0.4f), Quaternion.Euler(0f, 90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
-            PlaceKayKit(root.transform, "Smithy_World", "house.fbx", new Vector3(-8.4f, 0f, 5.0f), Quaternion.Euler(0f, 90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
-            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-9.2f, 0f, 10.8f), Quaternion.Euler(0f, 95f, 0f), new Vector3(2.5f, 2.5f, 2.5f));
+            // Two tidy rows of clean KayKit cottages lining the central street, all at a
+            // matching set-back (x = +/-8.5) and even spacing (z = 0, 5.5, 11), each facing
+            // the street. NPCs stand at the near ends in their own little stalls.
+            // West row (faces east): Elder's house, the Smithy, a cottage.
+            PlaceKayKit(root.transform, "ElderHouse_World", "house.fbx", new Vector3(-8.5f, 0f, 0f), Quaternion.Euler(0f, 90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
+            PlaceKayKit(root.transform, "Smithy_World", "house.fbx", new Vector3(-8.5f, 0f, 5.5f), Quaternion.Euler(0f, 90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
+            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-8.5f, 0f, 11f), Quaternion.Euler(0f, 90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
 
-            // East row, faces west toward the path: Marta's house, the market, a cottage.
-            PlaceKayKit(root.transform, "MartaHouse_World", "house.fbx", new Vector3(8.0f, 0f, -0.6f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
-            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(8.4f, 0f, 5.0f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
-            PlaceKayKit(root.transform, "VillageKayKitHouseEast_B", "house.fbx", new Vector3(9.2f, 0f, 10.8f), Quaternion.Euler(0f, -95f, 0f), new Vector3(2.5f, 2.5f, 2.5f));
+            // East row (faces west): Marta's house, the market, a cottage.
+            PlaceKayKit(root.transform, "MartaHouse_World", "house.fbx", new Vector3(8.5f, 0f, 0f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
+            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(8.5f, 0f, 5.5f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
+            PlaceKayKit(root.transform, "VillageKayKitHouseEast_B", "house.fbx", new Vector3(8.5f, 0f, 11f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
 
-            // North end frames the square behind the well.
-            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(-4.4f, 0f, 14.5f), Quaternion.Euler(0f, 150f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
-            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(4.6f, 0f, 14.8f), Quaternion.Euler(0f, 205f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
+            // North end closes the street: watermill + barracks facing back south, framed
+            // symmetrically so the village has a clear top edge (no stray walls behind).
+            PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(-5f, 0f, 16f), Quaternion.Euler(0f, 180f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
+            PlaceKayKit(root.transform, "VillageKayKitBarracks_World", "barracks.fbx", new Vector3(5f, 0f, 16f), Quaternion.Euler(0f, 180f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
 
             // Low front-yard fences lining each side of the path (set back from it).
             for (var i = 0; i < 3; i++)
