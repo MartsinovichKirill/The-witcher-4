@@ -62,6 +62,7 @@ namespace WitcherRightVersion.Editor
             RemoveIfExists("ZoneDiscoveryCanvas");
             RemoveIfExists("GameplayMenuCanvas");
             RemoveIfExists("GameplayMenuEventSystem");
+            RemoveIfExists("DeveloperConsole");
 
             CreateRuntimeServices();
             CreateLighting();
@@ -77,6 +78,7 @@ namespace WitcherRightVersion.Editor
             CreateWorldDirectionCanvas();
             CreateZoneDiscoveryCanvas();
             CreateGameplayMenuCanvas();
+            new GameObject("DeveloperConsole").AddComponent<WitcherRightVersion.Debugging.DeveloperConsole>();
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, ScenePath);
