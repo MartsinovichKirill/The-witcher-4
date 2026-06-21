@@ -2391,13 +2391,11 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("VillageDressing_DailyLife");
             root.transform.SetParent(parent, false);
 
-            PlaceKenney(root.transform, "VillageDressingNoticeBanner", "banner-red.fbx", new Vector3(-2.1f, 0f, -7.25f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.25f);
-            PlaceKenney(root.transform, "VillageDressingGreenBanner", "banner-green.fbx", new Vector3(2.0f, 0f, -7.25f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.25f);
-            PlaceKenney(root.transform, "VillageDressingMarketBench", "stall-bench.fbx", new Vector3(3.8f, 0f, 2.2f), Quaternion.Euler(0f, -22f, 0f), Vector3.one * 1.1f);
-            PlaceKenney(root.transform, "VillageDressingSmithPlanks", "planks.fbx", new Vector3(-4.4f, 0f, 2.7f), Quaternion.Euler(0f, -24f, 0f), Vector3.one * 1.1f);
-            PlaceKenney(root.transform, "VillageDressingWellLantern", "lantern.fbx", new Vector3(0.9f, 0f, -4.4f), Quaternion.Euler(0f, 45f, 0f), Vector3.one * 0.9f);
-            PlaceKenney(root.transform, "VillageDressingBrokenFenceNorth", "fence-broken.fbx", new Vector3(-6.8f, 0f, -7.25f), Quaternion.Euler(0f, 8f, 0f), Vector3.one * 1.1f);
-            PlaceKenney(root.transform, "VillageDressingCartByGate", "cart-high.fbx", new Vector3(6.2f, 0f, -7.45f), Quaternion.Euler(0f, -55f, 0f), Vector3.one * 1.15f);
+            // Just two banners framing the gate. The old market bench, smith planks, well
+            // lantern, broken fence and cart all sat in the centre and crowded it; with the
+            // decorative validator checks relaxed they are dropped for a cleaner square.
+            PlaceKenney(root.transform, "VillageDressingNoticeBanner", "banner-red.fbx", new Vector3(-2.4f, 0f, -7.0f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.3f);
+            PlaceKenney(root.transform, "VillageDressingGreenBanner", "banner-green.fbx", new Vector3(2.4f, 0f, -7.0f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 1.3f);
         }
 
         private static void CreateForestDressing(Transform parent)
