@@ -322,14 +322,16 @@ namespace WitcherRightVersion.Editor
             PlaceKenney(root.transform, "VillageCart_World", "cart.fbx", new Vector3(-1.9f, 0f, 2.4f), Quaternion.Euler(0f, 40f, 0f), Vector3.one * 1.1f);
 
             // West row, faces east toward the path: Elder's house, the Smithy, a cottage.
-            CreateHouse(root.transform, "ElderHouse_World", new Vector3(-7.8f, 0f, -0.4f), Quaternion.Euler(0f, 90f, 0f), 3.1f);
-            CreateHouse(root.transform, "Smithy_World", new Vector3(-8.2f, 0f, 4.6f), Quaternion.Euler(0f, 90f, 0f), 3.1f);
-            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-9.0f, 0f, 10.4f), Quaternion.Euler(0f, 95f, 0f), new Vector3(2.5f, 2.5f, 2.5f));
+            // Use the complete KayKit house model (clean orange-roof cottage) instead of the
+            // boxy hand-assembled Kenney walls+roof, which read as crude.
+            PlaceKayKit(root.transform, "ElderHouse_World", "house.fbx", new Vector3(-8.0f, 0f, -0.4f), Quaternion.Euler(0f, 90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
+            PlaceKayKit(root.transform, "Smithy_World", "house.fbx", new Vector3(-8.4f, 0f, 5.0f), Quaternion.Euler(0f, 90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
+            PlaceKayKit(root.transform, "VillageKayKitHouse_A", "house.fbx", new Vector3(-9.2f, 0f, 10.8f), Quaternion.Euler(0f, 95f, 0f), new Vector3(2.5f, 2.5f, 2.5f));
 
             // East row, faces west toward the path: Marta's house, the market, a cottage.
-            CreateHouse(root.transform, "MartaHouse_World", new Vector3(7.8f, 0f, -0.6f), Quaternion.Euler(0f, -90f, 0f), 3.1f);
-            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(8.2f, 0f, 4.8f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
-            PlaceKayKit(root.transform, "VillageKayKitHouseEast_B", "house.fbx", new Vector3(9.0f, 0f, 10.6f), Quaternion.Euler(0f, -95f, 0f), new Vector3(2.5f, 2.5f, 2.5f));
+            PlaceKayKit(root.transform, "MartaHouse_World", "house.fbx", new Vector3(8.0f, 0f, -0.6f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
+            PlaceKayKit(root.transform, "VillageKayKitMarket_World", "market.fbx", new Vector3(8.4f, 0f, 5.0f), Quaternion.Euler(0f, -90f, 0f), new Vector3(2.3f, 2.3f, 2.3f));
+            PlaceKayKit(root.transform, "VillageKayKitHouseEast_B", "house.fbx", new Vector3(9.2f, 0f, 10.8f), Quaternion.Euler(0f, -95f, 0f), new Vector3(2.5f, 2.5f, 2.5f));
 
             // North end frames the square behind the well.
             PlaceKayKit(root.transform, "VillageKayKitWatermill_World", "watermill.fbx", new Vector3(-4.4f, 0f, 14.5f), Quaternion.Euler(0f, 150f, 0f), new Vector3(2.6f, 2.6f, 2.6f));
@@ -493,7 +495,9 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("MapDensityAndScalePass");
             root.transform.SetParent(parent, false);
 
-            CreateStructuredVillageBlocks(root.transform);
+            // DECLUTTER: village no longer needs this extra block of edge houses/shops/fences
+            // now that CreateVillageDistrict is a clean self-contained settlement.
+            // CreateStructuredVillageBlocks(root.transform);
             CreateForestApproachDensity(root.transform);
             CreateSwampApproachDensity(root.transform);
             CreateAshRoadRuinedSettlement(root.transform);
@@ -821,7 +825,7 @@ namespace WitcherRightVersion.Editor
             if (dragon != null)
             {
                 ApplyMaterialToChildRenderers(dragon, CreateMaterial("Assets/Materials/DeepSwampBossSilhouette.mat", new Color(0.07f, 0.18f, 0.12f, 1f)));
-                MakeDisplayMonsterFightable(dragon, $"{MonsterPath}/Dragon.fbx", CharacterAnimationSetup.DragonController,
+                MakeDisplayMonsterFightable(dragon, $"{MonsterPath}/Dragon.fbx", null,
                     "Болотный ящер", 180f, EnemyKind.Monster, "DeepSwampBoss_Defeated",
                     new[] { "Drowner Slime", "Iron Ore" }, 35, 90, "Добыча: слизь утопца, железная руда, 35 монет, 90 опыта.",
                     new Vector3(0f, 1.6f, 0f), 3.2f, 1.5f, 16f, 18f);
@@ -1244,11 +1248,11 @@ namespace WitcherRightVersion.Editor
                 PlaceKenney(root.transform, $"SwampOverhaulBrokenBoardwalk_{i + 1:00}", i % 3 == 0 ? "planks-opening.fbx" : "planks-half.fbx", new Vector3(-2f + i * 2.1f, 0.055f, -84f - Mathf.Sin(i * 0.6f) * 3.2f), Quaternion.Euler(0f, 76f + i * 5f, 0f), Vector3.one * 0.82f);
             }
 
-            var bat = InstantiateModel($"{MonsterPath}/Bat.fbx", "SwampOverhaulBatSwarmMarker", root.transform, new Vector3(21f, 1.3f, -88f), Quaternion.Euler(0f, -120f, 0f), Vector3.one * 0.85f);
+            var bat = InstantiateModel($"{MonsterPath}/Bat.fbx", "SwampOverhaulBatSwarmMarker", root.transform, new Vector3(21f, 0.6f, -88f), Quaternion.Euler(0f, -120f, 0f), Vector3.one * 0.85f);
             if (bat != null)
             {
                 ApplyMaterialToChildRenderers(bat, CreateMaterial("Assets/Materials/SwampOverhaulBatVisual.mat", new Color(0.13f, 0.1f, 0.16f, 1f)));
-                MakeDisplayMonsterFightable(bat, $"{MonsterPath}/Bat.fbx", CharacterAnimationSetup.BatController,
+                MakeDisplayMonsterFightable(bat, $"{MonsterPath}/Bat.fbx", null,
                     "Болотный нетопырь", 34f, EnemyKind.Beast, "SwampBatSwarm_Defeated",
                     new[] { "Bogweed" }, 4, 14, "Добыча: болотник, 4 монеты, 14 опыта.",
                     new Vector3(0f, 0.7f, 0f), 1.6f, 1.0f, 12f, 8f);
@@ -3096,8 +3100,15 @@ namespace WitcherRightVersion.Editor
             health.Configure(displayName, hp);
             AddCombatVisual(model, new Color(1f, 0.25f, 0.12f, 1f), new Color(0.12f, 0.1f, 0.08f, 1f));
 
-            AttachAnimator(model, controller, modelPath);
-            model.AddComponent<EnemyAnimatorDriver>();
+            // Only attach the animator driver for controllers proven with EnemyAnimatorDriver
+            // (Skeleton/Drowner). Bat/Dragon controllers were only ever used for static
+            // display; driving them collapsed the model into an invisible/broken state, so
+            // those are passed a null controller and stay as visible, killable static models.
+            if (!string.IsNullOrEmpty(controller))
+            {
+                AttachAnimator(model, controller, modelPath);
+                model.AddComponent<EnemyAnimatorDriver>();
+            }
 
             var ai = model.AddComponent<EnemyAI>();
             ai.ConfigureKind(kind);
