@@ -209,16 +209,19 @@ namespace WitcherRightVersion.Editor
             CreateMapDensityAndScalePass(root.transform);
             CreateGameplayCompositionPass(root.transform);
             CreateLandmarkAndTraversalPass(root.transform);
-            CreateWorldCompositionPolishPass(root.transform);
-            CreateFullMapVisualOverhaulPass(root.transform);
-            CreateTerrainDepthAndSilhouettePass(root.transform);
+            // DECLUTTER (decorative checks relaxed): the heaviest pure-decoration passes
+            // that piled the map into a "dump" are disabled. Kept: core hubs, roads,
+            // gameplay, NPCs, fightable monsters (FullMapVisualOverhaul), VFX, anti-flicker.
+            // CreateWorldCompositionPolishPass(root.transform);      // edge orchards/cemetery/canopy/boardwalk/hamlet/ruins
+            CreateFullMapVisualOverhaulPass(root.transform);          // KEPT: contains the fightable display monsters
+            // CreateTerrainDepthAndSilhouettePass(root.transform);   // far background silhouettes
             CreateAmbientCharacterPopulationPass(root.transform);
-            CreateVisualAtmospherePolishPass(root.transform);
+            CreateVisualAtmospherePolishPass(root.transform);        // KEPT: anti-flicker ground + tower playable ruin
             CreateCharacterPresentationPolishPass(root.transform);
-            CreateDynamicAmbientVfxPass(root.transform);
-            CreateRouteCinematicCompositionPass(root.transform);
+            CreateDynamicAmbientVfxPass(root.transform);             // KEPT: validator-checked ambient VFX
+            // CreateRouteCinematicCompositionPass(root.transform);  // cinematic route props
             CreateZoneDiscoveryTriggers(root.transform);
-            CreateWorldDressing(root.transform);
+            // CreateWorldDressing(root.transform);                  // scattered banners/carts/props
             CreateGameplayObjects(root.transform);
             CreateWorldBoundary(root.transform);
         }
@@ -474,7 +477,10 @@ namespace WitcherRightVersion.Editor
             var root = new GameObject("InternetAssetMapExtensions_CC0");
             root.transform.SetParent(parent, false);
 
-            CreateOuterVillageRing(root.transform);
+            // DECLUTTER: the OuterVillageRing chain (-> Crossroads -> EdgeComposition ->
+            // StreetOverhaul) piled the bulk of the village-surroundings junk. Disabled now
+            // that decorative checks are relaxed; the roads + zone-discovery triggers stay.
+            // CreateOuterVillageRing(root.transform);
             CreateDeepForestMapExtension(root.transform);
             CreateDeepSwampMapExtension(root.transform);
             CreateAshRoadMapExtension(root.transform);
