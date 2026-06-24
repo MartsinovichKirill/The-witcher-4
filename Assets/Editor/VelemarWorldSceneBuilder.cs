@@ -298,13 +298,18 @@ namespace WitcherRightVersion.Editor
             var darkDirt = new Color(0.105f, 0.085f, 0.055f, 1f);
             var shoulder = new Color(0.09f, 0.13f, 0.078f, 1f);
 
-            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_Main", new Vector3(0f, 0.075f, 0f), new Vector3(5.4f, 0.026f, 252f), dirt);
-            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_Main", new Vector3(0f, 0.081f, 0f), new Vector3(252f, 0.024f, 5.4f), dirt);
-            CreateSurfacePatch(root.transform, "VelemarCrossroadsPackedMud", new Vector3(0f, 0.088f, 0f), new Vector3(10.5f, 0.022f, 10.5f), darkDirt);
-            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_LeftShoulder", new Vector3(-3.4f, 0.066f, 0f), new Vector3(1.2f, 0.018f, 244f), shoulder);
-            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_RightShoulder", new Vector3(3.4f, 0.066f, 0f), new Vector3(1.2f, 0.018f, 244f), shoulder);
-            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_NorthShoulder", new Vector3(0f, 0.068f, 3.4f), new Vector3(244f, 0.018f, 1.2f), shoulder);
-            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_SouthShoulder", new Vector3(0f, 0.068f, -3.4f), new Vector3(244f, 0.018f, 1.2f), shoulder);
+            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_Main", new Vector3(0f, 0.075f, 0f), new Vector3(7.4f, 0.026f, 252f), dirt);
+            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_Main", new Vector3(0f, 0.081f, 0f), new Vector3(252f, 0.024f, 7.4f), dirt);
+            CreateSurfacePatch(root.transform, "VelemarCrossroadsPackedMud", new Vector3(0f, 0.088f, 0f), new Vector3(12f, 0.022f, 12f), darkDirt);
+            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_LeftShoulder", new Vector3(-4.5f, 0.066f, 0f), new Vector3(1.4f, 0.018f, 244f), shoulder);
+            CreateSurfacePatch(root.transform, "VelemarNorthSouthRoad_RightShoulder", new Vector3(4.5f, 0.066f, 0f), new Vector3(1.4f, 0.018f, 244f), shoulder);
+            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_NorthShoulder", new Vector3(0f, 0.068f, 4.5f), new Vector3(244f, 0.018f, 1.4f), shoulder);
+            CreateSurfacePatch(root.transform, "VelemarEastWestRoad_SouthShoulder", new Vector3(0f, 0.068f, -4.5f), new Vector3(244f, 0.018f, 1.4f), shoulder);
+            // Packed-mud junctions where each road meets a zone, so the route reads clearly.
+            CreateSurfacePatch(root.transform, "RoadJunction_Forest", new Vector3(-70f, 0.09f, 4f), new Vector3(13f, 0.02f, 10f), darkDirt);
+            CreateSurfacePatch(root.transform, "RoadJunction_AshRoad", new Vector3(72f, 0.09f, 4f), new Vector3(13f, 0.02f, 10f), darkDirt);
+            CreateSurfacePatch(root.transform, "RoadJunction_Swamp", new Vector3(4f, 0.09f, -72f), new Vector3(10f, 0.02f, 13f), darkDirt);
+            CreateSurfacePatch(root.transform, "RoadJunction_Tower", new Vector3(0f, 0.09f, 70f), new Vector3(10f, 0.02f, 13f), darkDirt);
             CreateSurfacePatch(root.transform, "VillageRoadWearPatch_A", new Vector3(-5.5f, 0.092f, -3.2f), new Vector3(7f, 0.018f, 2.2f), darkDirt);
             CreateSurfacePatch(root.transform, "VillageRoadWearPatch_B", new Vector3(5.4f, 0.093f, -3.4f), new Vector3(7f, 0.018f, 2.2f), darkDirt);
             CreateSurfacePatch(root.transform, "VillageRoadWearPatch_C", new Vector3(0f, 0.094f, 4.5f), new Vector3(8.5f, 0.018f, 2.4f), darkDirt);
@@ -3587,7 +3592,11 @@ namespace WitcherRightVersion.Editor
             // untextured knight (verified by render). Kept under the name "ReynardKnightModel"
             // so scene refs/validator still resolve. Faces +Z to match PlayerController's
             // LookRotation(MoveDirection); ~0.55 scale matches the human-sized NPCs.
-            var hero = InstantiateModel($"{RpgCharacterPath}/Warrior.fbx", "ReynardKnightModel", player, new Vector3(0f, 0f, 0f), Quaternion.identity, Vector3.one * 0.55f);
+            // Lifted +0.16 on Y: the CharacterController rests on the base terrain (y=-0.06)
+            // but the visible ground (roads/patches/village floor) is layered up at +0.05..+0.16,
+            // so an un-offset model sank its feet into the ground. This raises the feet onto
+            // the visible surface for the areas the player actually walks (road + village).
+            var hero = InstantiateModel($"{RpgCharacterPath}/Warrior.fbx", "ReynardKnightModel", player, new Vector3(0f, 0.16f, 0f), Quaternion.identity, Vector3.one * 0.55f);
             if (hero == null)
             {
                 var fallback = GameObject.CreatePrimitive(PrimitiveType.Capsule);
